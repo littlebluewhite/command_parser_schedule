@@ -1,0 +1,179 @@
+definitions:
+  ping.SwaggerListPing:
+    properties:
+      age:
+        example: 20
+        type: integer
+      name:
+        example: wilson
+        type: string
+    type: object
+  ping.SwaggerPing:
+    properties:
+      example:
+        example: asdfasdf
+        type: string
+    type: object
+  time_template.TimeDatum:
+    properties:
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      m_condition:
+        items:
+          type: integer
+        type: array
+      m_condition_type:
+        type: string
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+    type: object
+  time_template.TimeDatumCreate:
+    properties:
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      m_condition:
+        items:
+          type: integer
+        type: array
+      m_condition_type:
+        type: string
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+    type: object
+  time_template.TimeTemplate:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/time_template.TimeDatum'
+      updated_at:
+        type: string
+    type: object
+  time_template.TimeTemplateCreate:
+    properties:
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/time_template.TimeDatumCreate'
+    required:
+    - name
+    type: object
+host: localhost:5487
+info:
+  contact:
+    email: wwilson008@gmail.com
+    name: Wilson
+    url: https://github.com/littlebluewhite
+  description: This is a schedule-command server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Schedule-Command swagger API
+  version: "2.0"
+paths:
+  /ping/list:
+    get:
+      description: test list ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ping.SwaggerListPing'
+            type: array
+      summary: return list ping
+      tags:
+      - ping
+  /ping/test:
+    get:
+      description: test ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ping.SwaggerPing'
+      summary: test ping
+      tags:
+      - ping
+  /time_template/:
+    get:
+      description: Get all time templates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/time_template.TimeTemplate'
+            type: array
+      summary: Show all time templates
+      tags:
+      - time_template
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: time template body
+        in: body
+        name: time_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/time_template.TimeTemplateCreate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: created success
+          schema:
+            type: string
+      summary: Create time templates
+      tags:
+      - time_template
+  /time_template/{id}:
+    get:
+      description: Get time templates by id
+      parameters:
+      - description: time template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/time_template.TimeTemplate'
+      summary: Show time templates
+      tags:
+      - time_template
+swagger: "2.0"
