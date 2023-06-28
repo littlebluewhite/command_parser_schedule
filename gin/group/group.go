@@ -2,6 +2,7 @@ package group
 
 import (
 	"command_parser_schedule/gin/group/ping"
+	"command_parser_schedule/gin/group/time_template"
 	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/gin/middleware"
 	swaggerFiles "github.com/swaggo/files"
@@ -17,6 +18,7 @@ func Inject(ginApp initial.GinApp) {
 
 	// inject routers
 	ping.Inject(ginApp)
+	time_template.Inject(ginApp)
 
 	// swagger router
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "command_parser_schedule/docs"
 	"command_parser_schedule/gin/group"
 	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util/config"
@@ -45,7 +46,11 @@ func main() {
 	mainLog.Info().Println("command module start")
 
 	// DBs start includes SQL Cache
-	dbs := initial.NewDbs(mainLog)
+	dbs := initial.NewDbs(mainLog, true)
+	defer func() {
+		dbs.GetIdb().Close()
+		mainLog.Info().Println("influxDB Disconnect")
+	}()
 
 	// gin app start
 	ginApp := initial.NewGinApp(mainLog, dbs)
@@ -91,14 +96,5 @@ func main() {
 	}
 
 	mainLog.Info().Println("Server exiting")
-	//db, _ := gorm.Open(mysql.Open("root:123456@tcp(127.0.0.1:3306)/node_object?charset=utf8&parseTime=true&parseTime=true&loc=Local"))
-	//Q := query.Use(db)
-	//ctx = context.Background()
-	//taskTemplate := Q.TaskTemplate
-	//a, err := taskTemplate.WithContext(ctx).First()
-	//if err != nil {
-	//	return
-	//}
-	//fmt.Println(a)
 
 }

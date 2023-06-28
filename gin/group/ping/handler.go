@@ -11,6 +11,13 @@ type Handler struct {
 	L logFile.LogFile
 }
 
+// GetPing swagger
+// @Summary    test ping
+// @Description test ping
+// @Tags        ping
+// @Produce     json
+// @Success     200 {object} ping.SwaggerPing
+// @Router      /ping/test [get]
 func (h *Handler) GetPing(c *gin.Context) {
 	example := c.MustGet("example").(string)
 	c.JSON(200, gin.H{
@@ -19,6 +26,13 @@ func (h *Handler) GetPing(c *gin.Context) {
 	h.L.Info().Println("get ping: example: ", example)
 }
 
+// GetListPing swagger
+// @Summary     return list ping
+// @Description test list ping
+// @Tags        ping
+// @Produce     json
+// @Success     200 {array} ping.SwaggerListPing
+// @Router      /ping/list [get]
 func (h *Handler) GetListPing(c *gin.Context) {
 	data := []map[string]interface{}{
 		{

@@ -50,8 +50,3 @@ func NewDB(dirPath, fileName, yamlName string) (*gorm.DB, error) {
 		PrepareStmt:            true,
 	})
 }
-
-func CloseDB(*gorm.DB) error {
-	//Todo Check the error
-	return nil
-}
