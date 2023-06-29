@@ -2,7 +2,6 @@ package time_template
 
 import (
 	"command_parser_schedule/util/logFile"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -72,7 +71,7 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 // @Accept  json
 // @Produce json
 // @Param   time_template body     []time_template.TimeTemplateCreate true "time template body"
-// @Success 200           {string} string                      "created success"
+// @Success 200           {array} time_template.TimeTemplate
 // @Router  /time_template/ [post]
 func (h *Handler) AddTimeTemplate(c *gin.Context) {
 	entry := []*TimeTemplateCreate{nil}
@@ -80,5 +79,45 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 		c.AbortWithStatusJSON(484, err.Error())
 		return
 	}
-	fmt.Println(entry)
+	tt := CreateConvert(entry)
+	tt, err := h.O.Create(tt)
+	if err != nil {
+		c.AbortWithStatusJSON(484, err.Error())
+		return
+	}
+	c.JSON(200, Format(tt))
+}
+
+// UpdateTimeTemplate swagger
+// @Summary Update time templates
+// @Tags    time_template
+// @Accept  json
+// @Produce json
+// @Param   time_template body     []time_template.TimeTemplateUpdate true "modify time template body"
+// @Success 200           {string} string "Update successfully
+// @Router  /time_template/ [patch]
+func (h *Handler) UpdateTimeTemplate(c *gin.Context) {
+	entry := []*TimeTemplateUpdate{nil}
+	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(484, err.Error())
+		return
+	}
+	ids := make([]int32, 0, len(entry))
+	uMap := make(map[int32]*TimeTemplateUpdate)
+	for _, item := range entry {
+		ids = append(ids, item.ID)
+		uMap[item.ID] = item
+	}
+	tt, err := h.O.Find(ids)
+	if err != nil {
+		c.AbortWithStatusJSON(484, err.Error())
+		return
+	}
+	tt = UpdateConvert(tt, uMap)
+	err = h.O.Update(tt)
+	if err != nil {
+		c.AbortWithStatusJSON(484, err.Error())
+		return
+	}
+	c.JSON(200, "Update successfully")
 }

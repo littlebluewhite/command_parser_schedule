@@ -55,6 +55,38 @@ definitions:
         type: string
       start_time:
         type: string
+    required:
+    - end_time
+    - m_condition
+    - start_date
+    - start_time
+    type: object
+  time_template.TimeDatumUpdate:
+    properties:
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      m_condition:
+        items:
+          type: integer
+        type: array
+      m_condition_type:
+        type: string
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+    required:
+    - end_time
+    - m_condition
+    - repeat_type
+    - start_date
+    - start_time
     type: object
   time_template.TimeTemplate:
     properties:
@@ -77,6 +109,18 @@ definitions:
         $ref: '#/definitions/time_template.TimeDatumCreate'
     required:
     - name
+    - time_data
+    type: object
+  time_template.TimeTemplateUpdate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/time_template.TimeDatumUpdate'
+    required:
+    - id
     type: object
 host: localhost:5487
 info:
@@ -135,6 +179,28 @@ paths:
       summary: Show all time templates
       tags:
       - time_template
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: modify time template body
+        in: body
+        name: time_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/time_template.TimeTemplateUpdate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update successfully
+          schema:
+            type: string
+      summary: Update time templates
+      tags:
+      - time_template
     post:
       consumes:
       - application/json
@@ -151,9 +217,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: created success
+          description: OK
           schema:
-            type: string
+            items:
+              $ref: '#/definitions/time_template.TimeTemplate'
+            type: array
       summary: Create time templates
       tags:
       - time_template

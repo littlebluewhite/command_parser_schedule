@@ -39,3 +39,20 @@ type TimeDatumCreate struct {
 	MConditionType  *string         `json:"m_condition_type"`
 	MCondition      json.RawMessage `json:"m_condition" binding:"required"`
 }
+
+type TimeTemplateUpdate struct {
+	ID       int32            `json:"id" binding:"required"`
+	Name     *string          `json:"name"`
+	TimeData *TimeDatumUpdate `json:"time_data"`
+}
+
+type TimeDatumUpdate struct {
+	RepeatType      *string         `json:"repeat_type" binding:"required"`
+	StartDate       time.Time       `json:"start_date" binding:"required"`
+	EndDate         *time.Time      `json:"end_date"`
+	StartTime       string          `json:"start_time" binding:"required"`
+	EndTime         string          `json:"end_time" binding:"required"`
+	IntervalSeconds *int32          `json:"interval_seconds"`
+	MConditionType  *string         `json:"m_condition_type"`
+	MCondition      json.RawMessage `json:"m_condition" binding:"required"`
+}

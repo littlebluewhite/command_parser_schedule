@@ -136,16 +136,16 @@ func TestCreate(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	o, l := setUpOperate()
 	t.Run("update", func(t *testing.T) {
-		var i int32 = 20
+		var s string = "monthly_day"
 		testTimeTemplate := []*model.TimeTemplate{
-			{Name: "", TimeDataID: 1, ID: 1,
+			{Name: "test1", TimeDataID: 1, ID: 1,
 				TimeData: model.TimeDatum{
 					RepeatType:      nil,
 					StartDate:       time.Date(2023, 6, 18, 0, 0, 0, 0, time.Local),
-					StartTime:       []byte("05:12:12"),
-					EndTime:         []byte("16:09:16"),
-					IntervalSeconds: &i,
-					MConditionType:  nil,
+					StartTime:       []byte("08:12:12"),
+					EndTime:         []byte("16:55:16"),
+					IntervalSeconds: nil,
+					MConditionType:  &s,
 					MCondition:      []byte("[5, 1, 7]"),
 				},
 			},

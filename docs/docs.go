@@ -117,7 +117,44 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "created success",
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/time_template.TimeTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "time_template"
+                ],
+                "summary": "Update time templates",
+                "parameters": [
+                    {
+                        "description": "modify time template body",
+                        "name": "time_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/time_template.TimeTemplateUpdate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update successfully",
                         "schema": {
                             "type": "string"
                         }
@@ -212,6 +249,51 @@ const docTemplate = `{
         },
         "time_template.TimeDatumCreate": {
             "type": "object",
+            "required": [
+                "end_time",
+                "m_condition",
+                "start_date",
+                "start_time"
+            ],
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "interval_seconds": {
+                    "type": "integer"
+                },
+                "m_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "m_condition_type": {
+                    "type": "string"
+                },
+                "repeat_type": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "time_template.TimeDatumUpdate": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "m_condition",
+                "repeat_type",
+                "start_date",
+                "start_time"
+            ],
             "properties": {
                 "end_date": {
                     "type": "string"
@@ -265,7 +347,8 @@ const docTemplate = `{
         "time_template.TimeTemplateCreate": {
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "time_data"
             ],
             "properties": {
                 "name": {
@@ -273,6 +356,23 @@ const docTemplate = `{
                 },
                 "time_data": {
                     "$ref": "#/definitions/time_template.TimeDatumCreate"
+                }
+            }
+        },
+        "time_template.TimeTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "time_data": {
+                    "$ref": "#/definitions/time_template.TimeDatumUpdate"
                 }
             }
         }

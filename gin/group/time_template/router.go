@@ -23,4 +23,5 @@ func InitRoutes(r Routes) {
 	g.GET("/", h.GetTimeTemplates)
 	g.GET("/:id", h.GetTimeTemplateById)
 	g.POST("/", h.AddTimeTemplate)
+	g.PATCH("/", h.UpdateTimeTemplate)
 }
