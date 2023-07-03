@@ -4,13 +4,17 @@
 
 package model
 
+import (
+	"encoding/json"
+)
+
 const TableNameHeaderTemplate = "header_template"
 
 // HeaderTemplate mapped from table <header_template>
 type HeaderTemplate struct {
-	ID   int32   `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Name string  `gorm:"column:name;not null" json:"name"`
-	Data *string `gorm:"column:data" json:"data"`
+	ID   int32           `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Name string          `gorm:"column:name;not null" json:"name"`
+	Data json.RawMessage `gorm:"column:data" json:"data"`
 }
 
 // TableName HeaderTemplate's table name

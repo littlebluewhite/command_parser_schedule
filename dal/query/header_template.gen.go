@@ -29,7 +29,7 @@ func newHeaderTemplate(db *gorm.DB, opts ...gen.DOOption) headerTemplate {
 	_headerTemplate.ALL = field.NewAsterisk(tableName)
 	_headerTemplate.ID = field.NewInt32(tableName, "id")
 	_headerTemplate.Name = field.NewString(tableName, "name")
-	_headerTemplate.Data = field.NewString(tableName, "data")
+	_headerTemplate.Data = field.NewBytes(tableName, "data")
 
 	_headerTemplate.fillFieldMap()
 
@@ -42,7 +42,7 @@ type headerTemplate struct {
 	ALL  field.Asterisk
 	ID   field.Int32
 	Name field.String
-	Data field.String
+	Data field.Bytes
 
 	fieldMap map[string]field.Expr
 }
@@ -61,7 +61,7 @@ func (h *headerTemplate) updateTableName(table string) *headerTemplate {
 	h.ALL = field.NewAsterisk(table)
 	h.ID = field.NewInt32(table, "id")
 	h.Name = field.NewString(table, "name")
-	h.Data = field.NewString(table, "data")
+	h.Data = field.NewBytes(table, "data")
 
 	h.fillFieldMap()
 

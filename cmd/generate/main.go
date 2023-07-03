@@ -32,7 +32,20 @@ func main() {
 		&field.RelateConfig{
 			GORMTag: map[string]string{"foreignKey": "time_data_id"},
 		}))
-	g.ApplyBasic(timeData, timeTemplate)
+	headerTemplate := g.GenerateModel("header_template", gen.FieldType("data", "json.RawMessage"))
+	httpsCommand := g.GenerateModel("https_command",
+		gen.FieldType("header", "json.RawMessage"),
+		gen.FieldType("params", "json.RawMessage"),
+		gen.FieldType("body", "json.RawMessage"))
+	websocketCommand := g.GenerateModel("websocket_command",
+		gen.FieldType("header", "json.RawMessage"))
+	mqttCommand := g.GenerateModel("mqtt_command",
+		gen.FieldType("header", "json.RawMessage"),
+		gen.FieldType("message", "json.RawMessage"))
+	redisCommand := g.GenerateModel("redisCommand",
+		gen.FieldType("message", "json.RawMessage"))
+
+	g.ApplyBasic(timeData, timeTemplate, headerTemplate)
 
 	// execute the action of code generation
 	g.Execute()

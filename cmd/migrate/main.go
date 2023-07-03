@@ -9,12 +9,12 @@ import (
 )
 
 func main() {
-	var up, down, force, t bool
+	var up, down, to, t bool
 	var version int
 	flag.BoolVar(&up, "up", false, "up to newest")
 	flag.BoolVar(&t, "test", false, "for test")
 	flag.BoolVar(&down, "down", false, "down to oldest")
-	flag.BoolVar(&force, "force", false, "force version")
+	flag.BoolVar(&to, "to", false, "to version")
 	flag.IntVar(&version, "version", -1, "version")
 	flag.Parse()
 	var c config.DBConfig
@@ -31,9 +31,9 @@ func main() {
 	if down {
 		client.Down()
 	}
-	if force {
+	if to {
 		if version != -1 {
-			client.Force(version)
+			client.To(uint(version))
 		}
 	}
 }

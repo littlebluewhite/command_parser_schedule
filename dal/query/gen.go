@@ -17,26 +17,29 @@ import (
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:           db,
-		TimeDatum:    newTimeDatum(db, opts...),
-		TimeTemplate: newTimeTemplate(db, opts...),
+		db:             db,
+		HeaderTemplate: newHeaderTemplate(db, opts...),
+		TimeDatum:      newTimeDatum(db, opts...),
+		TimeTemplate:   newTimeTemplate(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	TimeDatum    timeDatum
-	TimeTemplate timeTemplate
+	HeaderTemplate headerTemplate
+	TimeDatum      timeDatum
+	TimeTemplate   timeTemplate
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		TimeDatum:    q.TimeDatum.clone(db),
-		TimeTemplate: q.TimeTemplate.clone(db),
+		db:             db,
+		HeaderTemplate: q.HeaderTemplate.clone(db),
+		TimeDatum:      q.TimeDatum.clone(db),
+		TimeTemplate:   q.TimeTemplate.clone(db),
 	}
 }
 
@@ -50,21 +53,24 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		TimeDatum:    q.TimeDatum.replaceDB(db),
-		TimeTemplate: q.TimeTemplate.replaceDB(db),
+		db:             db,
+		HeaderTemplate: q.HeaderTemplate.replaceDB(db),
+		TimeDatum:      q.TimeDatum.replaceDB(db),
+		TimeTemplate:   q.TimeTemplate.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	TimeDatum    *timeDatumDo
-	TimeTemplate *timeTemplateDo
+	HeaderTemplate *headerTemplateDo
+	TimeDatum      *timeDatumDo
+	TimeTemplate   *timeTemplateDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		TimeDatum:    q.TimeDatum.WithContext(ctx),
-		TimeTemplate: q.TimeTemplate.WithContext(ctx),
+		HeaderTemplate: q.HeaderTemplate.WithContext(ctx),
+		TimeDatum:      q.TimeDatum.WithContext(ctx),
+		TimeTemplate:   q.TimeTemplate.WithContext(ctx),
 	}
 }
 

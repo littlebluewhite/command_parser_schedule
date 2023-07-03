@@ -74,6 +74,8 @@ func (o *operate) Update(timeTemplates []*model.TimeTemplate) error {
 			t := util.StructToMap(item)
 			td := t["time_data"].(map[string]interface{})
 			delete(t, "time_data")
+			delete(t, "updated_at")
+			delete(t, "created_at")
 			delete(td, "id")
 			if _, err := tx.TimeTemplate.WithContext(ctx).Where(tx.TimeTemplate.ID.Eq(item.ID)).Updates(
 				t); err != nil {

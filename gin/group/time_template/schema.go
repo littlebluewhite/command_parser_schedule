@@ -2,6 +2,7 @@ package time_template
 
 import (
 	"encoding/json"
+	"gorm.io/datatypes"
 	"time"
 )
 
@@ -33,8 +34,8 @@ type TimeDatumCreate struct {
 	RepeatType      *string         `json:"repeat_type"`
 	StartDate       time.Time       `json:"start_date" binding:"required"`
 	EndDate         *time.Time      `json:"end_date"`
-	StartTime       string          `json:"start_time" binding:"required"`
-	EndTime         string          `json:"end_time" binding:"required"`
+	StartTime       datatypes.Time  `json:"start_time" binding:"required"`
+	EndTime         datatypes.Time  `json:"end_time" binding:"required"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
 	MConditionType  *string         `json:"m_condition_type"`
 	MCondition      json.RawMessage `json:"m_condition" binding:"required"`
@@ -50,8 +51,8 @@ type TimeDatumUpdate struct {
 	RepeatType      *string         `json:"repeat_type" binding:"required"`
 	StartDate       time.Time       `json:"start_date" binding:"required"`
 	EndDate         *time.Time      `json:"end_date"`
-	StartTime       string          `json:"start_time" binding:"required"`
-	EndTime         string          `json:"end_time" binding:"required"`
+	StartTime       datatypes.Time  `json:"start_time" binding:"required"`
+	EndTime         datatypes.Time  `json:"end_time" binding:"required"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
 	MConditionType  *string         `json:"m_condition_type"`
 	MCondition      json.RawMessage `json:"m_condition" binding:"required"`

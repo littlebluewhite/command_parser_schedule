@@ -63,7 +63,7 @@ CREATE TABLE `websocket_commands` (
                                       `id` int PRIMARY KEY AUTO_INCREMENT,
                                       `command_id` int UNIQUE,
                                       `url` varchar(255),
-                                      `header` varchar(255),
+                                      `header` json,
                                       `message` varchar(255)
 );
 

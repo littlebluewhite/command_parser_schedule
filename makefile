@@ -22,8 +22,8 @@ down:
 down_test:
 	go run cmd/migrate/main.go -down -test
 
-force:
-	go run cmd/migrate/main.go -force -version 1
+to:
+	go run cmd/migrate/main.go -to -version 1
 
 swagger-docs-generate:
 	swag init --parseDependency --parseInternal --parseDepth 1 -d cmd/api

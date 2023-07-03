@@ -37,8 +37,8 @@ func CreateConvert(c []*TimeTemplateCreate) []*model.TimeTemplate {
 				RepeatType:      item.TimeData.RepeatType,
 				StartDate:       item.TimeData.StartDate,
 				EndDate:         item.TimeData.EndDate,
-				StartTime:       []byte(item.TimeData.StartTime),
-				EndTime:         []byte(item.TimeData.EndTime),
+				StartTime:       []byte(item.TimeData.StartTime.String()),
+				EndTime:         []byte(item.TimeData.EndTime.String()),
 				IntervalSeconds: item.TimeData.IntervalSeconds,
 				MConditionType:  item.TimeData.MConditionType,
 				MCondition:      item.TimeData.MCondition,
@@ -59,8 +59,8 @@ func UpdateConvert(tt []*model.TimeTemplate, uMap map[int32]*TimeTemplateUpdate)
 			tt[i].TimeData.RepeatType = u.TimeData.RepeatType
 			tt[i].TimeData.StartDate = u.TimeData.StartDate
 			tt[i].TimeData.EndDate = u.TimeData.EndDate
-			tt[i].TimeData.StartTime = []byte(u.TimeData.StartTime)
-			tt[i].TimeData.EndTime = []byte(u.TimeData.EndTime)
+			tt[i].TimeData.StartTime = []byte(u.TimeData.StartTime.String())
+			tt[i].TimeData.EndTime = []byte(u.TimeData.EndTime.String())
 			tt[i].TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
 			tt[i].TimeData.MConditionType = u.TimeData.MConditionType
 			tt[i].TimeData.MCondition = u.TimeData.MCondition

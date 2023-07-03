@@ -1,4 +1,40 @@
 definitions:
+  header_template.HeaderTemplate:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  header_template.HeaderTemplateCreate:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+    required:
+    - data
+    - name
+    type: object
+  header_template.HeaderTemplateUpdate:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    type: object
   ping.SwaggerListPing:
     properties:
       age:
@@ -136,6 +172,106 @@ info:
   title: Schedule-Command swagger API
   version: "2.0"
 paths:
+  /header_template/:
+    delete:
+      parameters:
+      - description: header_template id
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete successfully
+          schema:
+            type: string
+      summary: Delete header templates
+      tags:
+      - header_template
+    get:
+      description: Get all header templates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/header_template.HeaderTemplate'
+            type: array
+      summary: Show all header templates
+      tags:
+      - header_template
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: modify header template body
+        in: body
+        name: header_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/header_template.HeaderTemplateUpdate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: update successfully
+          schema:
+            type: string
+      summary: Update header templates
+      tags:
+      - header_template
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: header template body
+        in: body
+        name: header_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/header_template.HeaderTemplateCreate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/header_template.HeaderTemplate'
+            type: array
+      summary: Create header templates
+      tags:
+      - header_template
+  /header_template/{id}:
+    get:
+      description: Get header templates by id
+      parameters:
+      - description: header template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/header_template.HeaderTemplate'
+      summary: Show header templates
+      tags:
+      - header_template
   /ping/list:
     get:
       description: test list ping
@@ -165,6 +301,26 @@ paths:
       tags:
       - ping
   /time_template/:
+    delete:
+      parameters:
+      - description: time_template id
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete successfully
+          schema:
+            type: string
+      summary: Delete time templates
+      tags:
+      - time_template
     get:
       description: Get all time templates
       produces:
@@ -195,7 +351,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Update successfully
+          description: update successfully
           schema:
             type: string
       summary: Update time templates

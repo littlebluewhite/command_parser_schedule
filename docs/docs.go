@@ -25,6 +25,160 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/header_template/": {
+            "get": {
+                "description": "Get all header templates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header_template"
+                ],
+                "summary": "Show all header templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/header_template.HeaderTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header_template"
+                ],
+                "summary": "Create header templates",
+                "parameters": [
+                    {
+                        "description": "header template body",
+                        "name": "header_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/header_template.HeaderTemplateCreate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/header_template.HeaderTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header_template"
+                ],
+                "summary": "Delete header templates",
+                "parameters": [
+                    {
+                        "description": "header_template id",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header_template"
+                ],
+                "summary": "Update header templates",
+                "parameters": [
+                    {
+                        "description": "modify header template body",
+                        "name": "header_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/header_template.HeaderTemplateUpdate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "update successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/header_template/{id}": {
+            "get": {
+                "description": "Get header templates by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header_template"
+                ],
+                "summary": "Show header templates",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "header template id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/header_template.HeaderTemplate"
+                        }
+                    }
+                }
+            }
+        },
         "/ping/list": {
             "get": {
                 "description": "test list ping",
@@ -127,6 +281,37 @@ const docTemplate = `{
                     }
                 }
             },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "time_template"
+                ],
+                "summary": "Delete time templates",
+                "parameters": [
+                    {
+                        "description": "time_template id",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "consumes": [
                     "application/json"
@@ -154,7 +339,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Update successfully",
+                        "description": "update successfully",
                         "schema": {
                             "type": "string"
                         }
@@ -193,6 +378,61 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "header_template.HeaderTemplate": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "header_template.HeaderTemplateCreate": {
+            "type": "object",
+            "required": [
+                "data",
+                "name"
+            ],
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "header_template.HeaderTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "ping.SwaggerListPing": {
             "type": "object",
             "properties": {
