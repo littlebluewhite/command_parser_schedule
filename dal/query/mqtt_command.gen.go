@@ -30,8 +30,8 @@ func newMqttCommand(db *gorm.DB, opts ...gen.DOOption) mqttCommand {
 	_mqttCommand.ID = field.NewInt32(tableName, "id")
 	_mqttCommand.CommandID = field.NewInt32(tableName, "command_id")
 	_mqttCommand.Topic = field.NewString(tableName, "topic")
-	_mqttCommand.Header = field.NewString(tableName, "header")
-	_mqttCommand.Message = field.NewString(tableName, "message")
+	_mqttCommand.Header = field.NewBytes(tableName, "header")
+	_mqttCommand.Message = field.NewBytes(tableName, "message")
 	_mqttCommand.Type = field.NewString(tableName, "type")
 
 	_mqttCommand.fillFieldMap()
@@ -46,8 +46,8 @@ type mqttCommand struct {
 	ID        field.Int32
 	CommandID field.Int32
 	Topic     field.String
-	Header    field.String
-	Message   field.String
+	Header    field.Bytes
+	Message   field.Bytes
 	Type      field.String
 
 	fieldMap map[string]field.Expr
@@ -68,8 +68,8 @@ func (m *mqttCommand) updateTableName(table string) *mqttCommand {
 	m.ID = field.NewInt32(table, "id")
 	m.CommandID = field.NewInt32(table, "command_id")
 	m.Topic = field.NewString(table, "topic")
-	m.Header = field.NewString(table, "header")
-	m.Message = field.NewString(table, "message")
+	m.Header = field.NewBytes(table, "header")
+	m.Message = field.NewBytes(table, "message")
 	m.Type = field.NewString(table, "type")
 
 	m.fillFieldMap()

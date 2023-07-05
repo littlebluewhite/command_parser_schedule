@@ -32,10 +32,10 @@ func newHTTPSCommand(db *gorm.DB, opts ...gen.DOOption) hTTPSCommand {
 	_hTTPSCommand.Method = field.NewString(tableName, "method")
 	_hTTPSCommand.URL = field.NewString(tableName, "url")
 	_hTTPSCommand.AuthorizationType = field.NewString(tableName, "authorization_type")
-	_hTTPSCommand.Params = field.NewString(tableName, "params")
-	_hTTPSCommand.Header = field.NewString(tableName, "header")
+	_hTTPSCommand.Params = field.NewBytes(tableName, "params")
+	_hTTPSCommand.Header = field.NewBytes(tableName, "header")
 	_hTTPSCommand.BodyType = field.NewString(tableName, "body_type")
-	_hTTPSCommand.Body = field.NewString(tableName, "body")
+	_hTTPSCommand.Body = field.NewBytes(tableName, "body")
 
 	_hTTPSCommand.fillFieldMap()
 
@@ -51,10 +51,10 @@ type hTTPSCommand struct {
 	Method            field.String
 	URL               field.String
 	AuthorizationType field.String
-	Params            field.String
-	Header            field.String
+	Params            field.Bytes
+	Header            field.Bytes
 	BodyType          field.String
-	Body              field.String
+	Body              field.Bytes
 
 	fieldMap map[string]field.Expr
 }
@@ -76,10 +76,10 @@ func (h *hTTPSCommand) updateTableName(table string) *hTTPSCommand {
 	h.Method = field.NewString(table, "method")
 	h.URL = field.NewString(table, "url")
 	h.AuthorizationType = field.NewString(table, "authorization_type")
-	h.Params = field.NewString(table, "params")
-	h.Header = field.NewString(table, "header")
+	h.Params = field.NewBytes(table, "params")
+	h.Header = field.NewBytes(table, "header")
 	h.BodyType = field.NewString(table, "body_type")
-	h.Body = field.NewString(table, "body")
+	h.Body = field.NewBytes(table, "body")
 
 	h.fillFieldMap()
 

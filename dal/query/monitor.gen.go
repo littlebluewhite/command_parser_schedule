@@ -31,7 +31,12 @@ func newMonitor(db *gorm.DB, opts ...gen.DOOption) monitor {
 	_monitor.Column = field.NewString(tableName, "column")
 	_monitor.Timeout = field.NewInt32(tableName, "timeout")
 	_monitor.Interval = field.NewInt32(tableName, "interval")
-	_monitor.MConditionID = field.NewInt32(tableName, "m_condition_id")
+	_monitor.CommandID = field.NewInt32(tableName, "command_id")
+	_monitor.MConditions = monitorHasManyMConditions{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("MConditions", "model.MCondition"),
+	}
 
 	_monitor.fillFieldMap()
 
@@ -41,12 +46,13 @@ func newMonitor(db *gorm.DB, opts ...gen.DOOption) monitor {
 type monitor struct {
 	monitorDo monitorDo
 
-	ALL          field.Asterisk
-	ID           field.Int32
-	Column       field.String
-	Timeout      field.Int32
-	Interval     field.Int32
-	MConditionID field.Int32
+	ALL         field.Asterisk
+	ID          field.Int32
+	Column      field.String
+	Timeout     field.Int32
+	Interval    field.Int32
+	CommandID   field.Int32
+	MConditions monitorHasManyMConditions
 
 	fieldMap map[string]field.Expr
 }
@@ -67,7 +73,7 @@ func (m *monitor) updateTableName(table string) *monitor {
 	m.Column = field.NewString(table, "column")
 	m.Timeout = field.NewInt32(table, "timeout")
 	m.Interval = field.NewInt32(table, "interval")
-	m.MConditionID = field.NewInt32(table, "m_condition_id")
+	m.CommandID = field.NewInt32(table, "command_id")
 
 	m.fillFieldMap()
 
@@ -90,12 +96,13 @@ func (m *monitor) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *monitor) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 5)
+	m.fieldMap = make(map[string]field.Expr, 6)
 	m.fieldMap["id"] = m.ID
 	m.fieldMap["column"] = m.Column
 	m.fieldMap["timeout"] = m.Timeout
 	m.fieldMap["interval"] = m.Interval
-	m.fieldMap["m_condition_id"] = m.MConditionID
+	m.fieldMap["command_id"] = m.CommandID
+
 }
 
 func (m monitor) clone(db *gorm.DB) monitor {
@@ -106,6 +113,77 @@ func (m monitor) clone(db *gorm.DB) monitor {
 func (m monitor) replaceDB(db *gorm.DB) monitor {
 	m.monitorDo.ReplaceDB(db)
 	return m
+}
+
+type monitorHasManyMConditions struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a monitorHasManyMConditions) Where(conds ...field.Expr) *monitorHasManyMConditions {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a monitorHasManyMConditions) WithContext(ctx context.Context) *monitorHasManyMConditions {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a monitorHasManyMConditions) Session(session *gorm.Session) *monitorHasManyMConditions {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a monitorHasManyMConditions) Model(m *model.Monitor) *monitorHasManyMConditionsTx {
+	return &monitorHasManyMConditionsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type monitorHasManyMConditionsTx struct{ tx *gorm.Association }
+
+func (a monitorHasManyMConditionsTx) Find() (result []*model.MCondition, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a monitorHasManyMConditionsTx) Append(values ...*model.MCondition) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a monitorHasManyMConditionsTx) Replace(values ...*model.MCondition) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a monitorHasManyMConditionsTx) Delete(values ...*model.MCondition) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a monitorHasManyMConditionsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a monitorHasManyMConditionsTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type monitorDo struct{ gen.DO }

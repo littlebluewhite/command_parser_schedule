@@ -30,7 +30,7 @@ func newWebsocketCommand(db *gorm.DB, opts ...gen.DOOption) websocketCommand {
 	_websocketCommand.ID = field.NewInt32(tableName, "id")
 	_websocketCommand.CommandID = field.NewInt32(tableName, "command_id")
 	_websocketCommand.URL = field.NewString(tableName, "url")
-	_websocketCommand.Header = field.NewString(tableName, "header")
+	_websocketCommand.Header = field.NewBytes(tableName, "header")
 	_websocketCommand.Message = field.NewString(tableName, "message")
 
 	_websocketCommand.fillFieldMap()
@@ -45,7 +45,7 @@ type websocketCommand struct {
 	ID        field.Int32
 	CommandID field.Int32
 	URL       field.String
-	Header    field.String
+	Header    field.Bytes
 	Message   field.String
 
 	fieldMap map[string]field.Expr
@@ -66,7 +66,7 @@ func (w *websocketCommand) updateTableName(table string) *websocketCommand {
 	w.ID = field.NewInt32(table, "id")
 	w.CommandID = field.NewInt32(table, "command_id")
 	w.URL = field.NewString(table, "url")
-	w.Header = field.NewString(table, "header")
+	w.Header = field.NewBytes(table, "header")
 	w.Message = field.NewString(table, "message")
 
 	w.fillFieldMap()

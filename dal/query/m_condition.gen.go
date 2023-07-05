@@ -28,11 +28,12 @@ func newMCondition(db *gorm.DB, opts ...gen.DOOption) mCondition {
 	tableName := _mCondition.mConditionDo.TableName()
 	_mCondition.ALL = field.NewAsterisk(tableName)
 	_mCondition.ID = field.NewInt32(tableName, "id")
+	_mCondition.Order = field.NewInt32(tableName, "order")
 	_mCondition.CalculateType = field.NewString(tableName, "calculate_type")
-	_mCondition.NextLogicType = field.NewString(tableName, "next_logic_type")
+	_mCondition.PreLogicType = field.NewString(tableName, "pre_logic_type")
 	_mCondition.Value = field.NewString(tableName, "value")
 	_mCondition.SearchRule = field.NewString(tableName, "search_rule")
-	_mCondition.NextMConditionID = field.NewInt32(tableName, "next_m_condition_id")
+	_mCondition.MonitorID = field.NewInt32(tableName, "monitor_id")
 
 	_mCondition.fillFieldMap()
 
@@ -42,13 +43,14 @@ func newMCondition(db *gorm.DB, opts ...gen.DOOption) mCondition {
 type mCondition struct {
 	mConditionDo mConditionDo
 
-	ALL              field.Asterisk
-	ID               field.Int32
-	CalculateType    field.String
-	NextLogicType    field.String
-	Value            field.String
-	SearchRule       field.String // ex: person.item.[]array.name
-	NextMConditionID field.Int32
+	ALL           field.Asterisk
+	ID            field.Int32
+	Order         field.Int32
+	CalculateType field.String
+	PreLogicType  field.String
+	Value         field.String
+	SearchRule    field.String // ex: person.item.[]array.name
+	MonitorID     field.Int32
 
 	fieldMap map[string]field.Expr
 }
@@ -66,11 +68,12 @@ func (m mCondition) As(alias string) *mCondition {
 func (m *mCondition) updateTableName(table string) *mCondition {
 	m.ALL = field.NewAsterisk(table)
 	m.ID = field.NewInt32(table, "id")
+	m.Order = field.NewInt32(table, "order")
 	m.CalculateType = field.NewString(table, "calculate_type")
-	m.NextLogicType = field.NewString(table, "next_logic_type")
+	m.PreLogicType = field.NewString(table, "pre_logic_type")
 	m.Value = field.NewString(table, "value")
 	m.SearchRule = field.NewString(table, "search_rule")
-	m.NextMConditionID = field.NewInt32(table, "next_m_condition_id")
+	m.MonitorID = field.NewInt32(table, "monitor_id")
 
 	m.fillFieldMap()
 
@@ -95,13 +98,14 @@ func (m *mCondition) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *mCondition) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 6)
+	m.fieldMap = make(map[string]field.Expr, 7)
 	m.fieldMap["id"] = m.ID
+	m.fieldMap["order"] = m.Order
 	m.fieldMap["calculate_type"] = m.CalculateType
-	m.fieldMap["next_logic_type"] = m.NextLogicType
+	m.fieldMap["pre_logic_type"] = m.PreLogicType
 	m.fieldMap["value"] = m.Value
 	m.fieldMap["search_rule"] = m.SearchRule
-	m.fieldMap["next_m_condition_id"] = m.NextMConditionID
+	m.fieldMap["monitor_id"] = m.MonitorID
 }
 
 func (m mCondition) clone(db *gorm.DB) mCondition {

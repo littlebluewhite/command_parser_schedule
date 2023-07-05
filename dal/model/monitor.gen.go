@@ -8,11 +8,12 @@ const TableNameMonitor = "monitor"
 
 // Monitor mapped from table <monitor>
 type Monitor struct {
-	ID           int32   `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Column       *string `gorm:"column:column" json:"column"`
-	Timeout      *int32  `gorm:"column:timeout" json:"timeout"`
-	Interval     *int32  `gorm:"column:interval" json:"interval"`
-	MConditionID *int32  `gorm:"column:m_condition_id" json:"m_condition_id"`
+	ID          int32         `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Column      string        `gorm:"column:column;not null" json:"column"`
+	Timeout     int32         `gorm:"column:timeout;not null" json:"timeout"`
+	Interval    *int32        `gorm:"column:interval" json:"interval"`
+	CommandID   int32         `gorm:"column:command_id;not null" json:"command_id"`
+	MConditions []*MCondition `gorm:"foreignKey:monitor_id" json:"m_conditions"`
 }
 
 // TableName Monitor's table name

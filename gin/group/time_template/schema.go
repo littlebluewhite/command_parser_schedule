@@ -21,8 +21,8 @@ type TimeDatum struct {
 	StartTime       string          `json:"start_time"`
 	EndTime         string          `json:"end_time"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
-	MConditionType  *string         `json:"m_condition_type"`
-	MCondition      json.RawMessage `json:"m_condition"`
+	ConditionType   *string         `json:"condition_type"`
+	TCondition      json.RawMessage `json:"t_condition"`
 }
 
 type TimeTemplateCreate struct {
@@ -37,8 +37,8 @@ type TimeDatumCreate struct {
 	StartTime       datatypes.Time  `json:"start_time" binding:"required"`
 	EndTime         datatypes.Time  `json:"end_time" binding:"required"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
-	MConditionType  *string         `json:"m_condition_type"`
-	MCondition      json.RawMessage `json:"m_condition" binding:"required"`
+	ConditionType   *string         `json:"condition_type"`
+	TCondition      json.RawMessage `json:"t_condition" binding:"required"`
 }
 
 type TimeTemplateUpdate struct {
@@ -54,6 +54,6 @@ type TimeDatumUpdate struct {
 	StartTime       datatypes.Time  `json:"start_time" binding:"required"`
 	EndTime         datatypes.Time  `json:"end_time" binding:"required"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
-	MConditionType  *string         `json:"m_condition_type"`
-	MCondition      json.RawMessage `json:"m_condition" binding:"required"`
+	ConditionType   *string         `json:"condition_type"`
+	TCondition      json.RawMessage `json:"t_condition" binding:"required"`
 }

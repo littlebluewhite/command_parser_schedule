@@ -12,15 +12,19 @@ const TableNameCommandTemplate = "command_template"
 
 // CommandTemplate mapped from table <command_template>
 type CommandTemplate struct {
-	ID          int32      `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Name        string     `gorm:"column:name;not null" json:"name"`
-	Protocol    *string    `gorm:"column:protocol" json:"protocol"`
-	Description *string    `gorm:"column:description" json:"description"`
-	Host        *string    `gorm:"column:host" json:"host"`
-	Port        *string    `gorm:"column:port" json:"port"`
-	MonitorID   *int32     `gorm:"column:monitor_id" json:"monitor_id"`
-	UpdatedAt   *time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	CreatedAt   *time.Time `gorm:"column:created_at;default:now()" json:"created_at"`
+	ID          int32             `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Name        string            `gorm:"column:name;not null" json:"name"`
+	Protocol    string            `gorm:"column:protocol;not null" json:"protocol"`
+	Description *string           `gorm:"column:description" json:"description"`
+	Host        string            `gorm:"column:host;not null" json:"host"`
+	Port        string            `gorm:"column:port;not null" json:"port"`
+	UpdatedAt   *time.Time        `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	CreatedAt   *time.Time        `gorm:"column:created_at;default:now()" json:"created_at"`
+	Http        *HTTPSCommand     `gorm:"foreignKey:command_id" json:"http"`
+	Mqtt        *MqttCommand      `gorm:"foreignKey:command_id" json:"mqtt"`
+	Websocket   *WebsocketCommand `gorm:"foreignKey:command_id" json:"websocket"`
+	Redis       *RedisCommand     `gorm:"foreignKey:command_id" json:"redis"`
+	Monitor     *Monitor          `gorm:"foreignKey:command_id" json:"monitor"`
 }
 
 // TableName CommandTemplate's table name

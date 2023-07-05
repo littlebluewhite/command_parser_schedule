@@ -14,22 +14,22 @@ type Handler struct {
 	L logFile.LogFile
 }
 
-// GetcommandTemplates swagger
+// GetCommandTemplates swagger
 // @Summary     Show all command templates
 // @Description Get all command templates
 // @Tags        command_template
 // @Produce     json
 // @Success     200 {array} command_template.CommandTemplate
 // @Router      /command_template/ [get]
-func (h *Handler) GetcommandTemplates(c *gin.Context) {
+func (h *Handler) GetCommandTemplates(c *gin.Context) {
 	ht, err := h.O.List()
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("GetcommandTemplates: ", err)
+		h.L.Error().Println("GetCommandTemplates: ", err)
 		return
 	}
-	h.L.Info().Println("GetcommandTemplates: success")
-	c.JSON(200, ht)
+	h.L.Info().Println("GetCommandTemplates: success")
+	c.JSON(200, Format(ht))
 	return
 }
 
@@ -61,7 +61,7 @@ func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetCommandTemplateById: success")
-	c.JSON(200, ht[0])
+	c.JSON(200, Format(ht)[0])
 	return
 }
 
@@ -87,44 +87,7 @@ func (h *Handler) AddCommandTemplate(c *gin.Context) {
 		h.L.Error().Println("AddCommandTemplate: ", err)
 		return
 	}
-	c.JSON(200, ht)
-}
-
-// UpdateCommandTemplate swagger
-// @Summary Update command templates
-// @Tags    command_template
-// @Accept  json
-// @Produce json
-// @Param   command_template body     []command_template.CommandTemplateUpdate true "modify command template body"
-// @Success 200           {string} string "update successfully"
-// @Router  /command_template/ [patch]
-func (h *Handler) UpdateCommandTemplate(c *gin.Context) {
-	entry := []*CommandTemplateUpdate{nil}
-	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateCommandTemplate: ", err)
-		return
-	}
-	ids := make([]int32, 0, len(entry))
-	uMap := make(map[int32]*CommandTemplateUpdate)
-	for _, item := range entry {
-		ids = append(ids, item.ID)
-		uMap[item.ID] = item
-	}
-	ht, err := h.O.Find(ids)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateCommandTemplate: ", err)
-		return
-	}
-	ht = UpdateConvert(ht, uMap)
-	err = h.O.Update(ht)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateCommandTemplate: ", err)
-		return
-	}
-	c.JSON(200, "update successfully")
+	c.JSON(200, Format(ht))
 }
 
 // DeleteCommandTemplate swagger

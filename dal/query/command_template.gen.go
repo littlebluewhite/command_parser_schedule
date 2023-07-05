@@ -33,9 +33,42 @@ func newCommandTemplate(db *gorm.DB, opts ...gen.DOOption) commandTemplate {
 	_commandTemplate.Description = field.NewString(tableName, "description")
 	_commandTemplate.Host = field.NewString(tableName, "host")
 	_commandTemplate.Port = field.NewString(tableName, "port")
-	_commandTemplate.MonitorID = field.NewInt32(tableName, "monitor_id")
 	_commandTemplate.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_commandTemplate.CreatedAt = field.NewTime(tableName, "created_at")
+	_commandTemplate.Http = commandTemplateHasOneHttp{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Http", "model.HTTPSCommand"),
+	}
+
+	_commandTemplate.Mqtt = commandTemplateHasOneMqtt{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Mqtt", "model.MqttCommand"),
+	}
+
+	_commandTemplate.Websocket = commandTemplateHasOneWebsocket{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Websocket", "model.WebsocketCommand"),
+	}
+
+	_commandTemplate.Redis = commandTemplateHasOneRedis{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Redis", "model.RedisCommand"),
+	}
+
+	_commandTemplate.Monitor = commandTemplateHasOneMonitor{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Monitor", "model.Monitor"),
+		MConditions: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Monitor.MConditions", "model.MCondition"),
+		},
+	}
 
 	_commandTemplate.fillFieldMap()
 
@@ -52,9 +85,17 @@ type commandTemplate struct {
 	Description field.String
 	Host        field.String
 	Port        field.String
-	MonitorID   field.Int32
 	UpdatedAt   field.Time
 	CreatedAt   field.Time
+	Http        commandTemplateHasOneHttp
+
+	Mqtt commandTemplateHasOneMqtt
+
+	Websocket commandTemplateHasOneWebsocket
+
+	Redis commandTemplateHasOneRedis
+
+	Monitor commandTemplateHasOneMonitor
 
 	fieldMap map[string]field.Expr
 }
@@ -77,7 +118,6 @@ func (c *commandTemplate) updateTableName(table string) *commandTemplate {
 	c.Description = field.NewString(table, "description")
 	c.Host = field.NewString(table, "host")
 	c.Port = field.NewString(table, "port")
-	c.MonitorID = field.NewInt32(table, "monitor_id")
 	c.UpdatedAt = field.NewTime(table, "updated_at")
 	c.CreatedAt = field.NewTime(table, "created_at")
 
@@ -104,16 +144,16 @@ func (c *commandTemplate) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (c *commandTemplate) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 9)
+	c.fieldMap = make(map[string]field.Expr, 13)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["name"] = c.Name
 	c.fieldMap["protocol"] = c.Protocol
 	c.fieldMap["description"] = c.Description
 	c.fieldMap["host"] = c.Host
 	c.fieldMap["port"] = c.Port
-	c.fieldMap["monitor_id"] = c.MonitorID
 	c.fieldMap["updated_at"] = c.UpdatedAt
 	c.fieldMap["created_at"] = c.CreatedAt
+
 }
 
 func (c commandTemplate) clone(db *gorm.DB) commandTemplate {
@@ -124,6 +164,365 @@ func (c commandTemplate) clone(db *gorm.DB) commandTemplate {
 func (c commandTemplate) replaceDB(db *gorm.DB) commandTemplate {
 	c.commandTemplateDo.ReplaceDB(db)
 	return c
+}
+
+type commandTemplateHasOneHttp struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a commandTemplateHasOneHttp) Where(conds ...field.Expr) *commandTemplateHasOneHttp {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a commandTemplateHasOneHttp) WithContext(ctx context.Context) *commandTemplateHasOneHttp {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a commandTemplateHasOneHttp) Session(session *gorm.Session) *commandTemplateHasOneHttp {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a commandTemplateHasOneHttp) Model(m *model.CommandTemplate) *commandTemplateHasOneHttpTx {
+	return &commandTemplateHasOneHttpTx{a.db.Model(m).Association(a.Name())}
+}
+
+type commandTemplateHasOneHttpTx struct{ tx *gorm.Association }
+
+func (a commandTemplateHasOneHttpTx) Find() (result *model.HTTPSCommand, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a commandTemplateHasOneHttpTx) Append(values ...*model.HTTPSCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a commandTemplateHasOneHttpTx) Replace(values ...*model.HTTPSCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a commandTemplateHasOneHttpTx) Delete(values ...*model.HTTPSCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a commandTemplateHasOneHttpTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a commandTemplateHasOneHttpTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type commandTemplateHasOneMqtt struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a commandTemplateHasOneMqtt) Where(conds ...field.Expr) *commandTemplateHasOneMqtt {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a commandTemplateHasOneMqtt) WithContext(ctx context.Context) *commandTemplateHasOneMqtt {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a commandTemplateHasOneMqtt) Session(session *gorm.Session) *commandTemplateHasOneMqtt {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a commandTemplateHasOneMqtt) Model(m *model.CommandTemplate) *commandTemplateHasOneMqttTx {
+	return &commandTemplateHasOneMqttTx{a.db.Model(m).Association(a.Name())}
+}
+
+type commandTemplateHasOneMqttTx struct{ tx *gorm.Association }
+
+func (a commandTemplateHasOneMqttTx) Find() (result *model.MqttCommand, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a commandTemplateHasOneMqttTx) Append(values ...*model.MqttCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a commandTemplateHasOneMqttTx) Replace(values ...*model.MqttCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a commandTemplateHasOneMqttTx) Delete(values ...*model.MqttCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a commandTemplateHasOneMqttTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a commandTemplateHasOneMqttTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type commandTemplateHasOneWebsocket struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a commandTemplateHasOneWebsocket) Where(conds ...field.Expr) *commandTemplateHasOneWebsocket {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a commandTemplateHasOneWebsocket) WithContext(ctx context.Context) *commandTemplateHasOneWebsocket {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a commandTemplateHasOneWebsocket) Session(session *gorm.Session) *commandTemplateHasOneWebsocket {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a commandTemplateHasOneWebsocket) Model(m *model.CommandTemplate) *commandTemplateHasOneWebsocketTx {
+	return &commandTemplateHasOneWebsocketTx{a.db.Model(m).Association(a.Name())}
+}
+
+type commandTemplateHasOneWebsocketTx struct{ tx *gorm.Association }
+
+func (a commandTemplateHasOneWebsocketTx) Find() (result *model.WebsocketCommand, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a commandTemplateHasOneWebsocketTx) Append(values ...*model.WebsocketCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a commandTemplateHasOneWebsocketTx) Replace(values ...*model.WebsocketCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a commandTemplateHasOneWebsocketTx) Delete(values ...*model.WebsocketCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a commandTemplateHasOneWebsocketTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a commandTemplateHasOneWebsocketTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type commandTemplateHasOneRedis struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a commandTemplateHasOneRedis) Where(conds ...field.Expr) *commandTemplateHasOneRedis {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a commandTemplateHasOneRedis) WithContext(ctx context.Context) *commandTemplateHasOneRedis {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a commandTemplateHasOneRedis) Session(session *gorm.Session) *commandTemplateHasOneRedis {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a commandTemplateHasOneRedis) Model(m *model.CommandTemplate) *commandTemplateHasOneRedisTx {
+	return &commandTemplateHasOneRedisTx{a.db.Model(m).Association(a.Name())}
+}
+
+type commandTemplateHasOneRedisTx struct{ tx *gorm.Association }
+
+func (a commandTemplateHasOneRedisTx) Find() (result *model.RedisCommand, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a commandTemplateHasOneRedisTx) Append(values ...*model.RedisCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a commandTemplateHasOneRedisTx) Replace(values ...*model.RedisCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a commandTemplateHasOneRedisTx) Delete(values ...*model.RedisCommand) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a commandTemplateHasOneRedisTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a commandTemplateHasOneRedisTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type commandTemplateHasOneMonitor struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	MConditions struct {
+		field.RelationField
+	}
+}
+
+func (a commandTemplateHasOneMonitor) Where(conds ...field.Expr) *commandTemplateHasOneMonitor {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a commandTemplateHasOneMonitor) WithContext(ctx context.Context) *commandTemplateHasOneMonitor {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a commandTemplateHasOneMonitor) Session(session *gorm.Session) *commandTemplateHasOneMonitor {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a commandTemplateHasOneMonitor) Model(m *model.CommandTemplate) *commandTemplateHasOneMonitorTx {
+	return &commandTemplateHasOneMonitorTx{a.db.Model(m).Association(a.Name())}
+}
+
+type commandTemplateHasOneMonitorTx struct{ tx *gorm.Association }
+
+func (a commandTemplateHasOneMonitorTx) Find() (result *model.Monitor, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a commandTemplateHasOneMonitorTx) Append(values ...*model.Monitor) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a commandTemplateHasOneMonitorTx) Replace(values ...*model.Monitor) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a commandTemplateHasOneMonitorTx) Delete(values ...*model.Monitor) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a commandTemplateHasOneMonitorTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a commandTemplateHasOneMonitorTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type commandTemplateDo struct{ gen.DO }

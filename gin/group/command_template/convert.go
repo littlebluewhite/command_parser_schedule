@@ -1,28 +1,144 @@
 package command_template
 
-import "command_parser_schedule/dal/model"
+import (
+	"command_parser_schedule/dal/model"
+)
 
-func CreateConvert(c []*CommandTemplateCreate) []*model.CommandTemplate {
-	result := make([]*model.CommandTemplate, 0, len(c))
-	for _, item := range c {
-		i := model.CommandTemplate{
-			Name: item.Name,
-			Data: item.Data,
+func Format(ct []*model.CommandTemplate) []*CommandTemplate {
+	result := make([]*CommandTemplate, 0, len(ct))
+	for _, item := range ct {
+		mResult := make([]*MCondition, 0, len(item.Monitor.MConditions))
+		for _, m := range item.Monitor.MConditions {
+			i := MCondition{
+				Order:         m.Order,
+				CalculateType: m.CalculateType,
+				PreLogicType:  m.PreLogicType,
+				Value:         m.Value,
+				SearchRule:    m.SearchRule,
+			}
+			mResult = append(mResult, &i)
+		}
+		i := CommandTemplate{
+			ID:          item.ID,
+			Name:        item.Name,
+			Protocol:    item.Protocol,
+			Description: item.Description,
+			Host:        item.Host,
+			Port:        item.Port,
+		}
+		if item.Http != nil {
+			i.Http = &HTTPSCommand{
+				Method:            item.Http.Method,
+				URL:               item.Http.URL,
+				AuthorizationType: item.Http.AuthorizationType,
+				Params:            item.Http.Params,
+				Header:            item.Http.Header,
+				BodyType:          item.Http.BodyType,
+				Body:              item.Http.Body,
+			}
+		}
+		if item.Mqtt != nil {
+			i.Mqtt = &MqttCommand{
+				Topic:   item.Mqtt.Topic,
+				Header:  item.Mqtt.Header,
+				Message: item.Mqtt.Message,
+				Type:    item.Mqtt.Type,
+			}
+		}
+		if item.Websocket != nil {
+			i.Websocket = &WebsocketCommand{
+				URL:     item.Websocket.URL,
+				Header:  item.Websocket.Header,
+				Message: item.Websocket.Message,
+			}
+		}
+		if item.Redis != nil {
+			i.Redis = &RedisCommand{
+				Password: item.Redis.Password,
+				Db:       item.Redis.Db,
+				Topic:    item.Redis.Topic,
+				Message:  item.Redis.Message,
+				Type:     item.Redis.Type,
+			}
+		}
+		if item.Monitor != nil {
+			i.Monitor = &Monitor{
+				Column:      item.Monitor.Column,
+				Timeout:     item.Monitor.Timeout,
+				Interval:    item.Monitor.Interval,
+				MConditions: mResult,
+			}
 		}
 		result = append(result, &i)
 	}
 	return result
 }
 
-func UpdateConvert(ht []*model.CommandTemplate, uMap map[int32]*CommandTemplateUpdate) []*model.CommandTemplate {
-	for i := 0; i < len(uMap); i++ {
-		u := uMap[ht[i].ID]
-		if u.Name != nil {
-			ht[i].Name = *u.Name
+func CreateConvert(c []*CommandTemplateCreate) []*model.CommandTemplate {
+	result := make([]*model.CommandTemplate, 0, len(c))
+	for _, item := range c {
+		mResult := make([]*model.MCondition, 0, len(item.Monitor.MConditions))
+		for _, m := range item.Monitor.MConditions {
+			i := model.MCondition{
+				Order:         m.Order,
+				CalculateType: m.CalculateType,
+				PreLogicType:  m.PreLogicType,
+				Value:         m.Value,
+				SearchRule:    m.SearchRule,
+			}
+			mResult = append(mResult, &i)
 		}
-		if u.Data != nil {
-			ht[i].Data = *u.Data
+		i := model.CommandTemplate{
+			Name:        item.Name,
+			Protocol:    item.Protocol,
+			Description: item.Description,
+			Host:        item.Host,
+			Port:        item.Port,
 		}
+		if item.Http != nil {
+			i.Http = &model.HTTPSCommand{
+				Method:            item.Http.Method,
+				URL:               item.Http.URL,
+				AuthorizationType: item.Http.AuthorizationType,
+				Params:            item.Http.Params,
+				Header:            item.Http.Header,
+				BodyType:          item.Http.BodyType,
+				Body:              item.Http.Body,
+			}
+		}
+		if item.Mqtt != nil {
+			i.Mqtt = &model.MqttCommand{
+				Topic:   item.Mqtt.Topic,
+				Header:  item.Mqtt.Header,
+				Message: item.Mqtt.Message,
+				Type:    item.Mqtt.Type,
+			}
+		}
+		if item.Websocket != nil {
+			i.Websocket = &model.WebsocketCommand{
+				URL:     item.Websocket.URL,
+				Header:  item.Websocket.Header,
+				Message: item.Websocket.Message,
+			}
+		}
+		if item.Redis != nil {
+			i.Redis = &model.RedisCommand{
+				Password: item.Redis.Password,
+				Db:       item.Redis.Db,
+				Topic:    item.Redis.Topic,
+				Message:  item.Redis.Message,
+				Type:     item.Redis.Type,
+			}
+		}
+		if item.Monitor != nil {
+			i.Monitor = &model.Monitor{
+				Column:      item.Monitor.Column,
+				Timeout:     item.Monitor.Timeout,
+				Interval:    item.Monitor.Interval,
+				MConditions: mResult,
+			}
+		}
+		result = append(result, &i)
 	}
-	return ht
+	return result
 }

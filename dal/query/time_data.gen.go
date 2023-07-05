@@ -34,8 +34,8 @@ func newTimeDatum(db *gorm.DB, opts ...gen.DOOption) timeDatum {
 	_timeDatum.StartTime = field.NewBytes(tableName, "start_time")
 	_timeDatum.EndTime = field.NewBytes(tableName, "end_time")
 	_timeDatum.IntervalSeconds = field.NewInt32(tableName, "interval_seconds")
-	_timeDatum.MConditionType = field.NewString(tableName, "m_condition_type")
-	_timeDatum.MCondition = field.NewBytes(tableName, "m_condition")
+	_timeDatum.ConditionType = field.NewString(tableName, "condition_type")
+	_timeDatum.TCondition = field.NewBytes(tableName, "t_condition")
 
 	_timeDatum.fillFieldMap()
 
@@ -53,8 +53,8 @@ type timeDatum struct {
 	StartTime       field.Bytes
 	EndTime         field.Bytes
 	IntervalSeconds field.Int32
-	MConditionType  field.String
-	MCondition      field.Bytes
+	ConditionType   field.String
+	TCondition      field.Bytes
 
 	fieldMap map[string]field.Expr
 }
@@ -78,8 +78,8 @@ func (t *timeDatum) updateTableName(table string) *timeDatum {
 	t.StartTime = field.NewBytes(table, "start_time")
 	t.EndTime = field.NewBytes(table, "end_time")
 	t.IntervalSeconds = field.NewInt32(table, "interval_seconds")
-	t.MConditionType = field.NewString(table, "m_condition_type")
-	t.MCondition = field.NewBytes(table, "m_condition")
+	t.ConditionType = field.NewString(table, "condition_type")
+	t.TCondition = field.NewBytes(table, "t_condition")
 
 	t.fillFieldMap()
 
@@ -112,8 +112,8 @@ func (t *timeDatum) fillFieldMap() {
 	t.fieldMap["start_time"] = t.StartTime
 	t.fieldMap["end_time"] = t.EndTime
 	t.fieldMap["interval_seconds"] = t.IntervalSeconds
-	t.fieldMap["m_condition_type"] = t.MConditionType
-	t.fieldMap["m_condition"] = t.MCondition
+	t.fieldMap["condition_type"] = t.ConditionType
+	t.fieldMap["t_condition"] = t.TCondition
 }
 
 func (t timeDatum) clone(db *gorm.DB) timeDatum {

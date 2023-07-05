@@ -1,4 +1,4 @@
-DROP table IF EXISTS websocket_commands;
+DROP table IF EXISTS websocket_command;
 DROP table IF EXISTS https_command;
 DROP table IF EXISTS header_template;
 DROP table IF EXISTS redis_command;
@@ -9,6 +9,6 @@ DROP table IF EXISTS time_data;
 DROP table IF EXISTS task_template_stage;
 DROP table IF EXISTS task_template;
 DROP table IF EXISTS task_stage;
-DROP table IF EXISTS command_template;
-DROP table IF EXISTS monitor;
 DROP table IF EXISTS m_condition;
+DROP table IF EXISTS monitor;
+DROP table IF EXISTS command_template;

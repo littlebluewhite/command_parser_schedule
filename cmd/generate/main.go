@@ -25,7 +25,7 @@ func main() {
 	// if you want to use GenerateModel/GenerateModelAs, UseDB is necessary, or it will panic
 	g.UseDB(db)
 	timeData := g.GenerateModel("time_data",
-		gen.FieldType("m_condition", "json.RawMessage"),
+		gen.FieldType("t_condition", "json.RawMessage"),
 		gen.FieldType("start_time", "[]byte"),
 		gen.FieldType("end_time", "[]byte"))
 	timeTemplate := g.GenerateModel("time_template", gen.FieldRelate(field.BelongsTo, "TimeData", timeData,
@@ -42,10 +42,39 @@ func main() {
 	mqttCommand := g.GenerateModel("mqtt_command",
 		gen.FieldType("header", "json.RawMessage"),
 		gen.FieldType("message", "json.RawMessage"))
-	redisCommand := g.GenerateModel("redisCommand",
+	redisCommand := g.GenerateModel("redis_command",
 		gen.FieldType("message", "json.RawMessage"))
+	mCondition := g.GenerateModel("m_condition")
+	monitor := g.GenerateModel("monitor", gen.FieldRelate(field.HasMany, "MConditions",
+		mCondition, &field.RelateConfig{
+			GORMTag:            map[string]string{"foreignKey": "monitor_id"},
+			RelateSlicePointer: true,
+		}))
+	commandTemplate := g.GenerateModel("command_template",
+		gen.FieldRelate(field.HasOne, "Http", httpsCommand, &field.RelateConfig{
+			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			RelatePointer: true,
+		}),
+		gen.FieldRelate(field.HasOne, "Mqtt", mqttCommand, &field.RelateConfig{
+			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			RelatePointer: true,
+		}),
+		gen.FieldRelate(field.HasOne, "Websocket", websocketCommand, &field.RelateConfig{
+			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			RelatePointer: true,
+		}),
+		gen.FieldRelate(field.HasOne, "Redis", redisCommand, &field.RelateConfig{
+			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			RelatePointer: true,
+		}),
+		gen.FieldRelate(field.HasOne, "Monitor", monitor, &field.RelateConfig{
+			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			RelatePointer: true,
+		}),
+	)
 
-	g.ApplyBasic(timeData, timeTemplate, headerTemplate)
+	g.ApplyBasic(timeData, timeTemplate, headerTemplate, httpsCommand, commandTemplate,
+		redisCommand, mqttCommand, websocketCommand, monitor, mCondition)
 
 	// execute the action of code generation
 	g.Execute()

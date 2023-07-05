@@ -20,9 +20,8 @@ func InitRoutes(r Routes) {
 	// set api group
 	g := r.R.Group("/command_template")
 
-	g.GET("/", h.GetcommandTemplates)
+	g.GET("/", h.GetCommandTemplates)
 	g.GET("/:id", h.GetCommandTemplateById)
 	g.POST("/", h.AddCommandTemplate)
-	g.PATCH("/", h.UpdateCommandTemplate)
 	g.DELETE("/", h.DeleteCommandTemplate)
 }

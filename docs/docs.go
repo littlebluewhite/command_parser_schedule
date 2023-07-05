@@ -25,6 +25,126 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/command_template/": {
+            "get": {
+                "description": "Get all command templates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "command_template"
+                ],
+                "summary": "Show all command templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/command_template.CommandTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "command_template"
+                ],
+                "summary": "Create command templates",
+                "parameters": [
+                    {
+                        "description": "command template body",
+                        "name": "command_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/command_template.CommandTemplateCreate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/command_template.CommandTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "command_template"
+                ],
+                "summary": "Delete command templates",
+                "parameters": [
+                    {
+                        "description": "command_template id",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/command_template/{id}": {
+            "get": {
+                "description": "Get command templates by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "command_template"
+                ],
+                "summary": "Show command templates",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "command template id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/command_template.CommandTemplate"
+                        }
+                    }
+                }
+            }
+        },
         "/header_template/": {
             "get": {
                 "description": "Get all header templates",
@@ -378,6 +498,243 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "command_template.CommandTemplate": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "http": {
+                    "$ref": "#/definitions/command_template.HTTPSCommand"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "monitor": {
+                    "$ref": "#/definitions/command_template.Monitor"
+                },
+                "mqtt": {
+                    "$ref": "#/definitions/command_template.MqttCommand"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "redis": {
+                    "$ref": "#/definitions/command_template.RedisCommand"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "websocket": {
+                    "$ref": "#/definitions/command_template.WebsocketCommand"
+                }
+            }
+        },
+        "command_template.CommandTemplateCreate": {
+            "type": "object",
+            "required": [
+                "host",
+                "name",
+                "port",
+                "protocol"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "http": {
+                    "$ref": "#/definitions/command_template.HTTPSCommand"
+                },
+                "monitor": {
+                    "$ref": "#/definitions/command_template.Monitor"
+                },
+                "mqtt": {
+                    "$ref": "#/definitions/command_template.MqttCommand"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "redis": {
+                    "$ref": "#/definitions/command_template.RedisCommand"
+                },
+                "websocket": {
+                    "$ref": "#/definitions/command_template.WebsocketCommand"
+                }
+            }
+        },
+        "command_template.HTTPSCommand": {
+            "type": "object",
+            "properties": {
+                "authorization_type": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "body_type": {
+                    "type": "string"
+                },
+                "header": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "method": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "command_template.MCondition": {
+            "type": "object",
+            "properties": {
+                "calculate_type": {
+                    "type": "string"
+                },
+                "next_logic_type": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "search_rule": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "command_template.Monitor": {
+            "type": "object",
+            "required": [
+                "column",
+                "timeout"
+            ],
+            "properties": {
+                "column": {
+                    "type": "string"
+                },
+                "interval": {
+                    "type": "integer"
+                },
+                "m_conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/command_template.MCondition"
+                    }
+                },
+                "timeout": {
+                    "type": "integer"
+                }
+            }
+        },
+        "command_template.MqttCommand": {
+            "type": "object",
+            "required": [
+                "topic",
+                "type"
+            ],
+            "properties": {
+                "header": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "message": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "topic": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "command_template.RedisCommand": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "db": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "password": {
+                    "type": "string"
+                },
+                "topic": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "command_template.WebsocketCommand": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "header": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "header_template.HeaderTemplate": {
             "type": "object",
             "properties": {
@@ -458,6 +815,9 @@ const docTemplate = `{
         "time_template.TimeDatum": {
             "type": "object",
             "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
                 "end_date": {
                     "type": "string"
                 },
@@ -467,15 +827,6 @@ const docTemplate = `{
                 "interval_seconds": {
                     "type": "integer"
                 },
-                "m_condition": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "m_condition_type": {
-                    "type": "string"
-                },
                 "repeat_type": {
                     "type": "string"
                 },
@@ -484,6 +835,12 @@ const docTemplate = `{
                 },
                 "start_time": {
                     "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -491,11 +848,14 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "end_time",
-                "m_condition",
                 "start_date",
-                "start_time"
+                "start_time",
+                "t_condition"
             ],
             "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
                 "end_date": {
                     "type": "string"
                 },
@@ -505,15 +865,6 @@ const docTemplate = `{
                 "interval_seconds": {
                     "type": "integer"
                 },
-                "m_condition": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "m_condition_type": {
-                    "type": "string"
-                },
                 "repeat_type": {
                     "type": "string"
                 },
@@ -522,6 +873,12 @@ const docTemplate = `{
                 },
                 "start_time": {
                     "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -529,12 +886,15 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "end_time",
-                "m_condition",
                 "repeat_type",
                 "start_date",
-                "start_time"
+                "start_time",
+                "t_condition"
             ],
             "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
                 "end_date": {
                     "type": "string"
                 },
@@ -544,15 +904,6 @@ const docTemplate = `{
                 "interval_seconds": {
                     "type": "integer"
                 },
-                "m_condition": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "m_condition_type": {
-                    "type": "string"
-                },
                 "repeat_type": {
                     "type": "string"
                 },
@@ -561,6 +912,12 @@ const docTemplate = `{
                 },
                 "start_time": {
                     "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

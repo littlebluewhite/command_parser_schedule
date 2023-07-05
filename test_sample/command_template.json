@@ -1,0 +1,37 @@
+[
+  {
+    "description": "string",
+    "host": "string",
+    "http": {
+      "body": [
+        0
+      ],
+      "body_type": "json",
+      "header": [
+        0
+      ],
+      "method": "GET",
+      "params": [
+        0
+      ],
+      "url": "string"
+    },
+    "monitor": {
+      "column": "data",
+      "interval": 0,
+      "m_conditions": [
+        {
+          "calculate_type": "=",
+          "next_logic_type": "or",
+          "order": 0,
+          "search_rule": "string",
+          "value": "string"
+        }
+      ],
+      "timeout": 10
+    },
+    "name": "string",
+    "port": "string",
+    "protocol": "http"
+  }
+]

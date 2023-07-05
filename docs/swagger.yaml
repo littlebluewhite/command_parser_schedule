@@ -1,4 +1,161 @@
 definitions:
+  command_template.CommandTemplate:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      host:
+        type: string
+      http:
+        $ref: '#/definitions/command_template.HTTPSCommand'
+      id:
+        type: integer
+      monitor:
+        $ref: '#/definitions/command_template.Monitor'
+      mqtt:
+        $ref: '#/definitions/command_template.MqttCommand'
+      name:
+        type: string
+      port:
+        type: string
+      protocol:
+        type: string
+      redis:
+        $ref: '#/definitions/command_template.RedisCommand'
+      updated_at:
+        type: string
+      websocket:
+        $ref: '#/definitions/command_template.WebsocketCommand'
+    type: object
+  command_template.CommandTemplateCreate:
+    properties:
+      description:
+        type: string
+      host:
+        type: string
+      http:
+        $ref: '#/definitions/command_template.HTTPSCommand'
+      monitor:
+        $ref: '#/definitions/command_template.Monitor'
+      mqtt:
+        $ref: '#/definitions/command_template.MqttCommand'
+      name:
+        type: string
+      port:
+        type: string
+      protocol:
+        type: string
+      redis:
+        $ref: '#/definitions/command_template.RedisCommand'
+      websocket:
+        $ref: '#/definitions/command_template.WebsocketCommand'
+    required:
+    - host
+    - name
+    - port
+    - protocol
+    type: object
+  command_template.HTTPSCommand:
+    properties:
+      authorization_type:
+        type: string
+      body:
+        items:
+          type: integer
+        type: array
+      body_type:
+        type: string
+      header:
+        items:
+          type: integer
+        type: array
+      method:
+        type: string
+      params:
+        items:
+          type: integer
+        type: array
+      url:
+        type: string
+    type: object
+  command_template.MCondition:
+    properties:
+      calculate_type:
+        type: string
+      next_logic_type:
+        type: string
+      order:
+        type: integer
+      search_rule:
+        type: string
+      value:
+        type: string
+    type: object
+  command_template.Monitor:
+    properties:
+      column:
+        type: string
+      interval:
+        type: integer
+      m_conditions:
+        items:
+          $ref: '#/definitions/command_template.MCondition'
+        type: array
+      timeout:
+        type: integer
+    required:
+    - column
+    - timeout
+    type: object
+  command_template.MqttCommand:
+    properties:
+      header:
+        items:
+          type: integer
+        type: array
+      message:
+        items:
+          type: integer
+        type: array
+      topic:
+        type: string
+      type:
+        type: string
+    required:
+    - topic
+    - type
+    type: object
+  command_template.RedisCommand:
+    properties:
+      db:
+        type: integer
+      message:
+        items:
+          type: integer
+        type: array
+      password:
+        type: string
+      topic:
+        type: string
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  command_template.WebsocketCommand:
+    properties:
+      header:
+        items:
+          type: integer
+        type: array
+      message:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
   header_template.HeaderTemplate:
     properties:
       data:
@@ -52,77 +209,77 @@ definitions:
     type: object
   time_template.TimeDatum:
     properties:
+      condition_type:
+        type: string
       end_date:
         type: string
       end_time:
         type: string
       interval_seconds:
         type: integer
-      m_condition:
-        items:
-          type: integer
-        type: array
-      m_condition_type:
-        type: string
       repeat_type:
         type: string
       start_date:
         type: string
       start_time:
         type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
     type: object
   time_template.TimeDatumCreate:
     properties:
+      condition_type:
+        type: string
       end_date:
         type: string
       end_time:
         type: string
       interval_seconds:
         type: integer
-      m_condition:
-        items:
-          type: integer
-        type: array
-      m_condition_type:
-        type: string
       repeat_type:
         type: string
       start_date:
         type: string
       start_time:
         type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
     required:
     - end_time
-    - m_condition
     - start_date
     - start_time
+    - t_condition
     type: object
   time_template.TimeDatumUpdate:
     properties:
+      condition_type:
+        type: string
       end_date:
         type: string
       end_time:
         type: string
       interval_seconds:
         type: integer
-      m_condition:
-        items:
-          type: integer
-        type: array
-      m_condition_type:
-        type: string
       repeat_type:
         type: string
       start_date:
         type: string
       start_time:
         type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
     required:
     - end_time
-    - m_condition
     - repeat_type
     - start_date
     - start_time
+    - t_condition
     type: object
   time_template.TimeTemplate:
     properties:
@@ -172,6 +329,84 @@ info:
   title: Schedule-Command swagger API
   version: "2.0"
 paths:
+  /command_template/:
+    delete:
+      parameters:
+      - description: command_template id
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete successfully
+          schema:
+            type: string
+      summary: Delete command templates
+      tags:
+      - command_template
+    get:
+      description: Get all command templates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/command_template.CommandTemplate'
+            type: array
+      summary: Show all command templates
+      tags:
+      - command_template
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: command template body
+        in: body
+        name: command_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/command_template.CommandTemplateCreate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/command_template.CommandTemplate'
+            type: array
+      summary: Create command templates
+      tags:
+      - command_template
+  /command_template/{id}:
+    get:
+      description: Get command templates by id
+      parameters:
+      - description: command template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/command_template.CommandTemplate'
+      summary: Show command templates
+      tags:
+      - command_template
   /header_template/:
     delete:
       parameters:

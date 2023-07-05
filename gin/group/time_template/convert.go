@@ -19,8 +19,8 @@ func Format(tt []*model.TimeTemplate) []*TimeTemplate {
 				StartTime:       string(item.TimeData.StartTime),
 				EndTime:         string(item.TimeData.EndTime),
 				IntervalSeconds: item.TimeData.IntervalSeconds,
-				MConditionType:  item.TimeData.MConditionType,
-				MCondition:      item.TimeData.MCondition,
+				ConditionType:   item.TimeData.ConditionType,
+				TCondition:      item.TimeData.TCondition,
 			},
 		}
 		result = append(result, &i)
@@ -40,8 +40,8 @@ func CreateConvert(c []*TimeTemplateCreate) []*model.TimeTemplate {
 				StartTime:       []byte(item.TimeData.StartTime.String()),
 				EndTime:         []byte(item.TimeData.EndTime.String()),
 				IntervalSeconds: item.TimeData.IntervalSeconds,
-				MConditionType:  item.TimeData.MConditionType,
-				MCondition:      item.TimeData.MCondition,
+				ConditionType:   item.TimeData.ConditionType,
+				TCondition:      item.TimeData.TCondition,
 			},
 		}
 		result = append(result, &i)
@@ -62,8 +62,8 @@ func UpdateConvert(tt []*model.TimeTemplate, uMap map[int32]*TimeTemplateUpdate)
 			tt[i].TimeData.StartTime = []byte(u.TimeData.StartTime.String())
 			tt[i].TimeData.EndTime = []byte(u.TimeData.EndTime.String())
 			tt[i].TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
-			tt[i].TimeData.MConditionType = u.TimeData.MConditionType
-			tt[i].TimeData.MCondition = u.TimeData.MCondition
+			tt[i].TimeData.ConditionType = u.TimeData.ConditionType
+			tt[i].TimeData.TCondition = u.TimeData.TCondition
 		}
 	}
 	return tt

@@ -15,7 +15,7 @@ type Operate interface {
 	List() ([]*model.CommandTemplate, error)
 	Find(ids []int32) ([]*model.CommandTemplate, error)
 	Create([]*model.CommandTemplate) ([]*model.CommandTemplate, error)
-	Update([]*model.CommandTemplate) error
+	//Update([]*model.CommandTemplate) error
 	Delete([]*model.CommandTemplate) error
 }
 
@@ -32,19 +32,19 @@ func NewOperate(dbs initial.Dbs) Operate {
 }
 
 func (o *operate) List() ([]*model.CommandTemplate, error) {
-	t := query.Use(o.db).CommandTemplate
+	c := query.Use(o.db).CommandTemplate
 	ctx := context.Background()
-	ht, err := t.WithContext(ctx).Find()
+	ct, err := c.WithContext(ctx).Preload(field.Associations).Preload(c.Monitor.MConditions).Find()
 	if err != nil {
 		return nil, err
 	}
-	return ht, nil
+	return ct, nil
 }
 
 func (o *operate) Find(ids []int32) ([]*model.CommandTemplate, error) {
-	t := query.Use(o.db).CommandTemplate
+	c := query.Use(o.db).CommandTemplate
 	ctx := context.Background()
-	CommandTemplates, err := t.WithContext(ctx).Preload(field.Associations).Where(t.ID.In(ids...)).Find()
+	CommandTemplates, err := c.WithContext(ctx).Preload(field.Associations).Preload(c.Monitor.MConditions).Where(c.ID.In(ids...)).Find()
 	if err != nil {
 		return nil, err
 	}

@@ -17,29 +17,50 @@ import (
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:             db,
-		HeaderTemplate: newHeaderTemplate(db, opts...),
-		TimeDatum:      newTimeDatum(db, opts...),
-		TimeTemplate:   newTimeTemplate(db, opts...),
+		db:               db,
+		CommandTemplate:  newCommandTemplate(db, opts...),
+		HTTPSCommand:     newHTTPSCommand(db, opts...),
+		HeaderTemplate:   newHeaderTemplate(db, opts...),
+		MCondition:       newMCondition(db, opts...),
+		Monitor:          newMonitor(db, opts...),
+		MqttCommand:      newMqttCommand(db, opts...),
+		RedisCommand:     newRedisCommand(db, opts...),
+		TimeDatum:        newTimeDatum(db, opts...),
+		TimeTemplate:     newTimeTemplate(db, opts...),
+		WebsocketCommand: newWebsocketCommand(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	HeaderTemplate headerTemplate
-	TimeDatum      timeDatum
-	TimeTemplate   timeTemplate
+	CommandTemplate  commandTemplate
+	HTTPSCommand     hTTPSCommand
+	HeaderTemplate   headerTemplate
+	MCondition       mCondition
+	Monitor          monitor
+	MqttCommand      mqttCommand
+	RedisCommand     redisCommand
+	TimeDatum        timeDatum
+	TimeTemplate     timeTemplate
+	WebsocketCommand websocketCommand
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		HeaderTemplate: q.HeaderTemplate.clone(db),
-		TimeDatum:      q.TimeDatum.clone(db),
-		TimeTemplate:   q.TimeTemplate.clone(db),
+		db:               db,
+		CommandTemplate:  q.CommandTemplate.clone(db),
+		HTTPSCommand:     q.HTTPSCommand.clone(db),
+		HeaderTemplate:   q.HeaderTemplate.clone(db),
+		MCondition:       q.MCondition.clone(db),
+		Monitor:          q.Monitor.clone(db),
+		MqttCommand:      q.MqttCommand.clone(db),
+		RedisCommand:     q.RedisCommand.clone(db),
+		TimeDatum:        q.TimeDatum.clone(db),
+		TimeTemplate:     q.TimeTemplate.clone(db),
+		WebsocketCommand: q.WebsocketCommand.clone(db),
 	}
 }
 
@@ -53,24 +74,45 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		HeaderTemplate: q.HeaderTemplate.replaceDB(db),
-		TimeDatum:      q.TimeDatum.replaceDB(db),
-		TimeTemplate:   q.TimeTemplate.replaceDB(db),
+		db:               db,
+		CommandTemplate:  q.CommandTemplate.replaceDB(db),
+		HTTPSCommand:     q.HTTPSCommand.replaceDB(db),
+		HeaderTemplate:   q.HeaderTemplate.replaceDB(db),
+		MCondition:       q.MCondition.replaceDB(db),
+		Monitor:          q.Monitor.replaceDB(db),
+		MqttCommand:      q.MqttCommand.replaceDB(db),
+		RedisCommand:     q.RedisCommand.replaceDB(db),
+		TimeDatum:        q.TimeDatum.replaceDB(db),
+		TimeTemplate:     q.TimeTemplate.replaceDB(db),
+		WebsocketCommand: q.WebsocketCommand.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	HeaderTemplate *headerTemplateDo
-	TimeDatum      *timeDatumDo
-	TimeTemplate   *timeTemplateDo
+	CommandTemplate  *commandTemplateDo
+	HTTPSCommand     *hTTPSCommandDo
+	HeaderTemplate   *headerTemplateDo
+	MCondition       *mConditionDo
+	Monitor          *monitorDo
+	MqttCommand      *mqttCommandDo
+	RedisCommand     *redisCommandDo
+	TimeDatum        *timeDatumDo
+	TimeTemplate     *timeTemplateDo
+	WebsocketCommand *websocketCommandDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		HeaderTemplate: q.HeaderTemplate.WithContext(ctx),
-		TimeDatum:      q.TimeDatum.WithContext(ctx),
-		TimeTemplate:   q.TimeTemplate.WithContext(ctx),
+		CommandTemplate:  q.CommandTemplate.WithContext(ctx),
+		HTTPSCommand:     q.HTTPSCommand.WithContext(ctx),
+		HeaderTemplate:   q.HeaderTemplate.WithContext(ctx),
+		MCondition:       q.MCondition.WithContext(ctx),
+		Monitor:          q.Monitor.WithContext(ctx),
+		MqttCommand:      q.MqttCommand.WithContext(ctx),
+		RedisCommand:     q.RedisCommand.WithContext(ctx),
+		TimeDatum:        q.TimeDatum.WithContext(ctx),
+		TimeTemplate:     q.TimeTemplate.WithContext(ctx),
+		WebsocketCommand: q.WebsocketCommand.WithContext(ctx),
 	}
 }
 

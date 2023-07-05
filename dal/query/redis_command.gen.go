@@ -32,7 +32,7 @@ func newRedisCommand(db *gorm.DB, opts ...gen.DOOption) redisCommand {
 	_redisCommand.Password = field.NewString(tableName, "password")
 	_redisCommand.Db = field.NewInt32(tableName, "db")
 	_redisCommand.Topic = field.NewString(tableName, "topic")
-	_redisCommand.Message = field.NewString(tableName, "message")
+	_redisCommand.Message = field.NewBytes(tableName, "message")
 	_redisCommand.Type = field.NewString(tableName, "type")
 
 	_redisCommand.fillFieldMap()
@@ -49,7 +49,7 @@ type redisCommand struct {
 	Password  field.String
 	Db        field.Int32
 	Topic     field.String
-	Message   field.String
+	Message   field.Bytes
 	Type      field.String
 
 	fieldMap map[string]field.Expr
@@ -72,7 +72,7 @@ func (r *redisCommand) updateTableName(table string) *redisCommand {
 	r.Password = field.NewString(table, "password")
 	r.Db = field.NewInt32(table, "db")
 	r.Topic = field.NewString(table, "topic")
-	r.Message = field.NewString(table, "message")
+	r.Message = field.NewBytes(table, "message")
 	r.Type = field.NewString(table, "type")
 
 	r.fillFieldMap()
