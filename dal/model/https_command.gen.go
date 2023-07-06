@@ -17,8 +17,8 @@ type HTTPSCommand struct {
 	Method            string           `gorm:"column:method;not null" json:"method"`
 	URL               string           `gorm:"column:url;not null" json:"url"`
 	AuthorizationType *string          `gorm:"column:authorization_type" json:"authorization_type"`
-	Params            json.RawMessage  `gorm:"column:params" json:"params"`
-	Header            json.RawMessage  `gorm:"column:header" json:"header"`
+	Params            json.RawMessage  `gorm:"column:params;default:json_array()" json:"params"`
+	Header            json.RawMessage  `gorm:"column:header;default:json_array()" json:"header"`
 	BodyType          *string          `gorm:"column:body_type" json:"body_type"`
 	Body              *json.RawMessage `gorm:"column:body" json:"body"`
 }

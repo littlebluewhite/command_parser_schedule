@@ -82,7 +82,7 @@ func main() {
 			GORMTag:            map[string]string{"many2many": "task_template_stage"},
 			RelateSlicePointer: true,
 		}),
-		gen.FieldType("variable", "*json.RawMessage"))
+		gen.FieldType("variable", "json.RawMessage"))
 
 	g.ApplyBasic(timeData, timeTemplate, headerTemplate, httpsCommand, commandTemplate,
 		redisCommand, mqttCommand, websocketCommand, monitor, mCondition,

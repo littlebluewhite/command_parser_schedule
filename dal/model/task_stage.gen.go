@@ -12,13 +12,13 @@ const TableNameTaskStage = "task_stage"
 
 // TaskStage mapped from table <task_stage>
 type TaskStage struct {
-	ID                int32            `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Name              *string          `gorm:"column:name" json:"name"`
-	StageNumber       *int32           `gorm:"column:stage_number" json:"stage_number"`
-	Mode              *string          `gorm:"column:mode" json:"mode"`
-	CommandTemplateID *int32           `gorm:"column:command_template_id" json:"command_template_id"`
-	Tag               *json.RawMessage `gorm:"column:tag" json:"tag"`
-	CommandTemplate   CommandTemplate  `gorm:"foreignKey:command_template_id" json:"command_template"`
+	ID                int32           `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Name              string          `gorm:"column:name;not null" json:"name"`
+	StageNumber       int32           `gorm:"column:stage_number;not null" json:"stage_number"`
+	Mode              string          `gorm:"column:mode;not null" json:"mode"`
+	CommandTemplateID *int32          `gorm:"column:command_template_id" json:"command_template_id"`
+	Tag               json.RawMessage `gorm:"column:tag;default:json_array()" json:"tag"`
+	CommandTemplate   CommandTemplate `gorm:"foreignKey:command_template_id" json:"command_template"`
 }
 
 // TableName TaskStage's table name

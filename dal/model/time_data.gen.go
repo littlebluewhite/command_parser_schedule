@@ -21,7 +21,7 @@ type TimeDatum struct {
 	EndTime         []byte          `gorm:"column:end_time;not null" json:"end_time"`
 	IntervalSeconds *int32          `gorm:"column:interval_seconds" json:"interval_seconds"`
 	ConditionType   *string         `gorm:"column:condition_type" json:"condition_type"`
-	TCondition      json.RawMessage `gorm:"column:t_condition" json:"t_condition"`
+	TCondition      json.RawMessage `gorm:"column:t_condition;default:json_array()" json:"t_condition"`
 }
 
 // TableName TimeDatum's table name

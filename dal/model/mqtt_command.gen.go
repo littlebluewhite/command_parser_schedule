@@ -15,7 +15,7 @@ type MqttCommand struct {
 	ID        int32            `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	CommandID *int32           `gorm:"column:command_id" json:"command_id"`
 	Topic     string           `gorm:"column:topic;not null" json:"topic"`
-	Header    json.RawMessage  `gorm:"column:header" json:"header"`
+	Header    json.RawMessage  `gorm:"column:header;default:json_array()" json:"header"`
 	Message   *json.RawMessage `gorm:"column:message" json:"message"`
 	Type      string           `gorm:"column:type;not null" json:"type"`
 }

@@ -17,7 +17,7 @@ CREATE TABLE `time_data`
     `end_time`         time NOT NULL,
     `interval_seconds` int,
     `condition_type`   ENUM ('monthly_day', 'weekly_day', 'weekly_first', 'weekly_second', 'weekly_third', 'weekly_fourth'),
-    `t_condition`      json
+    `t_condition`      json DEFAULT (json_array())
 );
 
 CREATE TABLE `schedule`
@@ -51,8 +51,8 @@ CREATE TABLE `https_command`
     `method`             ENUM ('GET', 'POST', 'PATCH', 'PUT', 'DELETE') NOT NULL,
     `url`                varchar(255)                                   NOT NULL,
     `authorization_type` ENUM ('basic', 'token'),
-    `params`             json,
-    `header`             json,
+    `params`             json DEFAULT (json_array()),
+    `header`             json DEFAULT (json_array()),
     `body_type`          ENUM ('text', 'html', 'xml', 'form_data', 'x_www_form_urlencoded', 'json'),
     `body`               json
 );
@@ -69,7 +69,7 @@ CREATE TABLE `websocket_command`
     `id`         int PRIMARY KEY AUTO_INCREMENT,
     `command_id` int UNIQUE,
     `url`        varchar(255) NOT NULL,
-    `header`     json,
+    `header`     json DEFAULT (json_array()),
     `message`    varchar(255)
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE `mqtt_command`
     `id`         int PRIMARY KEY AUTO_INCREMENT,
     `command_id` int UNIQUE,
     `topic`      varchar(255)                  NOT NULL,
-    `header`     json,
+    `header`     json DEFAULT (json_array()),
     `message`    json,
     `type`       ENUM ('publish', 'subscribe') NOT NULL
 );
@@ -117,8 +117,8 @@ CREATE TABLE `m_condition`
 CREATE TABLE `task_template`
 (
     `id`         int PRIMARY KEY AUTO_INCREMENT,
-    `name`       varchar(255),
-    `variable`   json,
+    `name`       varchar(255) NOT NULL,
+    `variable`   json     DEFAULT (json_object()),
     `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `created_at` datetime DEFAULT (now())
 );
@@ -133,11 +133,11 @@ CREATE TABLE `task_template_stage`
 CREATE TABLE `task_stage`
 (
     `id`                  int PRIMARY KEY AUTO_INCREMENT,
-    `name`                varchar(255),
-    `stage_number`        int,
-    `mode`                ENUM ('monitor', 'execute'),
+    `name`                varchar(255)                NOT NULL,
+    `stage_number`        int                         NOT NULL,
+    `mode`                ENUM ('monitor', 'execute') NOT NULL,
     `command_template_id` int,
-    `tag`                 json
+    `tag`                 json DEFAULT (json_array())
 );
 
 ALTER TABLE `time_template`
