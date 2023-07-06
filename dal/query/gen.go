@@ -25,6 +25,8 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Monitor:          newMonitor(db, opts...),
 		MqttCommand:      newMqttCommand(db, opts...),
 		RedisCommand:     newRedisCommand(db, opts...),
+		TaskStage:        newTaskStage(db, opts...),
+		TaskTemplate:     newTaskTemplate(db, opts...),
 		TimeDatum:        newTimeDatum(db, opts...),
 		TimeTemplate:     newTimeTemplate(db, opts...),
 		WebsocketCommand: newWebsocketCommand(db, opts...),
@@ -41,6 +43,8 @@ type Query struct {
 	Monitor          monitor
 	MqttCommand      mqttCommand
 	RedisCommand     redisCommand
+	TaskStage        taskStage
+	TaskTemplate     taskTemplate
 	TimeDatum        timeDatum
 	TimeTemplate     timeTemplate
 	WebsocketCommand websocketCommand
@@ -58,6 +62,8 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Monitor:          q.Monitor.clone(db),
 		MqttCommand:      q.MqttCommand.clone(db),
 		RedisCommand:     q.RedisCommand.clone(db),
+		TaskStage:        q.TaskStage.clone(db),
+		TaskTemplate:     q.TaskTemplate.clone(db),
 		TimeDatum:        q.TimeDatum.clone(db),
 		TimeTemplate:     q.TimeTemplate.clone(db),
 		WebsocketCommand: q.WebsocketCommand.clone(db),
@@ -82,6 +88,8 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Monitor:          q.Monitor.replaceDB(db),
 		MqttCommand:      q.MqttCommand.replaceDB(db),
 		RedisCommand:     q.RedisCommand.replaceDB(db),
+		TaskStage:        q.TaskStage.replaceDB(db),
+		TaskTemplate:     q.TaskTemplate.replaceDB(db),
 		TimeDatum:        q.TimeDatum.replaceDB(db),
 		TimeTemplate:     q.TimeTemplate.replaceDB(db),
 		WebsocketCommand: q.WebsocketCommand.replaceDB(db),
@@ -96,6 +104,8 @@ type queryCtx struct {
 	Monitor          *monitorDo
 	MqttCommand      *mqttCommandDo
 	RedisCommand     *redisCommandDo
+	TaskStage        *taskStageDo
+	TaskTemplate     *taskTemplateDo
 	TimeDatum        *timeDatumDo
 	TimeTemplate     *timeTemplateDo
 	WebsocketCommand *websocketCommandDo
@@ -110,6 +120,8 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Monitor:          q.Monitor.WithContext(ctx),
 		MqttCommand:      q.MqttCommand.WithContext(ctx),
 		RedisCommand:     q.RedisCommand.WithContext(ctx),
+		TaskStage:        q.TaskStage.WithContext(ctx),
+		TaskTemplate:     q.TaskTemplate.WithContext(ctx),
 		TimeDatum:        q.TimeDatum.WithContext(ctx),
 		TimeTemplate:     q.TimeTemplate.WithContext(ctx),
 		WebsocketCommand: q.WebsocketCommand.WithContext(ctx),

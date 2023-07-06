@@ -14,28 +14,28 @@ type CommandTemplate struct {
 	Port        string            `json:"port"`
 	UpdatedAt   *time.Time        `json:"updated_at"`
 	CreatedAt   *time.Time        `json:"created_at"`
-	Http        *HTTPSCommand     `json:"http"`
-	Mqtt        *MqttCommand      `json:"mqtt"`
-	Websocket   *WebsocketCommand `json:"websocket"`
-	Redis       *RedisCommand     `json:"redis"`
+	Http        *HTTPSCommand     `json:"http,omitempty"`
+	Mqtt        *MqttCommand      `json:"mqtt,omitempty"`
+	Websocket   *WebsocketCommand `json:"websocket,omitempty"`
+	Redis       *RedisCommand     `json:"redis,omitempty"`
 	Monitor     *Monitor          `json:"monitor"`
 }
 
 type HTTPSCommand struct {
-	Method            string          `json:"method"`
-	URL               string          `json:"url"`
-	AuthorizationType *string         `json:"authorization_type"`
-	Params            json.RawMessage `json:"params"`
-	Header            json.RawMessage `json:"header"`
-	BodyType          *string         `json:"body_type"`
-	Body              json.RawMessage `json:"body"`
+	Method            string           `json:"method"`
+	URL               string           `json:"url"`
+	AuthorizationType *string          `json:"authorization_type"`
+	Params            json.RawMessage  `json:"params"`
+	Header            json.RawMessage  `json:"header"`
+	BodyType          *string          `json:"body_type"`
+	Body              *json.RawMessage `json:"body"`
 }
 
 type MqttCommand struct {
-	Topic   string          `json:"topic" binding:"required"`
-	Header  json.RawMessage `json:"header"`
-	Message json.RawMessage `json:"message"`
-	Type    string          `json:"type" binding:"required"`
+	Topic   string           `json:"topic" binding:"required"`
+	Header  json.RawMessage  `json:"header"`
+	Message *json.RawMessage `json:"message"`
+	Type    string           `json:"type" binding:"required"`
 }
 
 type WebsocketCommand struct {
@@ -45,11 +45,11 @@ type WebsocketCommand struct {
 }
 
 type RedisCommand struct {
-	Password *string         `json:"password"`
-	Db       *int32          `json:"db"`
-	Topic    *string         `json:"topic"`
-	Message  json.RawMessage `json:"message"`
-	Type     string          `json:"type" binding:"required"`
+	Password *string          `json:"password"`
+	Db       *int32           `json:"db"`
+	Topic    *string          `json:"topic"`
+	Message  *json.RawMessage `json:"message"`
+	Type     string           `json:"type" binding:"required"`
 }
 
 type Monitor struct {
