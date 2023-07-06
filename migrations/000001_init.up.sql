@@ -171,7 +171,7 @@ ALTER TABLE `task_template_stage`
     ADD FOREIGN KEY (`task_template_id`) REFERENCES `task_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `task_template_stage`
-    ADD FOREIGN KEY (`task_stage_id`) REFERENCES `task_stage` (`id`);
+    ADD FOREIGN KEY (`task_stage_id`) REFERENCES `task_stage` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `task_stage`
     ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`);
