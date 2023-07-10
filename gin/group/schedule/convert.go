@@ -2,7 +2,6 @@ package schedule
 
 import (
 	"command_parser_schedule/dal/model"
-	"fmt"
 )
 
 func Format(sd []*model.Schedule) []*Schedule {
@@ -35,7 +34,6 @@ func Format(sd []*model.Schedule) []*Schedule {
 func CreateConvert(c []*ScheduleCreate) []*model.Schedule {
 	result := make([]*model.Schedule, 0, len(c))
 	for _, item := range c {
-		fmt.Printf("%+v\n", item)
 		i := model.Schedule{
 			Name:        item.Name,
 			Description: item.Description,

@@ -9,6 +9,6 @@ FROM alpine
 WORKDIR /app
 COPY --from=builder /app/main /app/cmd/migrate/
 COPY env env
-COPY migration migration
+COPY migrations migrations
 
 CMD ["/app/cmd/migrate/main", "-up"]
