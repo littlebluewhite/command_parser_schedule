@@ -1,0 +1,14 @@
+[
+  {
+    "name": "test",
+    "stages": [
+      {
+        "mode": "monitor",
+        "name": "test",
+        "stage_number": 1,
+        "command_template_id": 1
+      }
+    ],
+    "variable": null
+  }
+]

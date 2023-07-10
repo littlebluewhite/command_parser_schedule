@@ -28,7 +28,7 @@ func newWebsocketCommand(db *gorm.DB, opts ...gen.DOOption) websocketCommand {
 	tableName := _websocketCommand.websocketCommandDo.TableName()
 	_websocketCommand.ALL = field.NewAsterisk(tableName)
 	_websocketCommand.ID = field.NewInt32(tableName, "id")
-	_websocketCommand.CommandID = field.NewInt32(tableName, "command_id")
+	_websocketCommand.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_websocketCommand.URL = field.NewString(tableName, "url")
 	_websocketCommand.Header = field.NewBytes(tableName, "header")
 	_websocketCommand.Message = field.NewString(tableName, "message")
@@ -41,12 +41,12 @@ func newWebsocketCommand(db *gorm.DB, opts ...gen.DOOption) websocketCommand {
 type websocketCommand struct {
 	websocketCommandDo websocketCommandDo
 
-	ALL       field.Asterisk
-	ID        field.Int32
-	CommandID field.Int32
-	URL       field.String
-	Header    field.Bytes
-	Message   field.String
+	ALL               field.Asterisk
+	ID                field.Int32
+	CommandTemplateID field.Int32
+	URL               field.String
+	Header            field.Bytes
+	Message           field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -64,7 +64,7 @@ func (w websocketCommand) As(alias string) *websocketCommand {
 func (w *websocketCommand) updateTableName(table string) *websocketCommand {
 	w.ALL = field.NewAsterisk(table)
 	w.ID = field.NewInt32(table, "id")
-	w.CommandID = field.NewInt32(table, "command_id")
+	w.CommandTemplateID = field.NewInt32(table, "command_template_id")
 	w.URL = field.NewString(table, "url")
 	w.Header = field.NewBytes(table, "header")
 	w.Message = field.NewString(table, "message")
@@ -94,7 +94,7 @@ func (w *websocketCommand) GetFieldByName(fieldName string) (field.OrderExpr, bo
 func (w *websocketCommand) fillFieldMap() {
 	w.fieldMap = make(map[string]field.Expr, 5)
 	w.fieldMap["id"] = w.ID
-	w.fieldMap["command_id"] = w.CommandID
+	w.fieldMap["command_template_id"] = w.CommandTemplateID
 	w.fieldMap["url"] = w.URL
 	w.fieldMap["header"] = w.Header
 	w.fieldMap["message"] = w.Message

@@ -83,10 +83,10 @@ definitions:
     properties:
       calculate_type:
         type: string
-      next_logic_type:
-        type: string
       order:
         type: integer
+      pre_logic_type:
+        type: string
       search_rule:
         type: string
       value:
@@ -206,6 +206,243 @@ definitions:
       example:
         example: asdfasdf
         type: string
+    type: object
+  schedule.Schedule:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/schedule.TimeDatum'
+      time_data_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  schedule.ScheduleCreate:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      name:
+        type: string
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/schedule.TimeDatumCreate'
+    required:
+    - name
+    - time_data
+    type: object
+  schedule.ScheduleUpdate:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/schedule.TimeDatumUpdate'
+    required:
+    - id
+    type: object
+  schedule.TimeDatum:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    type: object
+  schedule.TimeDatumCreate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - start_date
+    - start_time
+    type: object
+  schedule.TimeDatumUpdate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - repeat_type
+    - start_date
+    - start_time
+    - t_condition
+    type: object
+  task_template.TaskStage:
+    properties:
+      command_template:
+        $ref: '#/definitions/command_template.CommandTemplate'
+      command_template_id:
+        type: integer
+      id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tag:
+        items:
+          type: integer
+        type: array
+    type: object
+  task_template.TaskStageCreate:
+    properties:
+      command_template_id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tag:
+        items:
+          type: integer
+        type: array
+    required:
+    - mode
+    - name
+    - stage_number
+    type: object
+  task_template.TaskStageUpdate:
+    properties:
+      command_template_id:
+        type: integer
+      id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tag:
+        items:
+          type: integer
+        type: array
+    required:
+    - mode
+    - name
+    - stage_number
+    type: object
+  task_template.TaskTemplate:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/task_template.TaskStage'
+        type: array
+      updated_at:
+        type: string
+      variable:
+        items:
+          type: integer
+        type: array
+    type: object
+  task_template.TaskTemplateCreate:
+    properties:
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/task_template.TaskStageCreate'
+        type: array
+      variable:
+        items:
+          type: integer
+        type: array
+    required:
+    - name
+    type: object
+  task_template.TaskTemplateUpdate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/task_template.TaskStageUpdate'
+        type: array
+      variable:
+        items:
+          type: integer
+        type: array
+    required:
+    - id
     type: object
   time_template.TimeDatum:
     properties:
@@ -535,6 +772,206 @@ paths:
       summary: test ping
       tags:
       - ping
+  /schedule/:
+    delete:
+      parameters:
+      - description: schedule id
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete successfully
+          schema:
+            type: string
+      summary: Delete schedules
+      tags:
+      - schedule
+    get:
+      description: Get all schedules
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schedule.Schedule'
+            type: array
+      summary: Show all schedules
+      tags:
+      - schedule
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: modify schedule body
+        in: body
+        name: schedule
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/schedule.ScheduleUpdate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: update successfully
+          schema:
+            type: string
+      summary: Update schedules
+      tags:
+      - schedule
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: schedule body
+        in: body
+        name: schedule
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/schedule.ScheduleCreate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schedule.Schedule'
+            type: array
+      summary: Create schedules
+      tags:
+      - schedule
+  /schedule/{id}:
+    get:
+      description: Get schedules by id
+      parameters:
+      - description: schedule id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schedule.Schedule'
+      summary: Show schedules
+      tags:
+      - schedule
+  /task_template/:
+    delete:
+      parameters:
+      - description: task_template id
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete successfully
+          schema:
+            type: string
+      summary: Delete task templates
+      tags:
+      - task_template
+    get:
+      description: Get all task templates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/task_template.TaskTemplate'
+            type: array
+      summary: Show all task templates
+      tags:
+      - task_template
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: modify task template body
+        in: body
+        name: task_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/task_template.TaskTemplateUpdate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: update successfully
+          schema:
+            type: string
+      summary: Update task templates
+      tags:
+      - task_template
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: task template body
+        in: body
+        name: task_template
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/task_template.TaskTemplateCreate'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/task_template.TaskTemplate'
+            type: array
+      summary: Create task templates
+      tags:
+      - task_template
+  /task_template/{id}:
+    get:
+      description: Get task templates by id
+      parameters:
+      - description: task template id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/task_template.TaskTemplate'
+      summary: Show task templates
+      tags:
+      - task_template
   /time_template/:
     delete:
       parameters:

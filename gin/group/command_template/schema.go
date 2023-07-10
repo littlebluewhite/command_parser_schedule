@@ -53,10 +53,10 @@ type RedisCommand struct {
 }
 
 type Monitor struct {
-	Column      string        `json:"column" binding:"required"`
-	Timeout     int32         `json:"timeout" binding:"required"`
-	Interval    *int32        `json:"interval"`
-	MConditions []*MCondition `json:"m_conditions"`
+	Column      string       `json:"column" binding:"required"`
+	Timeout     int32        `json:"timeout" binding:"required"`
+	Interval    *int32       `json:"interval"`
+	MConditions []MCondition `json:"m_conditions"`
 }
 
 type MCondition struct {

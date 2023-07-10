@@ -31,7 +31,7 @@ func newMonitor(db *gorm.DB, opts ...gen.DOOption) monitor {
 	_monitor.Column = field.NewString(tableName, "column")
 	_monitor.Timeout = field.NewInt32(tableName, "timeout")
 	_monitor.Interval = field.NewInt32(tableName, "interval")
-	_monitor.CommandID = field.NewInt32(tableName, "command_id")
+	_monitor.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_monitor.MConditions = monitorHasManyMConditions{
 		db: db.Session(&gorm.Session{}),
 
@@ -46,13 +46,13 @@ func newMonitor(db *gorm.DB, opts ...gen.DOOption) monitor {
 type monitor struct {
 	monitorDo monitorDo
 
-	ALL         field.Asterisk
-	ID          field.Int32
-	Column      field.String
-	Timeout     field.Int32
-	Interval    field.Int32
-	CommandID   field.Int32
-	MConditions monitorHasManyMConditions
+	ALL               field.Asterisk
+	ID                field.Int32
+	Column            field.String
+	Timeout           field.Int32
+	Interval          field.Int32
+	CommandTemplateID field.Int32
+	MConditions       monitorHasManyMConditions
 
 	fieldMap map[string]field.Expr
 }
@@ -73,7 +73,7 @@ func (m *monitor) updateTableName(table string) *monitor {
 	m.Column = field.NewString(table, "column")
 	m.Timeout = field.NewInt32(table, "timeout")
 	m.Interval = field.NewInt32(table, "interval")
-	m.CommandID = field.NewInt32(table, "command_id")
+	m.CommandTemplateID = field.NewInt32(table, "command_template_id")
 
 	m.fillFieldMap()
 
@@ -101,7 +101,7 @@ func (m *monitor) fillFieldMap() {
 	m.fieldMap["column"] = m.Column
 	m.fieldMap["timeout"] = m.Timeout
 	m.fieldMap["interval"] = m.Interval
-	m.fieldMap["command_id"] = m.CommandID
+	m.fieldMap["command_template_id"] = m.CommandTemplateID
 
 }
 

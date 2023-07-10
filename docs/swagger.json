@@ -334,6 +334,314 @@
                 }
             }
         },
+        "/schedule/": {
+            "get": {
+                "description": "Get all schedules",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Show all schedules",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schedule.Schedule"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Create schedules",
+                "parameters": [
+                    {
+                        "description": "schedule body",
+                        "name": "schedule",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schedule.ScheduleCreate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schedule.Schedule"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Delete schedules",
+                "parameters": [
+                    {
+                        "description": "schedule id",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Update schedules",
+                "parameters": [
+                    {
+                        "description": "modify schedule body",
+                        "name": "schedule",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schedule.ScheduleUpdate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "update successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/{id}": {
+            "get": {
+                "description": "Get schedules by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Show schedules",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "schedule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schedule.Schedule"
+                        }
+                    }
+                }
+            }
+        },
+        "/task_template/": {
+            "get": {
+                "description": "Get all task templates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task_template"
+                ],
+                "summary": "Show all task templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/task_template.TaskTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task_template"
+                ],
+                "summary": "Create task templates",
+                "parameters": [
+                    {
+                        "description": "task template body",
+                        "name": "task_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/task_template.TaskTemplateCreate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/task_template.TaskTemplate"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task_template"
+                ],
+                "summary": "Delete task templates",
+                "parameters": [
+                    {
+                        "description": "task_template id",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task_template"
+                ],
+                "summary": "Update task templates",
+                "parameters": [
+                    {
+                        "description": "modify task template body",
+                        "name": "task_template",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/task_template.TaskTemplateUpdate"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "update successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/task_template/{id}": {
+            "get": {
+                "description": "Get task templates by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task_template"
+                ],
+                "summary": "Show task templates",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "task template id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/task_template.TaskTemplate"
+                        }
+                    }
+                }
+            }
+        },
         "/time_template/": {
             "get": {
                 "description": "Get all time templates",
@@ -616,11 +924,11 @@
                 "calculate_type": {
                     "type": "string"
                 },
-                "next_logic_type": {
-                    "type": "string"
-                },
                 "order": {
                     "type": "integer"
+                },
+                "pre_logic_type": {
+                    "type": "string"
                 },
                 "search_rule": {
                     "type": "string"
@@ -801,6 +1109,362 @@
                 "example": {
                     "type": "string",
                     "example": "asdfasdf"
+                }
+            }
+        },
+        "schedule.Schedule": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "integer"
+                },
+                "time_data": {
+                    "$ref": "#/definitions/schedule.TimeDatum"
+                },
+                "time_data_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "schedule.ScheduleCreate": {
+            "type": "object",
+            "required": [
+                "name",
+                "time_data"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "integer"
+                },
+                "time_data": {
+                    "$ref": "#/definitions/schedule.TimeDatumCreate"
+                }
+            }
+        },
+        "schedule.ScheduleUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "integer"
+                },
+                "time_data": {
+                    "$ref": "#/definitions/schedule.TimeDatumUpdate"
+                }
+            }
+        },
+        "schedule.TimeDatum": {
+            "type": "object",
+            "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "interval_seconds": {
+                    "type": "integer"
+                },
+                "repeat_type": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "schedule.TimeDatumCreate": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "start_date",
+                "start_time"
+            ],
+            "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "interval_seconds": {
+                    "type": "integer"
+                },
+                "repeat_type": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "schedule.TimeDatumUpdate": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "repeat_type",
+                "start_date",
+                "start_time",
+                "t_condition"
+            ],
+            "properties": {
+                "condition_type": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "interval_seconds": {
+                    "type": "integer"
+                },
+                "repeat_type": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "t_condition": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskStage": {
+            "type": "object",
+            "properties": {
+                "command_template": {
+                    "$ref": "#/definitions/command_template.CommandTemplate"
+                },
+                "command_template_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stage_number": {
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskStageCreate": {
+            "type": "object",
+            "required": [
+                "mode",
+                "name",
+                "stage_number"
+            ],
+            "properties": {
+                "command_template_id": {
+                    "type": "integer"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stage_number": {
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskStageUpdate": {
+            "type": "object",
+            "required": [
+                "mode",
+                "name",
+                "stage_number"
+            ],
+            "properties": {
+                "command_template_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stage_number": {
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskTemplate": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/task_template.TaskStage"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "variable": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskTemplateCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "stages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/task_template.TaskStageCreate"
+                    }
+                },
+                "variable": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "task_template.TaskTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/task_template.TaskStageUpdate"
+                    }
+                },
+                "variable": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

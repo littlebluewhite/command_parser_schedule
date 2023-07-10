@@ -28,7 +28,7 @@ func newMqttCommand(db *gorm.DB, opts ...gen.DOOption) mqttCommand {
 	tableName := _mqttCommand.mqttCommandDo.TableName()
 	_mqttCommand.ALL = field.NewAsterisk(tableName)
 	_mqttCommand.ID = field.NewInt32(tableName, "id")
-	_mqttCommand.CommandID = field.NewInt32(tableName, "command_id")
+	_mqttCommand.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_mqttCommand.Topic = field.NewString(tableName, "topic")
 	_mqttCommand.Header = field.NewBytes(tableName, "header")
 	_mqttCommand.Message = field.NewBytes(tableName, "message")
@@ -42,13 +42,13 @@ func newMqttCommand(db *gorm.DB, opts ...gen.DOOption) mqttCommand {
 type mqttCommand struct {
 	mqttCommandDo mqttCommandDo
 
-	ALL       field.Asterisk
-	ID        field.Int32
-	CommandID field.Int32
-	Topic     field.String
-	Header    field.Bytes
-	Message   field.Bytes
-	Type      field.String
+	ALL               field.Asterisk
+	ID                field.Int32
+	CommandTemplateID field.Int32
+	Topic             field.String
+	Header            field.Bytes
+	Message           field.Bytes
+	Type              field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -66,7 +66,7 @@ func (m mqttCommand) As(alias string) *mqttCommand {
 func (m *mqttCommand) updateTableName(table string) *mqttCommand {
 	m.ALL = field.NewAsterisk(table)
 	m.ID = field.NewInt32(table, "id")
-	m.CommandID = field.NewInt32(table, "command_id")
+	m.CommandTemplateID = field.NewInt32(table, "command_template_id")
 	m.Topic = field.NewString(table, "topic")
 	m.Header = field.NewBytes(table, "header")
 	m.Message = field.NewBytes(table, "message")
@@ -97,7 +97,7 @@ func (m *mqttCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 func (m *mqttCommand) fillFieldMap() {
 	m.fieldMap = make(map[string]field.Expr, 6)
 	m.fieldMap["id"] = m.ID
-	m.fieldMap["command_id"] = m.CommandID
+	m.fieldMap["command_template_id"] = m.CommandTemplateID
 	m.fieldMap["topic"] = m.Topic
 	m.fieldMap["header"] = m.Header
 	m.fieldMap["message"] = m.Message

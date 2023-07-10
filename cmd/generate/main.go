@@ -47,46 +47,53 @@ func main() {
 	mCondition := g.GenerateModel("m_condition")
 	monitor := g.GenerateModel("monitor", gen.FieldRelate(field.HasMany, "MConditions",
 		mCondition, &field.RelateConfig{
-			GORMTag:            map[string]string{"foreignKey": "monitor_id"},
-			RelateSlicePointer: true,
+			GORMTag: map[string]string{"foreignKey": "monitor_id"},
 		}))
 	commandTemplate := g.GenerateModel("command_template",
 		gen.FieldRelate(field.HasOne, "Http", httpsCommand, &field.RelateConfig{
-			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
 		gen.FieldRelate(field.HasOne, "Mqtt", mqttCommand, &field.RelateConfig{
-			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
 		gen.FieldRelate(field.HasOne, "Websocket", websocketCommand, &field.RelateConfig{
-			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
 		gen.FieldRelate(field.HasOne, "Redis", redisCommand, &field.RelateConfig{
-			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
 		gen.FieldRelate(field.HasOne, "Monitor", monitor, &field.RelateConfig{
-			GORMTag:       map[string]string{"foreignKey": "command_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
 	)
 	taskStage := g.GenerateModel("task_stage",
 		gen.FieldRelate(field.BelongsTo, "CommandTemplate", commandTemplate, &field.RelateConfig{
-			GORMTag: map[string]string{"foreignKey": "command_template_id"},
+			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
+			RelatePointer: true,
 		}),
 		gen.FieldType("tag", "json.RawMessage"))
 	taskTemplate := g.GenerateModel("task_template",
 		gen.FieldRelate(field.Many2Many, "Stages", taskStage, &field.RelateConfig{
-			GORMTag:            map[string]string{"many2many": "task_template_stage"},
-			RelateSlicePointer: true,
+			GORMTag: map[string]string{"many2many": "task_template_stage"},
 		}),
 		gen.FieldType("variable", "json.RawMessage"))
 
+	taskTemplateStage := g.GenerateModel("task_template_stage")
+
+	schedule := g.GenerateModel("schedule",
+		gen.FieldRelate(field.BelongsTo, "TimeData", timeData,
+			&field.RelateConfig{
+				GORMTag: map[string]string{"foreignKey": "time_data_id"},
+			}))
+
 	g.ApplyBasic(timeData, timeTemplate, headerTemplate, httpsCommand, commandTemplate,
-		redisCommand, mqttCommand, websocketCommand, monitor, mCondition,
-		taskStage, taskTemplate)
+		redisCommand, mqttCommand, websocketCommand, monitor, mCondition, taskTemplateStage,
+		taskStage, taskTemplate, schedule)
 
 	// execute the action of code generation
 	g.Execute()

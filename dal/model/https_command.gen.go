@@ -13,7 +13,7 @@ const TableNameHTTPSCommand = "https_command"
 // HTTPSCommand mapped from table <https_command>
 type HTTPSCommand struct {
 	ID                int32            `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	CommandID         *int32           `gorm:"column:command_id" json:"command_id"`
+	CommandTemplateID *int32           `gorm:"column:command_template_id" json:"command_template_id"`
 	Method            string           `gorm:"column:method;not null" json:"method"`
 	URL               string           `gorm:"column:url;not null" json:"url"`
 	AuthorizationType *string          `gorm:"column:authorization_type" json:"authorization_type"`

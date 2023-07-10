@@ -1,4 +1,4 @@
-package time_template
+package schedule
 
 import (
 	"encoding/json"
@@ -6,12 +6,16 @@ import (
 	"time"
 )
 
-type TimeTemplate struct {
-	ID        int32      `json:"id"`
-	Name      string     `json:"name"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	CreatedAt *time.Time `json:"created_at"`
-	TimeData  TimeDatum  `json:"time_data"`
+type Schedule struct {
+	ID          int32      `json:"id"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	TimeDataID  int32      `json:"time_data_id"`
+	TaskID      *int32     `json:"task_id"`
+	Enabled     bool       `json:"enabled"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	CreatedAt   *time.Time `json:"created_at"`
+	TimeData    TimeDatum  `json:"time_data"`
 }
 
 type TimeDatum struct {
@@ -25,9 +29,12 @@ type TimeDatum struct {
 	TCondition      json.RawMessage `json:"t_condition"`
 }
 
-type TimeTemplateCreate struct {
-	Name     string          `json:"name" binding:"required"`
-	TimeData TimeDatumCreate `json:"time_data" binding:"required"`
+type ScheduleCreate struct {
+	Name        string          `json:"name" binding:"required"`
+	Description *string         `json:"description"`
+	TaskID      *int32          `json:"task_id"`
+	Enabled     bool            `json:"enabled"`
+	TimeData    TimeDatumCreate `json:"time_data" binding:"required"`
 }
 
 type TimeDatumCreate struct {
@@ -38,13 +45,16 @@ type TimeDatumCreate struct {
 	EndTime         datatypes.Time  `json:"end_time" binding:"required"`
 	IntervalSeconds *int32          `json:"interval_seconds"`
 	ConditionType   *string         `json:"condition_type"`
-	TCondition      json.RawMessage `json:"t_condition" binding:"required"`
+	TCondition      json.RawMessage `json:"t_condition"`
 }
 
-type TimeTemplateUpdate struct {
-	ID       int32            `json:"id" binding:"required"`
-	Name     *string          `json:"name"`
-	TimeData *TimeDatumUpdate `json:"time_data"`
+type ScheduleUpdate struct {
+	ID          int32            `json:"id" binding:"required"`
+	Name        *string          `json:"name"`
+	Description *string          `json:"description"`
+	TaskID      *int32           `json:"task_id"`
+	Enabled     *bool            `json:"enabled"`
+	TimeData    *TimeDatumUpdate `json:"time_data"`
 }
 
 type TimeDatumUpdate struct {

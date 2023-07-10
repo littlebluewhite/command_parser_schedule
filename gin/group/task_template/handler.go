@@ -90,6 +90,43 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 	c.JSON(200, Format(ht))
 }
 
+// UpdateTaskTemplate swagger
+// @Summary Update task templates
+// @Tags    task_template
+// @Accept  json
+// @Produce json
+// @Param   task_template body     []task_template.TaskTemplateUpdate true "modify task template body"
+// @Success 200           {string} string "update successfully"
+// @Router  /task_template/ [patch]
+func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
+	entry := []*TaskTemplateUpdate{nil}
+	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
+		util.Err(c, err, 0)
+		h.L.Error().Println("UpdateTaskTemplate: ", err)
+		return
+	}
+	ids := make([]int32, 0, len(entry))
+	uMap := make(map[int32]*TaskTemplateUpdate)
+	for _, item := range entry {
+		ids = append(ids, item.ID)
+		uMap[item.ID] = item
+	}
+	tt, err := h.O.Find(ids)
+	if err != nil {
+		util.Err(c, err, 0)
+		h.L.Error().Println("UpdateTaskTemplate: ", err)
+		return
+	}
+	tt = UpdateConvert(tt, uMap)
+	err = h.O.Update(tt)
+	if err != nil {
+		util.Err(c, err, 0)
+		h.L.Error().Println("UpdateTaskTemplate: ", err)
+		return
+	}
+	c.JSON(200, "update successfully")
+}
+
 // DeleteTaskTemplate swagger
 // @Summary Delete task templates
 // @Tags    task_template

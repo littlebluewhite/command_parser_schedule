@@ -46,7 +46,7 @@ func main() {
 	mainLog.Info().Println("command module start")
 
 	// DBs start includes SQL Cache
-	dbs := initial.NewDbs(mainLog, true)
+	dbs := initial.NewDbs(mainLog, false)
 	defer func() {
 		dbs.GetIdb().Close()
 		mainLog.Info().Println("influxDB Disconnect")

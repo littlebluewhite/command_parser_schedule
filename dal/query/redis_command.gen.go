@@ -28,7 +28,7 @@ func newRedisCommand(db *gorm.DB, opts ...gen.DOOption) redisCommand {
 	tableName := _redisCommand.redisCommandDo.TableName()
 	_redisCommand.ALL = field.NewAsterisk(tableName)
 	_redisCommand.ID = field.NewInt32(tableName, "id")
-	_redisCommand.CommandID = field.NewInt32(tableName, "command_id")
+	_redisCommand.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_redisCommand.Password = field.NewString(tableName, "password")
 	_redisCommand.Db = field.NewInt32(tableName, "db")
 	_redisCommand.Topic = field.NewString(tableName, "topic")
@@ -43,14 +43,14 @@ func newRedisCommand(db *gorm.DB, opts ...gen.DOOption) redisCommand {
 type redisCommand struct {
 	redisCommandDo redisCommandDo
 
-	ALL       field.Asterisk
-	ID        field.Int32
-	CommandID field.Int32
-	Password  field.String
-	Db        field.Int32
-	Topic     field.String
-	Message   field.Bytes
-	Type      field.String
+	ALL               field.Asterisk
+	ID                field.Int32
+	CommandTemplateID field.Int32
+	Password          field.String
+	Db                field.Int32
+	Topic             field.String
+	Message           field.Bytes
+	Type              field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -68,7 +68,7 @@ func (r redisCommand) As(alias string) *redisCommand {
 func (r *redisCommand) updateTableName(table string) *redisCommand {
 	r.ALL = field.NewAsterisk(table)
 	r.ID = field.NewInt32(table, "id")
-	r.CommandID = field.NewInt32(table, "command_id")
+	r.CommandTemplateID = field.NewInt32(table, "command_template_id")
 	r.Password = field.NewString(table, "password")
 	r.Db = field.NewInt32(table, "db")
 	r.Topic = field.NewString(table, "topic")
@@ -100,7 +100,7 @@ func (r *redisCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 func (r *redisCommand) fillFieldMap() {
 	r.fieldMap = make(map[string]field.Expr, 7)
 	r.fieldMap["id"] = r.ID
-	r.fieldMap["command_id"] = r.CommandID
+	r.fieldMap["command_template_id"] = r.CommandTemplateID
 	r.fieldMap["password"] = r.Password
 	r.fieldMap["db"] = r.Db
 	r.fieldMap["topic"] = r.Topic

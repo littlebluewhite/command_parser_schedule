@@ -1,4 +1,4 @@
-package task_template
+package schedule
 
 import (
 	"command_parser_schedule/gin/initial"
@@ -7,7 +7,7 @@ import (
 
 func Inject(ginApp initial.GinApp) {
 	o := NewOperate(ginApp.GetDbs())
-	log := logFile.NewLogFile("router", "task_template.json.log")
+	log := logFile.NewLogFile("router", "schedule.log")
 	InitRoutes(Routes{
 		ginApp.GetRouter(),
 		o,

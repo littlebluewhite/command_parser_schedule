@@ -20,11 +20,11 @@ type CommandTemplate struct {
 	Port        string            `gorm:"column:port;not null" json:"port"`
 	UpdatedAt   *time.Time        `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
 	CreatedAt   *time.Time        `gorm:"column:created_at;default:now()" json:"created_at"`
-	Http        *HTTPSCommand     `gorm:"foreignKey:command_id" json:"http"`
-	Mqtt        *MqttCommand      `gorm:"foreignKey:command_id" json:"mqtt"`
-	Websocket   *WebsocketCommand `gorm:"foreignKey:command_id" json:"websocket"`
-	Redis       *RedisCommand     `gorm:"foreignKey:command_id" json:"redis"`
-	Monitor     *Monitor          `gorm:"foreignKey:command_id" json:"monitor"`
+	Http        *HTTPSCommand     `gorm:"foreignKey:command_template_id" json:"http"`
+	Mqtt        *MqttCommand      `gorm:"foreignKey:command_template_id" json:"mqtt"`
+	Websocket   *WebsocketCommand `gorm:"foreignKey:command_template_id" json:"websocket"`
+	Redis       *RedisCommand     `gorm:"foreignKey:command_template_id" json:"redis"`
+	Monitor     *Monitor          `gorm:"foreignKey:command_template_id" json:"monitor"`
 }
 
 // TableName CommandTemplate's table name

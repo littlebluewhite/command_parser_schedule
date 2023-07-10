@@ -1,4 +1,4 @@
-package task_template
+package schedule
 
 import (
 	"command_parser_schedule/util/logFile"
@@ -18,11 +18,11 @@ func InitRoutes(r Routes) {
 	}
 
 	// set api group
-	g := r.R.Group("/task_template")
+	g := r.R.Group("/schedule")
 
-	g.GET("/", h.GetTaskTemplates)
-	g.GET("/:id", h.GetTaskTemplateById)
-	g.POST("/", h.AddTaskTemplate)
-	g.PATCH("/", h.UpdateTaskTemplate)
-	g.DELETE("/", h.DeleteTaskTemplate)
+	g.GET("/", h.GetSchedules)
+	g.GET("/:id", h.GetScheduleById)
+	g.POST("/", h.AddSchedule)
+	g.PATCH("/", h.UpdateSchedule)
+	g.DELETE("/", h.DeleteSchedule)
 }

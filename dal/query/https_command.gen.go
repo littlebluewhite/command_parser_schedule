@@ -28,7 +28,7 @@ func newHTTPSCommand(db *gorm.DB, opts ...gen.DOOption) hTTPSCommand {
 	tableName := _hTTPSCommand.hTTPSCommandDo.TableName()
 	_hTTPSCommand.ALL = field.NewAsterisk(tableName)
 	_hTTPSCommand.ID = field.NewInt32(tableName, "id")
-	_hTTPSCommand.CommandID = field.NewInt32(tableName, "command_id")
+	_hTTPSCommand.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_hTTPSCommand.Method = field.NewString(tableName, "method")
 	_hTTPSCommand.URL = field.NewString(tableName, "url")
 	_hTTPSCommand.AuthorizationType = field.NewString(tableName, "authorization_type")
@@ -47,7 +47,7 @@ type hTTPSCommand struct {
 
 	ALL               field.Asterisk
 	ID                field.Int32
-	CommandID         field.Int32
+	CommandTemplateID field.Int32
 	Method            field.String
 	URL               field.String
 	AuthorizationType field.String
@@ -72,7 +72,7 @@ func (h hTTPSCommand) As(alias string) *hTTPSCommand {
 func (h *hTTPSCommand) updateTableName(table string) *hTTPSCommand {
 	h.ALL = field.NewAsterisk(table)
 	h.ID = field.NewInt32(table, "id")
-	h.CommandID = field.NewInt32(table, "command_id")
+	h.CommandTemplateID = field.NewInt32(table, "command_template_id")
 	h.Method = field.NewString(table, "method")
 	h.URL = field.NewString(table, "url")
 	h.AuthorizationType = field.NewString(table, "authorization_type")
@@ -106,7 +106,7 @@ func (h *hTTPSCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 func (h *hTTPSCommand) fillFieldMap() {
 	h.fieldMap = make(map[string]field.Expr, 9)
 	h.fieldMap["id"] = h.ID
-	h.fieldMap["command_id"] = h.CommandID
+	h.fieldMap["command_template_id"] = h.CommandTemplateID
 	h.fieldMap["method"] = h.Method
 	h.fieldMap["url"] = h.URL
 	h.fieldMap["authorization_type"] = h.AuthorizationType

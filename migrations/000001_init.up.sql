@@ -27,7 +27,7 @@ CREATE TABLE `schedule`
     `description`  varchar(255),
     `time_data_id` int UNIQUE          NOT NULL,
     `task_id`      int,
-    `enabled`      boolean  DEFAULT false,
+    `enabled`      boolean  DEFAULT false NOT NULL,
     `updated_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `created_at`   datetime DEFAULT (now())
 );
@@ -47,7 +47,7 @@ CREATE TABLE `command_template`
 CREATE TABLE `https_command`
 (
     `id`                 int PRIMARY KEY AUTO_INCREMENT,
-    `command_id`         int UNIQUE,
+    `command_template_id`         int UNIQUE,
     `method`             ENUM ('GET', 'POST', 'PATCH', 'PUT', 'DELETE') NOT NULL,
     `url`                varchar(255)                                   NOT NULL,
     `authorization_type` ENUM ('basic', 'token'),
@@ -67,7 +67,7 @@ CREATE TABLE `header_template`
 CREATE TABLE `websocket_command`
 (
     `id`         int PRIMARY KEY AUTO_INCREMENT,
-    `command_id` int UNIQUE,
+    `command_template_id` int UNIQUE,
     `url`        varchar(255) NOT NULL,
     `header`     json DEFAULT (json_array()),
     `message`    varchar(255)
@@ -76,7 +76,7 @@ CREATE TABLE `websocket_command`
 CREATE TABLE `mqtt_command`
 (
     `id`         int PRIMARY KEY AUTO_INCREMENT,
-    `command_id` int UNIQUE,
+    `command_template_id` int UNIQUE,
     `topic`      varchar(255)                  NOT NULL,
     `header`     json DEFAULT (json_array()),
     `message`    json,
@@ -86,7 +86,7 @@ CREATE TABLE `mqtt_command`
 CREATE TABLE `redis_command`
 (
     `id`         int PRIMARY KEY AUTO_INCREMENT,
-    `command_id` int UNIQUE,
+    `command_template_id` int UNIQUE,
     `password`   varchar(255),
     `db`         int DEFAULT 0,
     `topic`      varchar(255),
@@ -100,7 +100,7 @@ CREATE TABLE `monitor`
     `column`     ENUM ('status', 'data') NOT NULL,
     `timeout`    int                     NOT NULL,
     `interval`   int,
-    `command_id` int UNIQUE              NOT NULL
+    `command_template_id` int UNIQUE              NOT NULL
 );
 
 CREATE TABLE `m_condition`
@@ -150,19 +150,19 @@ ALTER TABLE `schedule`
     ADD FOREIGN KEY (`task_id`) REFERENCES `task_template` (`id`);
 
 ALTER TABLE `https_command`
-    ADD FOREIGN KEY (`command_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
+    ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `websocket_command`
-    ADD FOREIGN KEY (`command_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
+    ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `mqtt_command`
-    ADD FOREIGN KEY (`command_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
+    ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `redis_command`
-    ADD FOREIGN KEY (`command_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
+    ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `monitor`
-    ADD FOREIGN KEY (`command_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
+    ADD FOREIGN KEY (`command_template_id`) REFERENCES `command_template` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `m_condition`
     ADD FOREIGN KEY (`monitor_id`) REFERENCES `monitor` (`id`) ON DELETE CASCADE;

@@ -47,22 +47,22 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 	IdInt, err := strconv.ParseInt(id, 10, 0)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("GetHeaderTemplateById: ", err)
+		h.L.Error().Println("GetTimeTemplateById: ", err)
 		return
 	}
 	tt, err := h.O.Find([]int32{int32(IdInt)})
 	if len(tt) == 0 {
 		util.Err(c, errors.New("empty time template"), 0)
-		h.L.Error().Println("GetHeaderTemplateById: ", "empty time template")
+		h.L.Error().Println("GetTimeTemplateById: ", "empty time template")
 		return
 	}
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("GetHeaderTemplateById: ", err)
+		h.L.Error().Println("GetTimeTemplateById: ", err)
 		return
 	}
 	result := Format(tt)
-	h.L.Info().Println("GetHeaderTemplateById: success")
+	h.L.Info().Println("GetTimeTemplateById: success")
 	c.JSON(200, result[0])
 	return
 }
@@ -79,14 +79,14 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 	entry := []*TimeTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("AddHeaderTemplate: ", err)
+		h.L.Error().Println("AddTimeTemplate: ", err)
 		return
 	}
 	tt := CreateConvert(entry)
 	tt, err := h.O.Create(tt)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("AddHeaderTemplate: ", err)
+		h.L.Error().Println("AddTimeTemplate: ", err)
 		return
 	}
 	c.JSON(200, Format(tt))
@@ -98,13 +98,13 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 // @Accept  json
 // @Produce json
 // @Param   time_template body     []time_template.TimeTemplateUpdate true "modify time template body"
-// @Success 200           {string} string "update successfully
+// @Success 200           {string} string "update successfully"
 // @Router  /time_template/ [patch]
 func (h *Handler) UpdateTimeTemplate(c *gin.Context) {
 	entry := []*TimeTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateHeaderTemplate: ", err)
+		h.L.Error().Println("UpdateTimeTemplate: ", err)
 		return
 	}
 	ids := make([]int32, 0, len(entry))
@@ -116,14 +116,14 @@ func (h *Handler) UpdateTimeTemplate(c *gin.Context) {
 	tt, err := h.O.Find(ids)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateHeaderTemplate: ", err)
+		h.L.Error().Println("UpdateTimeTemplate: ", err)
 		return
 	}
 	tt = UpdateConvert(tt, uMap)
 	err = h.O.Update(tt)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateHeaderTemplate: ", err)
+		h.L.Error().Println("UpdateTimeTemplate: ", err)
 		return
 	}
 	c.JSON(200, "update successfully")
@@ -140,24 +140,24 @@ func (h *Handler) DeleteTimeTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
+		h.L.Error().Println("DeleteTimeTemplate: ", err)
 		return
 	}
 	tt, err := h.O.Find(entry)
 	if len(tt) == 0 {
 		util.Err(c, errors.New("empty time template"), 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
+		h.L.Error().Println("DeleteTimeTemplate: ", err)
 		return
 	}
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
+		h.L.Error().Println("DeleteTimeTemplate: ", err)
 		return
 	}
 	err = h.O.Delete(tt)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
+		h.L.Error().Println("DeleteTimeTemplate: ", err)
 		return
 	}
 	c.JSON(200, "delete successfully")
