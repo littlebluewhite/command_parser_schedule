@@ -1,13 +1,21 @@
 [
   {
-    "description": "string",
-    "name": "test2",
+    "description": "some text",
+    "enabled": true,
+    "name": "test1",
     "time_data": {
+      "condition_type": "monthly_day",
       "end_date": "2023-01-02T15:04:05+07:00",
-      "end_time": "02:00:00",
-      "interval_seconds": 0,
+      "end_time": "18:02:02",
+      "interval_seconds": 20,
+      "repeat_type": "monthly",
       "start_date": "2023-01-02T15:04:05+07:00",
-      "start_time": "05:12:15"
+      "start_time": "00:00:00",
+      "t_condition": [
+        1,
+        2,
+        3
+      ]
     }
   }
 ]
