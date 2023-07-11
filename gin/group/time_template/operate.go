@@ -6,6 +6,7 @@ import (
 	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util"
 	"context"
+	"errors"
 	"github.com/patrickmn/go-cache"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
@@ -17,6 +18,7 @@ type Operate interface {
 	Create([]*model.TimeTemplate) ([]*model.TimeTemplate, error)
 	Update([]*model.TimeTemplate) error
 	Delete([]*model.TimeTemplate) error
+	ReloadCache() error
 }
 
 type operate struct {
@@ -31,7 +33,17 @@ func NewOperate(dbs initial.Dbs) Operate {
 	}
 }
 
-func (o *operate) List() ([]*model.TimeTemplate, error) {
+func (o *operate) getCacheMap() (map[int]model.TimeTemplate, error) {
+	var cacheMap map[int]model.TimeTemplate
+	if x, found := o.cache.Get("timeTemplates"); found {
+		cacheMap = x.(map[int]model.TimeTemplate)
+	} else {
+		return nil, errors.New("cache error")
+	}
+	return cacheMap, nil
+}
+
+func (o *operate) listDB() ([]*model.TimeTemplate, error) {
 	t := query.Use(o.db).TimeTemplate
 	ctx := context.Background()
 	timeTemplates, err := t.WithContext(ctx).Preload(field.Associations).Find()
@@ -41,7 +53,38 @@ func (o *operate) List() ([]*model.TimeTemplate, error) {
 	return timeTemplates, nil
 }
 
-func (o *operate) Find(ids []int32) ([]*model.TimeTemplate, error) {
+func (o *operate) List() ([]*model.TimeTemplate, error) {
+	return o.listCache()
+}
+
+func (o *operate) listCache() ([]*model.TimeTemplate, error) {
+	var tt []*model.TimeTemplate
+	cacheMap, err := o.getCacheMap()
+	if err != nil {
+		return nil, err
+	}
+	for _, value := range cacheMap {
+		tt = append(tt, &value)
+	}
+	return tt, nil
+}
+
+func (o *operate) ReloadCache() (e error) {
+	tt, err := o.listDB()
+	if err != nil {
+		e = err
+		return
+	}
+	cacheMap := make(map[int]model.TimeTemplate)
+	for i := 0; i < len(tt); i++ {
+		entry := tt[i]
+		cacheMap[int(entry.ID)] = *entry
+	}
+	o.cache.Set("timeTemplates", cacheMap, cache.NoExpiration)
+	return
+}
+
+func (o *operate) findDB(ids []int32) ([]*model.TimeTemplate, error) {
 	t := query.Use(o.db).TimeTemplate
 	ctx := context.Background()
 	timeTemplates, err := t.WithContext(ctx).Preload(field.Associations).Where(t.ID.In(ids...)).Find()
@@ -51,12 +94,34 @@ func (o *operate) Find(ids []int32) ([]*model.TimeTemplate, error) {
 	return timeTemplates, nil
 }
 
+func (o *operate) Find(ids []int32) ([]*model.TimeTemplate, error) {
+	return o.findCache(ids)
+}
+
+func (o *operate) findCache(ids []int32) ([]*model.TimeTemplate, error) {
+	tt := make([]*model.TimeTemplate, 0, len(ids))
+	var cacheMap map[int]model.TimeTemplate
+	if x, found := o.cache.Get("timeTemplates"); found {
+		cacheMap = x.(map[int]model.TimeTemplate)
+	} else {
+		return nil, errors.New("cache error")
+	}
+	for _, id := range ids {
+		t := cacheMap[int(id)]
+		tt = append(tt, &t)
+	}
+	return tt, nil
+}
+
 func (o *operate) Create(timeTemplates []*model.TimeTemplate) ([]*model.TimeTemplate, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {
 		if err := tx.TimeTemplate.WithContext(ctx).Create(timeTemplates...); err != nil {
 			return err
+		}
+		for _, t := range timeTemplates {
+
 		}
 		return nil
 	})

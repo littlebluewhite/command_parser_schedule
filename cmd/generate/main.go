@@ -13,7 +13,8 @@ func main() {
 		OutPath: "./dal/query",
 		/* Mode: gen.WithoutContext,*/
 		//if you want the nullable field generation property to be pointer type, set FieldNullable true
-		FieldNullable: true,
+		FieldNullable:  true,
+		FieldCoverable: true,
 	})
 
 	db, err := sql.NewDB("mySQL", "gen_sql.log", "db")
@@ -81,7 +82,8 @@ func main() {
 		gen.FieldRelate(field.Many2Many, "Stages", taskStage, &field.RelateConfig{
 			GORMTag: map[string]string{"many2many": "task_template_stage"},
 		}),
-		gen.FieldType("variable", "json.RawMessage"))
+		gen.FieldType("variable", "json.RawMessage"),
+	)
 
 	taskTemplateStage := g.GenerateModel("task_template_stage")
 

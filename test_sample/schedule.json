@@ -1,21 +1,77 @@
 [
   {
-    "description": "some text",
-    "enabled": true,
     "name": "test1",
+    "description": "some text",
+    "time_data_id": 0,
+    "task_id": null,
+    "enabled": true,
     "time_data": {
-      "condition_type": "monthly_day",
-      "end_date": "2023-01-02T15:04:05+07:00",
+      "repeat_type": "monthly",
+      "start_date": "2023-01-02T00:00:00Z",
+      "end_date": "2023-01-02T00:00:00Z",
+      "start_time": "00:00:00",
       "end_time": "18:02:02",
       "interval_seconds": 20,
-      "repeat_type": "monthly",
-      "start_date": "2023-01-02T15:04:05+07:00",
-      "start_time": "00:00:00",
+      "condition_type": "monthly_day",
       "t_condition": [
         1,
         2,
         3
       ]
+    }
+  },
+  {
+    "name": "test2",
+    "description": "some text",
+    "time_data_id": 0,
+    "task_id": null,
+    "enabled": false,
+    "time_data": {
+      "repeat_type": "daily",
+      "start_date": "2023-01-02T00:00:00Z",
+      "end_date": null,
+      "start_time": "00:00:00",
+      "end_time": "18:02:02",
+      "interval_seconds": 20,
+      "condition_type": null,
+      "t_condition": []
+    }
+  },
+  {
+    "name": "test3",
+    "description": "some text",
+    "time_data_id": 0,
+    "task_id": null,
+    "enabled": true,
+    "time_data": {
+      "repeat_type": "weekly",
+      "start_date": "2023-01-02T00:00:00Z",
+      "end_date": "2023-07-22T00:00:00Z",
+      "start_time": "00:00:00",
+      "end_time": "18:02:02",
+      "interval_seconds": 30,
+      "condition_type": "weekly_day",
+      "t_condition": [
+        2,
+        6
+      ]
+    }
+  },
+  {
+    "name": "test4",
+    "description": "some text",
+    "time_data_id": 0,
+    "task_id": null,
+    "enabled": true,
+    "time_data": {
+      "repeat_type": null,
+      "start_date": "2023-04-18T00:00:00Z",
+      "end_date": null,
+      "start_time": "15:00:00",
+      "end_time": "18:02:02",
+      "interval_seconds": null,
+      "condition_type": null,
+      "t_condition": []
     }
   }
 ]

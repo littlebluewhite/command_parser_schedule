@@ -4,7 +4,7 @@ CREATE TABLE `time_template`
     `name`         varchar(255) UNIQUE NOT NULL,
     `time_data_id` int UNIQUE          NOT NULL,
     `updated_at`   datetime,
-    `created_at`   datetime DEFAULT (now())
+    `created_at`   datetime
 );
 
 CREATE TABLE `time_data`
@@ -23,13 +23,13 @@ CREATE TABLE `time_data`
 CREATE TABLE `schedule`
 (
     `id`           int PRIMARY KEY AUTO_INCREMENT,
-    `name`         varchar(255) UNIQUE NOT NULL,
+    `name`         varchar(255) UNIQUE   NOT NULL,
     `description`  varchar(255),
-    `time_data_id` int UNIQUE          NOT NULL,
+    `time_data_id` int UNIQUE            NOT NULL,
     `task_id`      int,
-    `enabled`      boolean  DEFAULT false NOT NULL,
-    `updated_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `created_at`   datetime DEFAULT (now())
+    `enabled`      boolean DEFAULT false NOT NULL,
+    `updated_at`   datetime,
+    `created_at`   datetime
 );
 
 CREATE TABLE `command_template`
@@ -40,21 +40,21 @@ CREATE TABLE `command_template`
     `description` varchar(255),
     `host`        varchar(255)                                      NOT NULL,
     `port`        varchar(255)                                      NOT NULL,
-    `updated_at`  datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `created_at`  datetime DEFAULT (now())
+    `updated_at`  datetime,
+    `created_at`  datetime
 );
 
 CREATE TABLE `https_command`
 (
-    `id`                 int PRIMARY KEY AUTO_INCREMENT,
-    `command_template_id`         int UNIQUE,
-    `method`             ENUM ('GET', 'POST', 'PATCH', 'PUT', 'DELETE') NOT NULL,
-    `url`                varchar(255)                                   NOT NULL,
-    `authorization_type` ENUM ('basic', 'token'),
-    `params`             json DEFAULT (json_array()),
-    `header`             json DEFAULT (json_array()),
-    `body_type`          ENUM ('text', 'html', 'xml', 'form_data', 'x_www_form_urlencoded', 'json'),
-    `body`               json
+    `id`                  int PRIMARY KEY AUTO_INCREMENT,
+    `command_template_id` int UNIQUE,
+    `method`              ENUM ('GET', 'POST', 'PATCH', 'PUT', 'DELETE') NOT NULL,
+    `url`                 varchar(255)                                   NOT NULL,
+    `authorization_type`  ENUM ('basic', 'token'),
+    `params`              json DEFAULT (json_array()),
+    `header`              json DEFAULT (json_array()),
+    `body_type`           ENUM ('text', 'html', 'xml', 'form_data', 'x_www_form_urlencoded', 'json'),
+    `body`                json
 );
 
 CREATE TABLE `header_template`
@@ -66,40 +66,40 @@ CREATE TABLE `header_template`
 
 CREATE TABLE `websocket_command`
 (
-    `id`         int PRIMARY KEY AUTO_INCREMENT,
+    `id`                  int PRIMARY KEY AUTO_INCREMENT,
     `command_template_id` int UNIQUE,
-    `url`        varchar(255) NOT NULL,
-    `header`     json DEFAULT (json_array()),
-    `message`    varchar(255)
+    `url`                 varchar(255) NOT NULL,
+    `header`              json DEFAULT (json_array()),
+    `message`             varchar(255)
 );
 
 CREATE TABLE `mqtt_command`
 (
-    `id`         int PRIMARY KEY AUTO_INCREMENT,
+    `id`                  int PRIMARY KEY AUTO_INCREMENT,
     `command_template_id` int UNIQUE,
-    `topic`      varchar(255)                  NOT NULL,
-    `header`     json DEFAULT (json_array()),
-    `message`    json,
-    `type`       ENUM ('publish', 'subscribe') NOT NULL
+    `topic`               varchar(255)                  NOT NULL,
+    `header`              json DEFAULT (json_array()),
+    `message`             json,
+    `type`                ENUM ('publish', 'subscribe') NOT NULL
 );
 
 CREATE TABLE `redis_command`
 (
-    `id`         int PRIMARY KEY AUTO_INCREMENT,
+    `id`                  int PRIMARY KEY AUTO_INCREMENT,
     `command_template_id` int UNIQUE,
-    `password`   varchar(255),
-    `db`         int DEFAULT 0,
-    `topic`      varchar(255),
-    `message`    json,
-    `type`       ENUM ('publish', 'subscribe') NOT NULL
+    `password`            varchar(255),
+    `db`                  int DEFAULT 0,
+    `topic`               varchar(255),
+    `message`             json,
+    `type`                ENUM ('publish', 'subscribe') NOT NULL
 );
 
 CREATE TABLE `monitor`
 (
-    `id`         int PRIMARY KEY AUTO_INCREMENT,
-    `column`     ENUM ('status', 'data') NOT NULL,
-    `timeout`    int                     NOT NULL,
-    `interval`   int,
+    `id`                  int PRIMARY KEY AUTO_INCREMENT,
+    `column`              ENUM ('status', 'data') NOT NULL,
+    `timeout`             int                     NOT NULL,
+    `interval`            int,
     `command_template_id` int UNIQUE              NOT NULL
 );
 
@@ -118,9 +118,9 @@ CREATE TABLE `task_template`
 (
     `id`         int PRIMARY KEY AUTO_INCREMENT,
     `name`       varchar(255) NOT NULL,
-    `variable`   json     DEFAULT (json_object()),
-    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `created_at` datetime DEFAULT (now())
+    `variable`   json DEFAULT (JSON_OBJECT()),
+    `updated_at` datetime,
+    `created_at` datetime
 );
 
 CREATE TABLE `task_template_stage`
@@ -137,7 +137,7 @@ CREATE TABLE `task_stage`
     `stage_number`        int                         NOT NULL,
     `mode`                ENUM ('monitor', 'execute') NOT NULL,
     `command_template_id` int,
-    `tag`                 json DEFAULT (json_array())
+    `tag`                 json DEFAULT (JSON_ARRAY())
 );
 
 ALTER TABLE `time_template`

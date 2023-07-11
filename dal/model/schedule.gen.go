@@ -18,8 +18,8 @@ type Schedule struct {
 	TimeDataID  int32      `gorm:"column:time_data_id;not null" json:"time_data_id"`
 	TaskID      *int32     `gorm:"column:task_id" json:"task_id"`
 	Enabled     bool       `gorm:"column:enabled;not null" json:"enabled"`
-	UpdatedAt   *time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	CreatedAt   *time.Time `gorm:"column:created_at;default:now()" json:"created_at"`
+	UpdatedAt   *time.Time `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt   *time.Time `gorm:"column:created_at" json:"created_at"`
 	TimeData    TimeDatum  `gorm:"foreignKey:time_data_id" json:"time_data"`
 }
 

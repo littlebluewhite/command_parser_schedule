@@ -16,8 +16,8 @@ type TaskTemplate struct {
 	ID        int32           `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Name      string          `gorm:"column:name;not null" json:"name"`
 	Variable  json.RawMessage `gorm:"column:variable;default:json_object()" json:"variable"`
-	UpdatedAt *time.Time      `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	CreatedAt *time.Time      `gorm:"column:created_at;default:now()" json:"created_at"`
+	UpdatedAt *time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt *time.Time      `gorm:"column:created_at" json:"created_at"`
 	Stages    []TaskStage     `gorm:"many2many:task_template_stage" json:"stages"`
 }
 
