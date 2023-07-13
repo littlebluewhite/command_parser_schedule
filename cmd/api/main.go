@@ -47,14 +47,14 @@ func main() {
 	mainLog.Info().Println("command module start")
 
 	// DBs start includes SQL Cache
-	dbs := dbs.NewDbs(mainLog, false)
+	DBS := dbs.NewDbs(mainLog, false)
 	defer func() {
-		dbs.GetIdb().Close()
+		DBS.GetIdb().Close()
 		mainLog.Info().Println("influxDB Disconnect")
 	}()
 
 	// gin app start
-	ginApp := initial.NewGinApp(mainLog, dbs)
+	ginApp := initial.NewGinApp(mainLog, DBS)
 
 	// injection
 	group.Inject(ginApp)
