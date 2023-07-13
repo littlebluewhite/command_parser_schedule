@@ -1,7 +1,7 @@
 package main
 
 import (
-	"command_parser_schedule/app/rdb"
+	"command_parser_schedule/app/dbs/rdb"
 	"context"
 	"encoding/json"
 	"fmt"

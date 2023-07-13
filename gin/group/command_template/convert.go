@@ -4,8 +4,8 @@ import (
 	"command_parser_schedule/dal/model"
 )
 
-func Format(ct []*model.CommandTemplate) []*CommandTemplate {
-	result := make([]*CommandTemplate, 0, len(ct))
+func Format(ct []model.CommandTemplate) []CommandTemplate {
+	result := make([]CommandTemplate, 0, len(ct))
 	for _, item := range ct {
 		i := CommandTemplate{
 			ID:          item.ID,
@@ -71,7 +71,7 @@ func Format(ct []*model.CommandTemplate) []*CommandTemplate {
 				MConditions: mResult,
 			}
 		}
-		result = append(result, &i)
+		result = append(result, i)
 	}
 	return result
 }

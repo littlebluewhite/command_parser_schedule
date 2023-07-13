@@ -1,7 +1,7 @@
 package main
 
 import (
-	"command_parser_schedule/app/sql"
+	"command_parser_schedule/app/dbs/sql"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
 )

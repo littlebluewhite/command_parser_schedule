@@ -3,7 +3,6 @@ package task_template
 import (
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -50,11 +49,6 @@ func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 		return
 	}
 	ht, err := h.O.Find([]int32{int32(IdInt)})
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty task template"), 0)
-		h.L.Error().Println("GetTaskTemplateById: ", "empty task template")
-		return
-	}
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetTaskTemplateById: ", err)
@@ -80,14 +74,13 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 		h.L.Error().Println("AddTaskTemplate: ", err)
 		return
 	}
-	ht := CreateConvert(entry)
-	ht, err := h.O.Create(ht)
+	tt, err := h.O.Create(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddTaskTemplate: ", err)
 		return
 	}
-	c.JSON(200, Format(ht))
+	c.JSON(200, Format(tt))
 }
 
 // UpdateTaskTemplate swagger
@@ -105,20 +98,7 @@ func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
 		h.L.Error().Println("UpdateTaskTemplate: ", err)
 		return
 	}
-	ids := make([]int32, 0, len(entry))
-	uMap := make(map[int32]*TaskTemplateUpdate)
-	for _, item := range entry {
-		ids = append(ids, item.ID)
-		uMap[item.ID] = item
-	}
-	tt, err := h.O.Find(ids)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateTaskTemplate: ", err)
-		return
-	}
-	tt = UpdateConvert(tt, uMap)
-	err = h.O.Update(tt)
+	err := h.O.Update(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateTaskTemplate: ", err)
@@ -141,18 +121,7 @@ func (h *Handler) DeleteTaskTemplate(c *gin.Context) {
 		h.L.Error().Println("DeleteTaskTemplate: ", err)
 		return
 	}
-	ht, err := h.O.Find(entry)
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty task template"), 0)
-		h.L.Error().Println("DeleteTaskTemplate: ", err)
-		return
-	}
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteTaskTemplate: ", err)
-		return
-	}
-	err = h.O.Delete(ht)
+	err := h.O.Delete(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("DeleteTaskTemplate: ", err)

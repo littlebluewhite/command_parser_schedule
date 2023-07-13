@@ -7,15 +7,15 @@ import (
 	"math"
 )
 
-func Format(ct []*model.TaskTemplate) []*TaskTemplate {
-	result := make([]*TaskTemplate, 0, len(ct))
+func Format(ct []model.TaskTemplate) []TaskTemplate {
+	result := make([]TaskTemplate, 0, len(ct))
 	for _, item := range ct {
 		fmt.Printf("%+v\n", item)
 		sResult := make([]*TaskStage, 0, len(item.Stages))
 		for _, s := range item.Stages {
 			var cTemplate *command_template.CommandTemplate
 			if s.CommandTemplate != nil {
-				cTemplate = command_template.Format([]*model.CommandTemplate{s.CommandTemplate})[0]
+				cTemplate = &command_template.Format([]model.CommandTemplate{*s.CommandTemplate})[0]
 			} else {
 				cTemplate = nil
 			}
@@ -38,7 +38,7 @@ func Format(ct []*model.TaskTemplate) []*TaskTemplate {
 			CreatedAt: item.CreatedAt,
 			Stages:    sResult,
 		}
-		result = append(result, &i)
+		result = append(result, i)
 	}
 	return result
 }
@@ -67,17 +67,17 @@ func CreateConvert(c []*TaskTemplateCreate) []*model.TaskTemplate {
 	return result
 }
 
-func UpdateConvert(tt []*model.TaskTemplate, uMap map[int32]*TaskTemplateUpdate) []*model.TaskTemplate {
-	for i := 0; i < len(uMap); i++ {
-		u := uMap[tt[i].ID]
+func UpdateConvert(ttMap map[int]model.TaskTemplate, utt []*TaskTemplateUpdate) (result []*model.TaskTemplate) {
+	for _, u := range utt {
+		tt := ttMap[int(u.ID)]
 		if u.Name != nil {
-			tt[i].Name = *u.Name
+			tt.Name = *u.Name
 		}
 		if u.Variable != nil {
-			tt[i].Variable = *u.Variable
+			tt.Variable = *u.Variable
 		}
 		sId := make(map[int32]struct{})
-		for _, s := range tt[i].Stages {
+		for _, s := range tt.Stages {
 			sId[s.ID] = struct{}{}
 		}
 		if u.Stages != nil {
@@ -97,8 +97,9 @@ func UpdateConvert(tt []*model.TaskTemplate, uMap map[int32]*TaskTemplateUpdate)
 				}
 				sResult = append(sResult, ts)
 			}
-			tt[i].Stages = sResult
+			tt.Stages = sResult
 		}
+		result = append(result, &tt)
 	}
-	return tt
+	return
 }

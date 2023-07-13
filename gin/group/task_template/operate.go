@@ -1,22 +1,25 @@
 package task_template
 
 import (
+	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
-	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/patrickmn/go-cache"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
 )
 
 type Operate interface {
-	List() ([]*model.TaskTemplate, error)
-	Find(ids []int32) ([]*model.TaskTemplate, error)
-	Create([]*model.TaskTemplate) ([]*model.TaskTemplate, error)
-	Update([]*model.TaskTemplate) error
-	Delete([]*model.TaskTemplate) error
+	List() ([]model.TaskTemplate, error)
+	Find(ids []int32) ([]model.TaskTemplate, error)
+	Create([]*TaskTemplateCreate) ([]model.TaskTemplate, error)
+	Update([]*TaskTemplateUpdate) error
+	Delete([]int32) error
+	ReloadCache() error
 }
 
 type operate struct {
@@ -24,14 +27,33 @@ type operate struct {
 	cache *cache.Cache
 }
 
-func NewOperate(dbs initial.Dbs) Operate {
-	return &operate{
+func NewOperate(dbs dbs.Dbs) Operate {
+	o := &operate{
 		db:    dbs.GetSql(),
 		cache: dbs.GetCache(),
 	}
+	err := o.ReloadCache()
+	if err != nil {
+		panic("initial time template operate error")
+	}
+	return o
 }
 
-func (o *operate) List() ([]*model.TaskTemplate, error) {
+func (o *operate) getCacheMap() map[int]model.TaskTemplate {
+	var cacheMap map[int]model.TaskTemplate
+	if x, found := o.cache.Get("taskTemplates"); found {
+		cacheMap = x.(map[int]model.TaskTemplate)
+	} else {
+		return make(map[int]model.TaskTemplate)
+	}
+	return cacheMap
+}
+
+func (o *operate) setCacheMap(cacheMap map[int]model.TaskTemplate) {
+	o.cache.Set("taskTemplates", cacheMap, cache.NoExpiration)
+}
+
+func (o *operate) listDB() ([]*model.TaskTemplate, error) {
 	t := query.Use(o.db).TaskTemplate
 	ctx := context.Background()
 	tt, err := t.WithContext(ctx).Preload(field.Associations).Preload(t.Stages.CommandTemplate).Find()
@@ -41,7 +63,36 @@ func (o *operate) List() ([]*model.TaskTemplate, error) {
 	return tt, nil
 }
 
-func (o *operate) Find(ids []int32) ([]*model.TaskTemplate, error) {
+func (o *operate) listCache() ([]model.TaskTemplate, error) {
+	var tt []model.TaskTemplate
+	cacheMap := o.getCacheMap()
+	fmt.Println(cacheMap)
+	for _, value := range cacheMap {
+		tt = append(tt, value)
+	}
+	return tt, nil
+}
+
+func (o *operate) List() ([]model.TaskTemplate, error) {
+	return o.listCache()
+}
+
+func (o *operate) ReloadCache() (e error) {
+	tt, err := o.listDB()
+	if err != nil {
+		e = err
+		return
+	}
+	cacheMap := make(map[int]model.TaskTemplate)
+	for i := 0; i < len(tt); i++ {
+		entry := tt[i]
+		cacheMap[int(entry.ID)] = *entry
+	}
+	o.setCacheMap(cacheMap)
+	return
+}
+
+func (o *operate) findDB(ids []int32) ([]*model.TaskTemplate, error) {
 	t := query.Use(o.db).TaskTemplate
 	ctx := context.Background()
 	TaskTemplates, err := t.WithContext(ctx).Preload(field.Associations).Preload(t.Stages.CommandTemplate).Where(t.ID.In(ids...)).Find()
@@ -51,26 +102,58 @@ func (o *operate) Find(ids []int32) ([]*model.TaskTemplate, error) {
 	return TaskTemplates, nil
 }
 
-func (o *operate) Create(TaskTemplates []*model.TaskTemplate) ([]*model.TaskTemplate, error) {
+func (o *operate) findCache(ids []int32) ([]model.TaskTemplate, error) {
+	tt := make([]model.TaskTemplate, 0, len(ids))
+	var cacheMap map[int]model.TaskTemplate
+	if x, found := o.cache.Get("taskTemplates"); found {
+		cacheMap = x.(map[int]model.TaskTemplate)
+	} else {
+		return nil, errors.New("cache error")
+	}
+	for _, id := range ids {
+		t, ok := cacheMap[int(id)]
+		if !ok {
+			return nil, fmt.Errorf("id: %v not found", id)
+		}
+		tt = append(tt, t)
+	}
+	return tt, nil
+}
+
+func (o *operate) Find(ids []int32) ([]model.TaskTemplate, error) {
+	return o.findCache(ids)
+}
+
+func (o *operate) Create(c []*TaskTemplateCreate) ([]model.TaskTemplate, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
+	cacheMap := o.getCacheMap()
+	taskTemplates := CreateConvert(c)
+	result := make([]model.TaskTemplate, 0, len(taskTemplates))
 	err := q.Transaction(func(tx *query.Query) error {
-		if err := tx.TaskTemplate.WithContext(ctx).Create(TaskTemplates...); err != nil {
+		if err := tx.TaskTemplate.WithContext(ctx).CreateInBatches(taskTemplates, 100); err != nil {
 			return err
 		}
+		for _, t := range taskTemplates {
+			cacheMap[int(t.ID)] = *t
+			result = append(result, *t)
+		}
+		o.setCacheMap(cacheMap)
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return TaskTemplates, nil
+	return result, nil
 }
 
-func (o *operate) Update(TaskTemplates []*model.TaskTemplate) error {
+func (o *operate) Update(u []*TaskTemplateUpdate) error {
+	cacheMap := o.getCacheMap()
+	tt := UpdateConvert(cacheMap, u)
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {
-		for _, item := range TaskTemplates {
+		for _, item := range tt {
 			t := util.StructToMap(item)
 			sUpdate := make([]map[string]interface{}, 0, 10)
 			sCreate := make([]*model.TaskStage, 0, 10)
@@ -123,12 +206,15 @@ func (o *operate) Update(TaskTemplates []*model.TaskTemplate) error {
 	return nil
 }
 
-func (o *operate) Delete(TaskTemplate []*model.TaskTemplate) error {
-	ids := make([]int32, 0, len(TaskTemplate))
+func (o *operate) Delete(ids []int32) error {
+	cacheMap := o.getCacheMap()
 	sIds := make([]int32, 0, 20)
-	for _, t := range TaskTemplate {
-		ids = append(ids, t.ID)
-		for _, s := range t.Stages {
+	for _, i := range ids {
+		tt, ok := cacheMap[int(i)]
+		if !ok {
+			return errors.New(fmt.Sprintf("id: %d not found", i))
+		}
+		for _, s := range tt.Stages {
 			sIds = append(sIds, s.ID)
 		}
 	}

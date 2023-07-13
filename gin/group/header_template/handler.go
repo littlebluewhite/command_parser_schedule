@@ -3,7 +3,6 @@ package header_template
 import (
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -50,11 +49,6 @@ func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 		return
 	}
 	ht, err := h.O.Find([]int32{int32(IdInt)})
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty header template"), 0)
-		h.L.Error().Println("GetHeaderTemplateById: ", "empty header template")
-		return
-	}
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetHeaderTemplateById: ", err)
@@ -80,14 +74,13 @@ func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 		h.L.Error().Println("AddHeaderTemplate: ", err)
 		return
 	}
-	ht := CreateConvert(entry)
-	ht, err := h.O.Create(ht)
+	result, err := h.O.Create(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddHeaderTemplate: ", err)
 		return
 	}
-	c.JSON(200, ht)
+	c.JSON(200, result)
 }
 
 // UpdateHeaderTemplate swagger
@@ -105,20 +98,7 @@ func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
 		h.L.Error().Println("UpdateHeaderTemplate: ", err)
 		return
 	}
-	ids := make([]int32, 0, len(entry))
-	uMap := make(map[int32]*HeaderTemplateUpdate)
-	for _, item := range entry {
-		ids = append(ids, item.ID)
-		uMap[item.ID] = item
-	}
-	ht, err := h.O.Find(ids)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateHeaderTemplate: ", err)
-		return
-	}
-	ht = UpdateConvert(ht, uMap)
-	err = h.O.Update(ht)
+	err := h.O.Update(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateHeaderTemplate: ", err)
@@ -141,18 +121,7 @@ func (h *Handler) DeleteHeaderTemplate(c *gin.Context) {
 		h.L.Error().Println("DeleteHeaderTemplate: ", err)
 		return
 	}
-	ht, err := h.O.Find(entry)
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty header template"), 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
-		return
-	}
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteHeaderTemplate: ", err)
-		return
-	}
-	err = h.O.Delete(ht)
+	err := h.O.Delete(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("DeleteHeaderTemplate: ", err)

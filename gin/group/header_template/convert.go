@@ -14,15 +14,16 @@ func CreateConvert(c []*HeaderTemplateCreate) []*model.HeaderTemplate {
 	return result
 }
 
-func UpdateConvert(ht []*model.HeaderTemplate, uMap map[int32]*HeaderTemplateUpdate) []*model.HeaderTemplate {
-	for i := 0; i < len(uMap); i++ {
-		u := uMap[ht[i].ID]
+func UpdateConvert(htMap map[int]model.HeaderTemplate, uht []*HeaderTemplateUpdate) (result []*model.HeaderTemplate) {
+	for _, u := range uht {
+		ht := htMap[int(u.ID)]
 		if u.Name != nil {
-			ht[i].Name = *u.Name
+			ht.Name = *u.Name
 		}
 		if u.Data != nil {
-			ht[i].Data = *u.Data
+			ht.Data = *u.Data
 		}
+		result = append(result, &ht)
 	}
-	return ht
+	return
 }

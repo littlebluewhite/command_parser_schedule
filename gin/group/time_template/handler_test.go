@@ -1,7 +1,7 @@
 package time_template
 
 import (
-	"command_parser_schedule/dal/model"
+	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
@@ -12,7 +12,7 @@ import (
 
 func setUpHandler() (l logFile.LogFile, modelConfig initial.GinApp) {
 	l = logFile.NewLogFile("test", "handler.log")
-	dbs := initial.NewDbs(l, true)
+	dbs := dbs.NewDbs(l, true)
 	modelConfig = initial.NewGinApp(l, dbs)
 	Inject(modelConfig)
 	return
@@ -23,7 +23,7 @@ func TestGetList(t *testing.T) {
 	l.Info().Println("test handler get list")
 	w := util.PerformRequest(app.GetRouter(), "GET", "/time_template/", nil)
 	require.Equal(t, 200, w.Code)
-	var response []model.TimeTemplate
+	var response []TimeTemplate
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	require.Nil(t, err)
 	util.P("============================")

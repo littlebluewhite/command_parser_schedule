@@ -4,8 +4,8 @@ import (
 	"command_parser_schedule/dal/model"
 )
 
-func Format(sd []*model.Schedule) []*Schedule {
-	result := make([]*Schedule, 0, len(sd))
+func Format(sd []model.Schedule) []Schedule {
+	result := make([]Schedule, 0, len(sd))
 	for _, item := range sd {
 		i := Schedule{
 			ID:          item.ID,
@@ -26,7 +26,7 @@ func Format(sd []*model.Schedule) []*Schedule {
 				TCondition:      item.TimeData.TCondition,
 			},
 		}
-		result = append(result, &i)
+		result = append(result, i)
 	}
 	return result
 }
@@ -55,23 +55,24 @@ func CreateConvert(c []*ScheduleCreate) []*model.Schedule {
 	return result
 }
 
-func UpdateConvert(sd []*model.Schedule, uMap map[int32]*ScheduleUpdate) []*model.Schedule {
-	for i := 0; i < len(uMap); i++ {
-		u := uMap[sd[i].ID]
-		sd[i].Name = *u.Name
-		sd[i].Description = u.Description
-		sd[i].TaskID = u.TaskID
-		sd[i].Enabled = *u.Enabled
+func UpdateConvert(sMap map[int]model.Schedule, us []*ScheduleUpdate) (result []*model.Schedule) {
+	for _, u := range us {
+		s := sMap[int(u.ID)]
+		s.Name = *u.Name
+		s.Description = u.Description
+		s.TaskID = u.TaskID
+		s.Enabled = *u.Enabled
 		if u.TimeData != nil {
-			sd[i].TimeData.RepeatType = u.TimeData.RepeatType
-			sd[i].TimeData.StartDate = u.TimeData.StartDate
-			sd[i].TimeData.EndDate = u.TimeData.EndDate
-			sd[i].TimeData.StartTime = []byte(u.TimeData.StartTime.String())
-			sd[i].TimeData.EndTime = []byte(u.TimeData.EndTime.String())
-			sd[i].TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
-			sd[i].TimeData.ConditionType = u.TimeData.ConditionType
-			sd[i].TimeData.TCondition = u.TimeData.TCondition
+			s.TimeData.RepeatType = u.TimeData.RepeatType
+			s.TimeData.StartDate = u.TimeData.StartDate
+			s.TimeData.EndDate = u.TimeData.EndDate
+			s.TimeData.StartTime = []byte(u.TimeData.StartTime.String())
+			s.TimeData.EndTime = []byte(u.TimeData.EndTime.String())
+			s.TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
+			s.TimeData.ConditionType = u.TimeData.ConditionType
+			s.TimeData.TCondition = u.TimeData.TCondition
 		}
+		result = append(result, &s)
 	}
-	return sd
+	return
 }

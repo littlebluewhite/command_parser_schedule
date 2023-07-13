@@ -3,7 +3,6 @@ package time_template
 import (
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -23,14 +22,13 @@ type Handler struct {
 // @Router      /time_template/ [get]
 func (h *Handler) GetTimeTemplates(c *gin.Context) {
 	tt, err := h.O.List()
-	result := Format(tt)
 	if err != nil {
 		util.Err(c, err, 0)
-		h.L.Error().Println("GetheaderTemplates: ", err)
+		h.L.Error().Println("GetTimeTemplates: ", err)
 		return
 	}
-	h.L.Info().Println("GetheaderTemplates: success")
-	c.JSON(200, result)
+	h.L.Info().Println("GetTimeTemplates: success")
+	c.JSON(200, Format(tt))
 	return
 }
 
@@ -51,11 +49,6 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 		return
 	}
 	tt, err := h.O.Find([]int32{int32(IdInt)})
-	if len(tt) == 0 {
-		util.Err(c, errors.New("empty time template"), 0)
-		h.L.Error().Println("GetTimeTemplateById: ", "empty time template")
-		return
-	}
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetTimeTemplateById: ", err)
@@ -82,8 +75,7 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 		h.L.Error().Println("AddTimeTemplate: ", err)
 		return
 	}
-	tt := CreateConvert(entry)
-	tt, err := h.O.Create(tt)
+	tt, err := h.O.Create(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddTimeTemplate: ", err)
@@ -107,20 +99,7 @@ func (h *Handler) UpdateTimeTemplate(c *gin.Context) {
 		h.L.Error().Println("UpdateTimeTemplate: ", err)
 		return
 	}
-	ids := make([]int32, 0, len(entry))
-	uMap := make(map[int32]*TimeTemplateUpdate)
-	for _, item := range entry {
-		ids = append(ids, item.ID)
-		uMap[item.ID] = item
-	}
-	tt, err := h.O.Find(ids)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateTimeTemplate: ", err)
-		return
-	}
-	tt = UpdateConvert(tt, uMap)
-	err = h.O.Update(tt)
+	err := h.O.Update(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateTimeTemplate: ", err)
@@ -143,18 +122,7 @@ func (h *Handler) DeleteTimeTemplate(c *gin.Context) {
 		h.L.Error().Println("DeleteTimeTemplate: ", err)
 		return
 	}
-	tt, err := h.O.Find(entry)
-	if len(tt) == 0 {
-		util.Err(c, errors.New("empty time template"), 0)
-		h.L.Error().Println("DeleteTimeTemplate: ", err)
-		return
-	}
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteTimeTemplate: ", err)
-		return
-	}
-	err = h.O.Delete(tt)
+	err := h.O.Delete(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("DeleteTimeTemplate: ", err)

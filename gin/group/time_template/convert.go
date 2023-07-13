@@ -4,8 +4,8 @@ import (
 	"command_parser_schedule/dal/model"
 )
 
-func Format(tt []*model.TimeTemplate) []*TimeTemplate {
-	result := make([]*TimeTemplate, 0, len(tt))
+func Format(tt []model.TimeTemplate) []TimeTemplate {
+	result := make([]TimeTemplate, 0, len(tt))
 	for _, item := range tt {
 		i := TimeTemplate{
 			ID:        item.ID,
@@ -23,7 +23,7 @@ func Format(tt []*model.TimeTemplate) []*TimeTemplate {
 				TCondition:      item.TimeData.TCondition,
 			},
 		}
-		result = append(result, &i)
+		result = append(result, i)
 	}
 	return result
 }
@@ -49,22 +49,23 @@ func CreateConvert(c []*TimeTemplateCreate) []*model.TimeTemplate {
 	return result
 }
 
-func UpdateConvert(tt []*model.TimeTemplate, uMap map[int32]*TimeTemplateUpdate) []*model.TimeTemplate {
-	for i := 0; i < len(uMap); i++ {
-		u := uMap[tt[i].ID]
+func UpdateConvert(ttMap map[int]model.TimeTemplate, utt []*TimeTemplateUpdate) (result []*model.TimeTemplate) {
+	for _, u := range utt {
+		tt := ttMap[int(u.ID)]
 		if u.Name != nil {
-			tt[i].Name = *u.Name
+			tt.Name = *u.Name
 		}
 		if u.TimeData != nil {
-			tt[i].TimeData.RepeatType = u.TimeData.RepeatType
-			tt[i].TimeData.StartDate = u.TimeData.StartDate
-			tt[i].TimeData.EndDate = u.TimeData.EndDate
-			tt[i].TimeData.StartTime = []byte(u.TimeData.StartTime.String())
-			tt[i].TimeData.EndTime = []byte(u.TimeData.EndTime.String())
-			tt[i].TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
-			tt[i].TimeData.ConditionType = u.TimeData.ConditionType
-			tt[i].TimeData.TCondition = u.TimeData.TCondition
+			tt.TimeData.RepeatType = u.TimeData.RepeatType
+			tt.TimeData.StartDate = u.TimeData.StartDate
+			tt.TimeData.EndDate = u.TimeData.EndDate
+			tt.TimeData.StartTime = []byte(u.TimeData.StartTime.String())
+			tt.TimeData.EndTime = []byte(u.TimeData.EndTime.String())
+			tt.TimeData.IntervalSeconds = u.TimeData.IntervalSeconds
+			tt.TimeData.ConditionType = u.TimeData.ConditionType
+			tt.TimeData.TCondition = u.TimeData.TCondition
 		}
+		result = append(result, &tt)
 	}
-	return tt
+	return
 }

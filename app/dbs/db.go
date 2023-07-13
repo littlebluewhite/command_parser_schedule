@@ -1,9 +1,9 @@
-package initial
+package dbs
 
 import (
-	"command_parser_schedule/app/influxdb"
-	"command_parser_schedule/app/rdb"
-	"command_parser_schedule/app/sql"
+	"command_parser_schedule/app/dbs/influxdb"
+	"command_parser_schedule/app/dbs/rdb"
+	"command_parser_schedule/app/dbs/sql"
 	"command_parser_schedule/util/logFile"
 	"github.com/patrickmn/go-cache"
 	"github.com/redis/go-redis/v9"

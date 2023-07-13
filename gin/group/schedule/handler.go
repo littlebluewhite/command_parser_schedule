@@ -3,7 +3,6 @@ package schedule
 import (
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -22,15 +21,14 @@ type Handler struct {
 // @Success     200 {array} schedule.Schedule
 // @Router      /schedule/ [get]
 func (h *Handler) GetSchedules(c *gin.Context) {
-	tt, err := h.O.List()
-	result := Format(tt)
+	s, err := h.O.List()
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetheaderTemplates: ", err)
 		return
 	}
 	h.L.Info().Println("GetheaderTemplates: success")
-	c.JSON(200, result)
+	c.JSON(200, Format(s))
 	return
 }
 
@@ -50,20 +48,14 @@ func (h *Handler) GetScheduleById(c *gin.Context) {
 		h.L.Error().Println("GetScheduleById: ", err)
 		return
 	}
-	tt, err := h.O.Find([]int32{int32(IdInt)})
-	if len(tt) == 0 {
-		util.Err(c, errors.New("empty schedule"), 0)
-		h.L.Error().Println("GetScheduleById: ", "empty schedule")
-		return
-	}
+	s, err := h.O.Find([]int32{int32(IdInt)})
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetScheduleById: ", err)
 		return
 	}
-	result := Format(tt)
 	h.L.Info().Println("GetScheduleById: success")
-	c.JSON(200, result[0])
+	c.JSON(200, Format(s)[0])
 	return
 }
 
@@ -82,14 +74,13 @@ func (h *Handler) AddSchedule(c *gin.Context) {
 		h.L.Error().Println("AddSchedule: ", err)
 		return
 	}
-	tt := CreateConvert(entry)
-	tt, err := h.O.Create(tt)
+	s, err := h.O.Create(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddSchedule: ", err)
 		return
 	}
-	c.JSON(200, Format(tt))
+	c.JSON(200, Format(s))
 }
 
 // UpdateSchedule swagger
@@ -107,20 +98,7 @@ func (h *Handler) UpdateSchedule(c *gin.Context) {
 		h.L.Error().Println("UpdateSchedule: ", err)
 		return
 	}
-	ids := make([]int32, 0, len(entry))
-	uMap := make(map[int32]*ScheduleUpdate)
-	for _, item := range entry {
-		ids = append(ids, item.ID)
-		uMap[item.ID] = item
-	}
-	tt, err := h.O.Find(ids)
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("UpdateSchedule: ", err)
-		return
-	}
-	tt = UpdateConvert(tt, uMap)
-	err = h.O.Update(tt)
+	err := h.O.Update(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateSchedule: ", err)
@@ -143,18 +121,7 @@ func (h *Handler) DeleteSchedule(c *gin.Context) {
 		h.L.Error().Println("DeleteSchedule: ", err)
 		return
 	}
-	tt, err := h.O.Find(entry)
-	if len(tt) == 0 {
-		util.Err(c, errors.New("empty schedule"), 0)
-		h.L.Error().Println("DeleteSchedule: ", err)
-		return
-	}
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteSchedule: ", err)
-		return
-	}
-	err = h.O.Delete(tt)
+	err := h.O.Delete(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("DeleteSchedule: ", err)

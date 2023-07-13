@@ -1,22 +1,25 @@
 package schedule
 
 import (
+	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
-	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/patrickmn/go-cache"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
 )
 
 type Operate interface {
-	List() ([]*model.Schedule, error)
-	Find(ids []int32) ([]*model.Schedule, error)
-	Create([]*model.Schedule) ([]*model.Schedule, error)
-	Update([]*model.Schedule) error
-	Delete([]*model.Schedule) error
+	List() ([]model.Schedule, error)
+	Find(ids []int32) ([]model.Schedule, error)
+	Create([]*ScheduleCreate) ([]model.Schedule, error)
+	Update([]*ScheduleUpdate) error
+	Delete([]int32) error
+	ReloadCache() error
 }
 
 type operate struct {
@@ -24,14 +27,33 @@ type operate struct {
 	cache *cache.Cache
 }
 
-func NewOperate(dbs initial.Dbs) Operate {
-	return &operate{
+func NewOperate(dbs dbs.Dbs) Operate {
+	o := &operate{
 		db:    dbs.GetSql(),
 		cache: dbs.GetCache(),
 	}
+	err := o.ReloadCache()
+	if err != nil {
+		panic("initial time template operate error")
+	}
+	return o
 }
 
-func (o *operate) List() ([]*model.Schedule, error) {
+func (o *operate) getCacheMap() map[int]model.Schedule {
+	var cacheMap map[int]model.Schedule
+	if x, found := o.cache.Get("Schedules"); found {
+		cacheMap = x.(map[int]model.Schedule)
+	} else {
+		return make(map[int]model.Schedule)
+	}
+	return cacheMap
+}
+
+func (o *operate) setCacheMap(cacheMap map[int]model.Schedule) {
+	o.cache.Set("Schedules", cacheMap, cache.NoExpiration)
+}
+
+func (o *operate) listDB() ([]*model.Schedule, error) {
 	t := query.Use(o.db).Schedule
 	ctx := context.Background()
 	schedules, err := t.WithContext(ctx).Preload(field.Associations).Find()
@@ -41,7 +63,36 @@ func (o *operate) List() ([]*model.Schedule, error) {
 	return schedules, nil
 }
 
-func (o *operate) Find(ids []int32) ([]*model.Schedule, error) {
+func (o *operate) listCache() ([]model.Schedule, error) {
+	var s []model.Schedule
+	cacheMap := o.getCacheMap()
+	fmt.Println(cacheMap)
+	for _, value := range cacheMap {
+		s = append(s, value)
+	}
+	return s, nil
+}
+
+func (o *operate) List() ([]model.Schedule, error) {
+	return o.listCache()
+}
+
+func (o *operate) ReloadCache() (e error) {
+	s, err := o.listDB()
+	if err != nil {
+		e = err
+		return
+	}
+	cacheMap := make(map[int]model.Schedule)
+	for i := 0; i < len(s); i++ {
+		entry := s[i]
+		cacheMap[int(entry.ID)] = *entry
+	}
+	o.setCacheMap(cacheMap)
+	return
+}
+
+func (o *operate) findDB(ids []int32) ([]*model.Schedule, error) {
 	t := query.Use(o.db).Schedule
 	ctx := context.Background()
 	schedules, err := t.WithContext(ctx).Preload(field.Associations).Where(t.ID.In(ids...)).Find()
@@ -51,26 +102,58 @@ func (o *operate) Find(ids []int32) ([]*model.Schedule, error) {
 	return schedules, nil
 }
 
-func (o *operate) Create(schedules []*model.Schedule) ([]*model.Schedule, error) {
+func (o *operate) findCache(ids []int32) ([]model.Schedule, error) {
+	s := make([]model.Schedule, 0, len(ids))
+	var cacheMap map[int]model.Schedule
+	if x, found := o.cache.Get("Schedules"); found {
+		cacheMap = x.(map[int]model.Schedule)
+	} else {
+		return nil, errors.New("cache error")
+	}
+	for _, id := range ids {
+		t, ok := cacheMap[int(id)]
+		if !ok {
+			return nil, fmt.Errorf("id: %v not found", id)
+		}
+		s = append(s, t)
+	}
+	return s, nil
+}
+
+func (o *operate) Find(ids []int32) ([]model.Schedule, error) {
+	return o.findCache(ids)
+}
+
+func (o *operate) Create(c []*ScheduleCreate) ([]model.Schedule, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
+	cacheMap := o.getCacheMap()
+	Schedules := CreateConvert(c)
+	result := make([]model.Schedule, 0, len(Schedules))
 	err := q.Transaction(func(tx *query.Query) error {
-		if err := tx.Schedule.WithContext(ctx).Create(schedules...); err != nil {
+		if err := tx.Schedule.WithContext(ctx).CreateInBatches(Schedules, 100); err != nil {
 			return err
 		}
+		for _, t := range Schedules {
+			cacheMap[int(t.ID)] = *t
+			result = append(result, *t)
+		}
+		o.setCacheMap(cacheMap)
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return schedules, nil
+	return result, nil
 }
 
-func (o *operate) Update(schedules []*model.Schedule) error {
+func (o *operate) Update(u []*ScheduleUpdate) error {
+	cacheMap := o.getCacheMap()
+	s := UpdateConvert(cacheMap, u)
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {
-		for _, item := range schedules {
+		for _, item := range s {
 			s := util.StructToMap(item)
 			td := s["time_data"].(map[string]interface{})
 			util.MapDeleteNil(s)
@@ -86,7 +169,9 @@ func (o *operate) Update(schedules []*model.Schedule) error {
 				td); err != nil {
 				return err
 			}
+			cacheMap[int(item.ID)] = *item
 		}
+		o.setCacheMap(cacheMap)
 		return nil
 	})
 	if err != nil {
@@ -95,18 +180,21 @@ func (o *operate) Update(schedules []*model.Schedule) error {
 	return nil
 }
 
-func (o *operate) Delete(schedule []*model.Schedule) error {
-	sId := make([]int32, 0, len(schedule))
-	tdId := make([]int32, 0, len(schedule))
-	for _, t := range schedule {
-		sId = append(sId, t.ID)
+func (o *operate) Delete(ids []int32) error {
+	cacheMap := o.getCacheMap()
+	tdId := make([]int32, 0, len(ids))
+	for _, i := range ids {
+		t, ok := cacheMap[int(i)]
+		if !ok {
+			return errors.New(fmt.Sprintf("id: %d not found", i))
+		}
 		tdId = append(tdId, t.TimeDataID)
 	}
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {
 		if _, err := tx.Schedule.WithContext(ctx).Where(
-			tx.Schedule.ID.In(sId...)).Delete(); err != nil {
+			tx.Schedule.ID.In(ids...)).Delete(); err != nil {
 			return err
 		}
 		if _, err := tx.TimeDatum.WithContext(ctx).Where(

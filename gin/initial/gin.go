@@ -1,6 +1,7 @@
 package initial
 
 import (
+	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/gin/middleware"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -10,15 +11,15 @@ import (
 
 type GinApp interface {
 	GetRouter() *gin.Engine
-	GetDbs() Dbs
+	GetDbs() dbs.Dbs
 }
 
 type ginApp struct {
 	Router *gin.Engine
-	Dbs    Dbs
+	Dbs    dbs.Dbs
 }
 
-func NewGinApp(log logFile.LogFile, dbs Dbs) GinApp {
+func NewGinApp(log logFile.LogFile, dbs dbs.Dbs) GinApp {
 	r := initRouter(log)
 	return &ginApp{
 		Router: r,
@@ -43,6 +44,6 @@ func (g *ginApp) GetRouter() *gin.Engine {
 	return g.Router
 }
 
-func (g *ginApp) GetDbs() Dbs {
+func (g *ginApp) GetDbs() dbs.Dbs {
 	return g.Dbs
 }

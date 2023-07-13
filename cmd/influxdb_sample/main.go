@@ -1,7 +1,7 @@
 package main
 
 import (
-	"command_parser_schedule/app/influxdb"
+	"command_parser_schedule/app/dbs/influxdb"
 	"context"
 	"fmt"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"

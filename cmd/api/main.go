@@ -1,6 +1,7 @@
 package main
 
 import (
+	"command_parser_schedule/app/dbs"
 	_ "command_parser_schedule/docs"
 	"command_parser_schedule/gin/group"
 	"command_parser_schedule/gin/initial"
@@ -46,7 +47,7 @@ func main() {
 	mainLog.Info().Println("command module start")
 
 	// DBs start includes SQL Cache
-	dbs := initial.NewDbs(mainLog, false)
+	dbs := dbs.NewDbs(mainLog, false)
 	defer func() {
 		dbs.GetIdb().Close()
 		mainLog.Info().Println("influxDB Disconnect")

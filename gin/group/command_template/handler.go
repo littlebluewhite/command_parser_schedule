@@ -3,7 +3,6 @@ package command_template
 import (
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strconv"
@@ -22,14 +21,15 @@ type Handler struct {
 // @Success     200 {array} command_template.CommandTemplate
 // @Router      /command_template/ [get]
 func (h *Handler) GetCommandTemplates(c *gin.Context) {
-	ht, err := h.O.List()
+	ct, err := h.O.List()
+	result := Format(ct)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetCommandTemplates: ", err)
 		return
 	}
 	h.L.Info().Println("GetCommandTemplates: success")
-	c.JSON(200, Format(ht))
+	c.JSON(200, result)
 	return
 }
 
@@ -50,11 +50,6 @@ func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 		return
 	}
 	ht, err := h.O.Find([]int32{int32(IdInt)})
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty command template"), 0)
-		h.L.Error().Println("GetCommandTemplateById: ", "empty command template")
-		return
-	}
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetCommandTemplateById: ", err)
@@ -80,14 +75,13 @@ func (h *Handler) AddCommandTemplate(c *gin.Context) {
 		h.L.Error().Println("AddCommandTemplate: ", err)
 		return
 	}
-	ht := CreateConvert(entry)
-	ht, err := h.O.Create(ht)
+	result, err := h.O.Create(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddCommandTemplate: ", err)
 		return
 	}
-	c.JSON(200, Format(ht))
+	c.JSON(200, Format(result))
 }
 
 // DeleteCommandTemplate swagger
@@ -104,18 +98,7 @@ func (h *Handler) DeleteCommandTemplate(c *gin.Context) {
 		h.L.Error().Println("DeleteCommandTemplate: ", err)
 		return
 	}
-	ht, err := h.O.Find(entry)
-	if len(ht) == 0 {
-		util.Err(c, errors.New("empty command template"), 0)
-		h.L.Error().Println("DeleteCommandTemplate: ", err)
-		return
-	}
-	if err != nil {
-		util.Err(c, err, 0)
-		h.L.Error().Println("DeleteCommandTemplate: ", err)
-		return
-	}
-	err = h.O.Delete(ht)
+	err := h.O.Delete(entry)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("DeleteCommandTemplate: ", err)

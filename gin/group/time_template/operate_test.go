@@ -1,18 +1,19 @@
 package time_template
 
 import (
+	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
-	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util/logFile"
 	"fmt"
 	"github.com/stretchr/testify/require"
+	"gorm.io/datatypes"
 	"testing"
 	"time"
 )
 
 func setUpOperate() (o Operate, l logFile.LogFile) {
 	l = logFile.NewLogFile("test", "operate.log")
-	dbs := initial.NewDbs(l, true)
+	dbs := dbs.NewDbs(l, true)
 	o = NewOperate(dbs)
 	return
 }
@@ -30,8 +31,8 @@ func TestQuery(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "test2",
@@ -41,8 +42,8 @@ func TestQuery(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "test3",
@@ -52,8 +53,8 @@ func TestQuery(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "test4",
@@ -63,8 +64,8 @@ func TestQuery(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 		}
@@ -86,7 +87,7 @@ func TestQuery(t *testing.T) {
 		l.Info().Println("test time templates list")
 		timeTemplates, err := o.List()
 		require.Nil(t, err)
-		require.Equal(t, timeTemplates[0].ID, int32(1))
+		require.Equal(t, int32(4), timeTemplates[0].ID)
 	})
 }
 
@@ -96,34 +97,34 @@ func TestCreate(t *testing.T) {
 		l.Info().Println("test operate time template create")
 		var i int32 = 300
 		testTimeTemplate := []*model.TimeTemplate{
-			{Name: "test1", TimeData: model.TimeDatum{
+			{Name: "test6", TimeData: model.TimeDatum{
 				RepeatType:      nil,
 				StartDate:       time.Date(2023, 6, 16, 0, 0, 0, 0, time.Local),
 				StartTime:       []byte("12:15:12"),
 				EndTime:         []byte("13:21:13"),
 				IntervalSeconds: &i,
-				MConditionType:  nil,
-				MCondition:      []byte("[1, 7, 3, 4]"),
+				ConditionType:   nil,
+				TCondition:      []byte("[1, 7, 3, 4]"),
 			}},
 		}
 		result, err := o.Create(testTimeTemplate)
 		fmt.Println(result)
 		require.Nil(t, err)
-		require.Equal(t, result[0].Name, "test1")
+		require.Equal(t, result[0].Name, "test6")
 	})
 	t.Run("create fail", func(t *testing.T) {
 
 		l.Info().Println("test operate time template create")
 		var i int32 = 300
 		testTimeTemplate := []*model.TimeTemplate{
-			{Name: "test1", TimeData: model.TimeDatum{
+			{Name: "test6", TimeData: model.TimeDatum{
 				RepeatType:      nil,
 				StartDate:       time.Date(2023, 6, 19, 0, 0, 0, 0, time.Local),
 				StartTime:       []byte("08:12:12"),
 				EndTime:         []byte("13:09:13"),
 				IntervalSeconds: &i,
-				MConditionType:  nil,
-				MCondition:      []byte("[1, 8, 3, 4]"),
+				ConditionType:   nil,
+				TCondition:      []byte("[1, 8, 3, 4]"),
 			}},
 		}
 		result, err := o.Create(testTimeTemplate)
@@ -137,16 +138,18 @@ func TestUpdate(t *testing.T) {
 	o, l := setUpOperate()
 	t.Run("update", func(t *testing.T) {
 		var s string = "monthly_day"
-		testTimeTemplate := []*model.TimeTemplate{
-			{Name: "test1", TimeDataID: 1, ID: 1,
-				TimeData: model.TimeDatum{
+		name := "test1"
+		startTime := datatypes.NewTime(8, 12, 12, 0)
+		testTimeTemplate := []*TimeTemplateUpdate{
+			{Name: &name, ID: 1,
+				TimeData: &TimeDatumUpdate{
 					RepeatType:      nil,
 					StartDate:       time.Date(2023, 6, 18, 0, 0, 0, 0, time.Local),
-					StartTime:       []byte("08:12:12"),
-					EndTime:         []byte("16:55:16"),
+					StartTime:       &startTime,
+					EndTime:         datatypes.NewTime(16, 55, 16, 0),
 					IntervalSeconds: nil,
-					MConditionType:  &s,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   &s,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 		}
@@ -168,8 +171,8 @@ func TestDelete(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "dog",
@@ -179,8 +182,8 @@ func TestDelete(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "banana",
@@ -190,8 +193,8 @@ func TestDelete(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 			{Name: "cherry",
@@ -201,15 +204,19 @@ func TestDelete(t *testing.T) {
 					StartTime:       []byte("05:12:12"),
 					EndTime:         []byte("16:09:16"),
 					IntervalSeconds: &i,
-					MConditionType:  nil,
-					MCondition:      []byte("[5, 1, 7]"),
+					ConditionType:   nil,
+					TCondition:      []byte("[5, 1, 7]"),
 				},
 			},
 		}
 		l.Info().Println("test operate time template delete")
 		timeTemplates, err := o.Create(testTimeTemplates)
 		require.Nil(t, err)
-		err = o.Delete(timeTemplates)
+		ids := make([]int32, 0, len(timeTemplates))
+		for _, tt := range timeTemplates {
+			ids = append(ids, tt.ID)
+		}
+		err = o.Delete(ids)
 		require.Nil(t, err)
 	})
 }

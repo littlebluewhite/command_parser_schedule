@@ -14,7 +14,7 @@ var (
 
 func init() {
 	_, b, _, _ := runtime.Caller(0)
-	rootPath = filepath.Dir(filepath.Dir(filepath.Dir(b)))
+	rootPath = filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(b))))
 }
 
 func NewRedis(yamlName string) *redis.Client {

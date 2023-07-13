@@ -12,6 +12,10 @@ type Routes struct {
 }
 
 func InitRoutes(r Routes) {
+	err := r.O.ReloadCache()
+	if err != nil {
+		panic("initial header template router error")
+	}
 	h := Handler{
 		O: r.O,
 		L: r.L,
