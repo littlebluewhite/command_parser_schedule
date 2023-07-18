@@ -20,8 +20,8 @@ func TestStructToMap1(t *testing.T) {
 			StartTime:       []byte("13:12:12"),
 			EndTime:         []byte("16:17:16"),
 			IntervalSeconds: &i,
-			MConditionType:  nil,
-			MCondition:      []byte("[5, 6, 8]"),
+			ConditionType:   nil,
+			TCondition:      []byte("[5, 6, 8]"),
 		},
 	}
 	res := StructToMap(&sample)

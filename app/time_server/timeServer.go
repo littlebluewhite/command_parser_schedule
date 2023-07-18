@@ -1,10 +1,11 @@
 package time_server
 
 import (
+	"command_parser_schedule/app/dbs"
+	"command_parser_schedule/dal/model"
 	"command_parser_schedule/util/logFile"
 	"context"
 	"fmt"
-	"github.com/patrickmn/go-cache"
 	"time"
 )
 
@@ -21,16 +22,14 @@ type TimeServer interface {
 }
 
 type timeServer[T any] struct {
-	cache      *cache.Cache
-	cacheTable string
-	duration   time.Duration
+	dbs      dbs.Dbs
+	duration time.Duration
 }
 
-func NewTimeServer[T any](cache *cache.Cache, tableName string, duration time.Duration) TimeServer {
+func NewTimeServer[T any](dbs dbs.Dbs, duration time.Duration) TimeServer {
 	return &timeServer[T]{
-		cache:      cache,
-		cacheTable: tableName,
-		duration:   duration,
+		dbs:      dbs,
+		duration: duration,
 	}
 }
 
@@ -45,21 +44,24 @@ func (ts *timeServer[T]) Start(ctx context.Context) {
 			timeServerLog.Info().Println("Time server stop gracefully")
 			return
 		case t := <-ticker.C:
-			s := ts.refreshData()
-			for _, value := range s {
-				go func(value T) {
-					pointer := &value
-					listenToSchedule(ctxChild, pointer, t)
-				}(value)
-			}
+			go ts.checkSchedule(ctxChild, t)
 			fmt.Println("Invoked at ", t)
 		}
 	}
 }
 
-func (ts *timeServer[T]) refreshData() (s map[int]T) {
-	if x, found := ts.cache.Get(ts.cacheTable); found {
-		s = x.(map[int]T)
+func (ts *timeServer[T]) checkSchedule(ctx context.Context, t time.Time) {
+	select {
+	case <-ctx.Done():
+		return
+	default:
+		var cacheMap map[int]model.Schedule
+		if x, found := ts.dbs.GetCache().Get("schedule"); found {
+			cacheMap = x.(map[int]model.Schedule)
+		}
+		for _, s := range cacheMap {
+			go checkScheduleActive(s, t)
+		}
+
 	}
-	return
 }

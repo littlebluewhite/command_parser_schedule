@@ -1,0 +1,138 @@
+package time_server
+
+import (
+	"command_parser_schedule/dal/model"
+	"command_parser_schedule/util"
+	"encoding/json"
+	"gorm.io/datatypes"
+	"time"
+)
+
+func checkScheduleActive(s model.Schedule, t time.Time) (result bool) {
+	result = checkTimeData(s.TimeData, t) && s.Enabled
+	return
+}
+
+func checkTimeData(td model.TimeDatum, t time.Time) (result bool) {
+	ch := make(chan bool, 3)
+	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+		ch <- checkTime(td, t)
+	}(td, t, ch)
+	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+		ch <- checkDate(td, t)
+	}(td, t, ch)
+	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+		ch <- checkCondition(td, t)
+	}(td, t, ch)
+	for i := 0; i < 3; i++ {
+		select {
+		case b := <-ch:
+			if b == false {
+				result = false
+			}
+		}
+	}
+	result = true
+	return
+}
+
+func checkTime(td model.TimeDatum, t time.Time) (result bool) {
+	var startTime datatypes.Time
+	var endTime datatypes.Time
+	if err := startTime.UnmarshalJSON(td.StartTime); err != nil {
+		return
+	}
+	if err := endTime.UnmarshalJSON(td.StartTime); err != nil {
+		return
+	}
+	startInt := int(startTime)
+	nowInt := util.GetTimeInt(t)
+	endInt := int(endTime)
+	if !(startInt <= nowInt && endInt+999999999 >= nowInt) {
+		return
+	}
+	if td.IntervalSeconds == nil || *td.IntervalSeconds == 0 {
+		result = true
+		return
+	}
+	if duration := nowInt - startInt; (duration/int(time.Second))%int(*td.IntervalSeconds) == 0 {
+		result = true
+	}
+	return
+}
+
+func checkDate(td model.TimeDatum, t time.Time) (result bool) {
+	if td.EndDate == nil {
+		if td.StartDate.Unix() <= t.Unix() {
+			result = true
+		}
+	} else {
+		if td.StartDate.Unix() <= t.Unix() && (*td.EndDate).Add(24*time.Hour).Unix() > t.Unix() {
+			result = true
+		}
+	}
+	return
+}
+
+func checkCondition(td model.TimeDatum, t time.Time) (result bool) {
+	if td.RepeatType == nil {
+		result = true
+	} else {
+		switch *td.RepeatType {
+		case daily.String():
+			result = true
+		case weekly.String():
+			result = checkWeekly(td, t)
+		case monthly.String():
+			result = checkMonthly(td, t)
+		}
+	}
+	return
+}
+
+func checkWeekly(td model.TimeDatum, t time.Time) (result bool) {
+	if td.ConditionType == nil {
+		return
+	}
+	if *td.ConditionType != weeklyDay.String() {
+		return
+	}
+	var conditions []int
+	if err := json.Unmarshal(td.TCondition, &conditions); err != nil {
+		return
+	}
+	result = util.Contains[int]([]int{int(t.Weekday())}, conditions)
+	return
+}
+
+func checkMonthly(td model.TimeDatum, t time.Time) (result bool) {
+	if td.ConditionType == nil {
+		return
+	}
+	var conditions []int
+	if err := json.Unmarshal(td.TCondition, &conditions); err != nil {
+		return
+	}
+	weekCount := util.CountWeek(t)
+	switch *td.ConditionType {
+	case monthDay.String():
+		result = util.Contains[int]([]int{t.Day()}, conditions)
+	case weeklyFirst.String():
+		if weekCount == 0 {
+			result = util.Contains[int]([]int{int(t.Weekday())}, conditions)
+		}
+	case weeklySecond.String():
+		if weekCount == 1 {
+			result = util.Contains[int]([]int{int(t.Weekday())}, conditions)
+		}
+	case weeklyThird.String():
+		if weekCount == 2 {
+			result = util.Contains[int]([]int{int(t.Weekday())}, conditions)
+		}
+	case weeklyFourth.String():
+		if weekCount == 3 {
+			result = util.Contains[int]([]int{int(t.Weekday())}, conditions)
+		}
+	}
+	return
+}
