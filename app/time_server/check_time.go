@@ -9,11 +9,12 @@ import (
 )
 
 func checkScheduleActive(s model.Schedule, t time.Time) (result bool) {
-	result = checkTimeData(s.TimeData, t) && s.Enabled
+	result = s.Enabled && checkTimeData(s.TimeData, t)
 	return
 }
 
 func checkTimeData(td model.TimeDatum, t time.Time) (result bool) {
+	result = true
 	ch := make(chan bool, 3)
 	go func(td model.TimeDatum, t time.Time, ch chan bool) {
 		ch <- checkTime(td, t)
@@ -32,7 +33,6 @@ func checkTimeData(td model.TimeDatum, t time.Time) (result bool) {
 			}
 		}
 	}
-	result = true
 	return
 }
 
@@ -42,7 +42,7 @@ func checkTime(td model.TimeDatum, t time.Time) (result bool) {
 	if err := startTime.UnmarshalJSON(td.StartTime); err != nil {
 		return
 	}
-	if err := endTime.UnmarshalJSON(td.StartTime); err != nil {
+	if err := endTime.UnmarshalJSON(td.EndTime); err != nil {
 		return
 	}
 	startInt := int(startTime)

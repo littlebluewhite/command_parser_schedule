@@ -6,6 +6,7 @@ import (
 	"command_parser_schedule/util/logFile"
 	"context"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -56,12 +57,21 @@ func (ts *timeServer[T]) checkSchedule(ctx context.Context, t time.Time) {
 		return
 	default:
 		var cacheMap map[int]model.Schedule
-		if x, found := ts.dbs.GetCache().Get("schedule"); found {
+		if x, found := ts.dbs.GetCache().Get("Schedules"); found {
 			cacheMap = x.(map[int]model.Schedule)
 		}
+		var wg sync.WaitGroup
 		for _, s := range cacheMap {
-			go checkScheduleActive(s, t)
+			wg.Add(1)
+			go func(s model.Schedule, t time.Time, wg *sync.WaitGroup) {
+				isActive := checkScheduleActive(s, t)
+				if isActive {
+					// TODO execute task
+				}
+				timeServerLog.Info().Printf("id: %v, active: %v\n", s.ID, isActive)
+				wg.Done()
+			}(s, t, &wg)
 		}
-
+		wg.Wait()
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"command_parser_schedule/app/dbs"
+	"command_parser_schedule/app/time_server"
 	_ "command_parser_schedule/docs"
 	"command_parser_schedule/gin/group"
 	"command_parser_schedule/gin/initial"
@@ -73,6 +74,9 @@ func main() {
 		WriteTimeout:   ServerConfig.WriteTimeout * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
+	timeServer := time_server.NewTimeServer[int](DBS, 1*time.Second)
+	go timeServer.Start(ctx)
 
 	// API server Start
 	go func() {
