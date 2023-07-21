@@ -10,19 +10,14 @@ var allMonthDay = [...]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
 
 type schedule struct {
-	ID          int32      `json:"id"`
-	Name        string     `json:"name"`
-	Description *string    `json:"description"`
-	TimeDataID  int32      `json:"time_data_id"`
-	TaskID      *int32     `json:"task_id"`
-	Enabled     bool       `json:"enabled"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	CreatedAt   *time.Time `json:"created_at"`
-	TimeData    timeDatum  `json:"time_data"`
+	ID       int32     `json:"id"`
+	Name     string    `json:"name"`
+	TaskID   *int32    `json:"task_id"`
+	Enabled  bool      `json:"enabled"`
+	TimeData timeDatum `json:"time_data"`
 }
 
 type timeDatum struct {
-	ID              int32           `json:"id"`
 	RepeatType      *string         `json:"repeat_type"`
 	StartDate       time.Time       `json:"start_date"`
 	EndDate         *time.Time      `json:"end_date"`

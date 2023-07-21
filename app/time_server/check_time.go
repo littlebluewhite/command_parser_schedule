@@ -1,28 +1,27 @@
 package time_server
 
 import (
-	"command_parser_schedule/dal/model"
 	"command_parser_schedule/util"
 	"encoding/json"
 	"gorm.io/datatypes"
 	"time"
 )
 
-func checkScheduleActive(s model.Schedule, t time.Time) (result bool) {
+func checkScheduleActive(s schedule, t time.Time) (result bool) {
 	result = s.Enabled && checkTimeData(s.TimeData, t)
 	return
 }
 
-func checkTimeData(td model.TimeDatum, t time.Time) (result bool) {
+func checkTimeData(td timeDatum, t time.Time) (result bool) {
 	result = true
 	ch := make(chan bool, 3)
-	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+	go func(td timeDatum, t time.Time, ch chan bool) {
 		ch <- checkTime(td, t)
 	}(td, t, ch)
-	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+	go func(td timeDatum, t time.Time, ch chan bool) {
 		ch <- checkDate(td, t)
 	}(td, t, ch)
-	go func(td model.TimeDatum, t time.Time, ch chan bool) {
+	go func(td timeDatum, t time.Time, ch chan bool) {
 		ch <- checkCondition(td, t)
 	}(td, t, ch)
 	for i := 0; i < 3; i++ {
@@ -36,7 +35,7 @@ func checkTimeData(td model.TimeDatum, t time.Time) (result bool) {
 	return
 }
 
-func checkTime(td model.TimeDatum, t time.Time) (result bool) {
+func checkTime(td timeDatum, t time.Time) (result bool) {
 	var startTime datatypes.Time
 	var endTime datatypes.Time
 	if err := startTime.UnmarshalJSON(td.StartTime); err != nil {
@@ -61,7 +60,7 @@ func checkTime(td model.TimeDatum, t time.Time) (result bool) {
 	return
 }
 
-func checkDate(td model.TimeDatum, t time.Time) (result bool) {
+func checkDate(td timeDatum, t time.Time) (result bool) {
 	if td.EndDate == nil {
 		if td.StartDate.Unix() <= t.Unix() {
 			result = true
@@ -74,7 +73,7 @@ func checkDate(td model.TimeDatum, t time.Time) (result bool) {
 	return
 }
 
-func checkCondition(td model.TimeDatum, t time.Time) (result bool) {
+func checkCondition(td timeDatum, t time.Time) (result bool) {
 	if td.RepeatType == nil {
 		result = true
 	} else {
@@ -90,7 +89,7 @@ func checkCondition(td model.TimeDatum, t time.Time) (result bool) {
 	return
 }
 
-func checkWeekly(td model.TimeDatum, t time.Time) (result bool) {
+func checkWeekly(td timeDatum, t time.Time) (result bool) {
 	if td.ConditionType == nil {
 		return
 	}
@@ -105,7 +104,7 @@ func checkWeekly(td model.TimeDatum, t time.Time) (result bool) {
 	return
 }
 
-func checkMonthly(td model.TimeDatum, t time.Time) (result bool) {
+func checkMonthly(td timeDatum, t time.Time) (result bool) {
 	if td.ConditionType == nil {
 		return
 	}

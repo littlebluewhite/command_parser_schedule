@@ -54,31 +54,34 @@ func main() {
 		mainLog.Info().Println("influxDB Disconnect")
 	}()
 
-	// gin app start
-	ginApp := initial.NewGinApp(mainLog, DBS)
+	// create new time server
+	timeServer := time_server.NewTimeServer[int](DBS, 1*time.Second)
 
-	// injection
+	ginApp := initial.NewGinApp(mainLog, DBS, timeServer)
+
 	group.Inject(ginApp)
 
-	// server config
 	ServerConfig := config.NewConfig[config.ServerConfig](".", "env", "server")
 
-	// server
 	var sb strings.Builder
 	sb.WriteString(":")
 	sb.WriteString(ServerConfig.Port)
 	srv := &http.Server{
+		// server
+		// server config
+		// injection
+		// gin app start
 		Addr:           sb.String(),
 		Handler:        ginApp.GetRouter(),
 		ReadTimeout:    ServerConfig.ReadTimeout * time.Second,
 		WriteTimeout:   ServerConfig.WriteTimeout * time.Second,
 		MaxHeaderBytes: 1 << 20,
+		// API server Start
 	}
 
-	timeServer := time_server.NewTimeServer[int](DBS, 1*time.Second)
+	// start time server
 	go timeServer.Start(ctx)
 
-	// API server Start
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			mainLog.Error().Fatalf("listen: %s\n", err)

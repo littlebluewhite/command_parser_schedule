@@ -20,17 +20,22 @@ func init() {
 
 type TimeServer interface {
 	Start(ctx context.Context)
+	ReloadSchedule(msm map[int]model.Schedule)
 }
 
 type timeServer[T any] struct {
+	mu       *sync.RWMutex
 	dbs      dbs.Dbs
 	duration time.Duration
+	schedule map[int]schedule
 }
 
 func NewTimeServer[T any](dbs dbs.Dbs, duration time.Duration) TimeServer {
+	mu := new(sync.RWMutex)
 	return &timeServer[T]{
 		dbs:      dbs,
 		duration: duration,
+		mu:       mu,
 	}
 }
 
@@ -56,22 +61,26 @@ func (ts *timeServer[T]) checkSchedule(ctx context.Context, t time.Time) {
 	case <-ctx.Done():
 		return
 	default:
-		var cacheMap map[int]model.Schedule
-		if x, found := ts.dbs.GetCache().Get("Schedules"); found {
-			cacheMap = x.(map[int]model.Schedule)
-		}
 		var wg sync.WaitGroup
-		for _, s := range cacheMap {
+		for _, s := range ts.schedule {
 			wg.Add(1)
-			go func(s model.Schedule, t time.Time, wg *sync.WaitGroup) {
+			go func(s schedule, t time.Time, wg *sync.WaitGroup, mu *sync.RWMutex) {
+				mu.RLock()
+				defer mu.RUnlock()
+				defer wg.Done()
 				isActive := checkScheduleActive(s, t)
 				if isActive {
 					// TODO execute task
 				}
 				timeServerLog.Info().Printf("id: %v, active: %v\n", s.ID, isActive)
-				wg.Done()
-			}(s, t, &wg)
+			}(s, t, &wg, ts.mu)
 		}
 		wg.Wait()
 	}
+}
+
+func (ts *timeServer[T]) ReloadSchedule(msm map[int]model.Schedule) {
+	ts.mu.Lock()
+	defer ts.mu.Unlock()
+	ts.schedule = modelMap2scheduleMap(msm)
 }

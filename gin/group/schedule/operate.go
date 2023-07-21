@@ -2,6 +2,7 @@ package schedule
 
 import (
 	"command_parser_schedule/app/dbs"
+	"command_parser_schedule/app/time_server"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
 	"command_parser_schedule/util"
@@ -25,12 +26,14 @@ type Operate interface {
 type operate struct {
 	db    *gorm.DB
 	cache *cache.Cache
+	ts    time_server.TimeServer
 }
 
-func NewOperate(dbs dbs.Dbs) Operate {
+func NewOperate(dbs dbs.Dbs, ts time_server.TimeServer) Operate {
 	o := &operate{
 		db:    dbs.GetSql(),
 		cache: dbs.GetCache(),
+		ts:    ts,
 	}
 	err := o.ReloadCache()
 	if err != nil {
@@ -89,6 +92,7 @@ func (o *operate) ReloadCache() (e error) {
 		cacheMap[int(entry.ID)] = *entry
 	}
 	o.setCacheMap(cacheMap)
+	o.ts.ReloadSchedule(cacheMap)
 	return
 }
 
@@ -139,6 +143,7 @@ func (o *operate) Create(c []*ScheduleCreate) ([]model.Schedule, error) {
 			result = append(result, *t)
 		}
 		o.setCacheMap(cacheMap)
+		o.ts.ReloadSchedule(cacheMap)
 		return nil
 	})
 	if err != nil {
@@ -172,6 +177,7 @@ func (o *operate) Update(u []*ScheduleUpdate) error {
 			cacheMap[int(item.ID)] = *item
 		}
 		o.setCacheMap(cacheMap)
+		o.ts.ReloadSchedule(cacheMap)
 		return nil
 	})
 	if err != nil {
@@ -201,6 +207,11 @@ func (o *operate) Delete(ids []int32) error {
 			tx.TimeDatum.ID.In(tdId...)).Delete(); err != nil {
 			return err
 		}
+		for _, id := range ids {
+			delete(cacheMap, int(id))
+		}
+		o.setCacheMap(cacheMap)
+		o.ts.ReloadSchedule(cacheMap)
 		return nil
 	})
 	if err != nil {

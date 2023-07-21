@@ -58,10 +58,14 @@ func CreateConvert(c []*ScheduleCreate) []*model.Schedule {
 func UpdateConvert(sMap map[int]model.Schedule, us []*ScheduleUpdate) (result []*model.Schedule) {
 	for _, u := range us {
 		s := sMap[int(u.ID)]
-		s.Name = *u.Name
+		if u.Name != nil {
+			s.Name = *u.Name
+		}
 		s.Description = u.Description
 		s.TaskID = u.TaskID
-		s.Enabled = *u.Enabled
+		if u.Enabled != nil {
+			s.Enabled = *u.Enabled
+		}
 		if u.TimeData != nil {
 			s.TimeData.RepeatType = u.TimeData.RepeatType
 			s.TimeData.StartDate = u.TimeData.StartDate

@@ -6,7 +6,7 @@ import (
 )
 
 func Inject(ginApp initial.GinApp) {
-	o := NewOperate(ginApp.GetDbs())
+	o := NewOperate(ginApp.GetDbs(), ginApp.GetTimeServer())
 	log := logFile.NewLogFile("router", "schedule.log")
 	InitRoutes(Routes{
 		ginApp.GetRouter(),

@@ -20,6 +20,9 @@ func main() {
 	}); err != nil {
 		panic(err)
 	}
+	if err := r.HDel(ctx, "key", "bool").Err(); err != nil {
+		panic(err)
+	}
 
 	jsonData, _ := json.Marshal(map[string]string{"vd": "dd"})
 
