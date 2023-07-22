@@ -46,6 +46,18 @@ func (c CalculateType) String() string {
 	return [...]string{"=", "!=", "<", ">", "<=", ">=", "include", "exclude"}[c]
 }
 
+type Status int
+
+const (
+	Process Status = iota
+	Success
+	Failure
+)
+
+func (s Status) String() string {
+	return [...]string{"Process", "Success", "Failure"}[s]
+}
+
 type command struct {
 	CommandId   string     `json:"command_id"`
 	From        time.Time  `json:"from"`
