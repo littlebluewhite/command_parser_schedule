@@ -71,18 +71,20 @@ func main() {
 			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
+		gen.FieldType("tags", "json.RawMessage"),
 	)
 	taskStage := g.GenerateModel("task_stage",
 		gen.FieldRelate(field.BelongsTo, "CommandTemplate", commandTemplate, &field.RelateConfig{
 			GORMTag:       map[string]string{"foreignKey": "command_template_id"},
 			RelatePointer: true,
 		}),
-		gen.FieldType("tag", "json.RawMessage"))
+		gen.FieldType("tags", "json.RawMessage"))
 	taskTemplate := g.GenerateModel("task_template",
 		gen.FieldRelate(field.Many2Many, "Stages", taskStage, &field.RelateConfig{
 			GORMTag: map[string]string{"many2many": "task_template_stage"},
 		}),
 		gen.FieldType("variable", "json.RawMessage"),
+		gen.FieldType("tags", "json.RawMessage"),
 	)
 
 	taskTemplateStage := g.GenerateModel("task_template_stage")
@@ -91,7 +93,8 @@ func main() {
 		gen.FieldRelate(field.BelongsTo, "TimeData", timeData,
 			&field.RelateConfig{
 				GORMTag: map[string]string{"foreignKey": "time_data_id"},
-			}))
+			}),
+		gen.FieldType("tags", "json.RawMessage"))
 
 	g.ApplyBasic(timeData, timeTemplate, headerTemplate, httpsCommand, commandTemplate,
 		redisCommand, mqttCommand, websocketCommand, monitor, mCondition, taskTemplateStage,

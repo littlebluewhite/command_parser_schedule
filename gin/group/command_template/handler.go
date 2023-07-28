@@ -19,7 +19,7 @@ type Handler struct {
 // @Tags        command_template
 // @Produce     json
 // @Success     200 {array} command_template.CommandTemplate
-// @Router      /command_template/ [get]
+// @Router      /api/command_template/ [get]
 func (h *Handler) GetCommandTemplates(c *gin.Context) {
 	ct, err := h.O.List()
 	result := Format(ct)
@@ -40,7 +40,7 @@ func (h *Handler) GetCommandTemplates(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     int true "command template id"
 // @Success     200 {object} command_template.CommandTemplate
-// @Router      /command_template/{id} [get]
+// @Router      /api/command_template/{id} [get]
 func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -67,7 +67,7 @@ func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 // @Produce json
 // @Param   command_template body     []command_template.CommandTemplateCreate true "command template body"
 // @Success 200           {array} command_template.CommandTemplate
-// @Router  /command_template/ [post]
+// @Router  /api/command_template/ [post]
 func (h *Handler) AddCommandTemplate(c *gin.Context) {
 	entry := []*CommandTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) AddCommandTemplate(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "command_template id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /command_template/ [delete]
+// @Router  /api/command_template/ [delete]
 func (h *Handler) DeleteCommandTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

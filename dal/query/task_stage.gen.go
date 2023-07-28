@@ -32,7 +32,7 @@ func newTaskStage(db *gorm.DB, opts ...gen.DOOption) taskStage {
 	_taskStage.StageNumber = field.NewInt32(tableName, "stage_number")
 	_taskStage.Mode = field.NewString(tableName, "mode")
 	_taskStage.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
-	_taskStage.Tag = field.NewBytes(tableName, "tag")
+	_taskStage.Tags = field.NewBytes(tableName, "tags")
 	_taskStage.CommandTemplate = taskStageBelongsToCommandTemplate{
 		db: db.Session(&gorm.Session{}),
 
@@ -86,7 +86,7 @@ type taskStage struct {
 	StageNumber       field.Int32
 	Mode              field.String
 	CommandTemplateID field.Int32
-	Tag               field.Bytes
+	Tags              field.Bytes
 	CommandTemplate   taskStageBelongsToCommandTemplate
 
 	fieldMap map[string]field.Expr
@@ -109,7 +109,7 @@ func (t *taskStage) updateTableName(table string) *taskStage {
 	t.StageNumber = field.NewInt32(table, "stage_number")
 	t.Mode = field.NewString(table, "mode")
 	t.CommandTemplateID = field.NewInt32(table, "command_template_id")
-	t.Tag = field.NewBytes(table, "tag")
+	t.Tags = field.NewBytes(table, "tags")
 
 	t.fillFieldMap()
 
@@ -140,7 +140,7 @@ func (t *taskStage) fillFieldMap() {
 	t.fieldMap["stage_number"] = t.StageNumber
 	t.fieldMap["mode"] = t.Mode
 	t.fieldMap["command_template_id"] = t.CommandTemplateID
-	t.fieldMap["tag"] = t.Tag
+	t.fieldMap["tags"] = t.Tags
 
 }
 

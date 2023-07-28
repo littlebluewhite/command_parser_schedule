@@ -15,6 +15,7 @@ func Format(sd []model.Schedule) []Schedule {
 			Enabled:     item.Enabled,
 			UpdatedAt:   item.UpdatedAt,
 			CreatedAt:   item.CreatedAt,
+			Tags:        item.Tags,
 			TimeData: TimeDatum{
 				RepeatType:      item.TimeData.RepeatType,
 				StartDate:       item.TimeData.StartDate,
@@ -39,6 +40,7 @@ func CreateConvert(c []*ScheduleCreate) []*model.Schedule {
 			Description: item.Description,
 			TaskID:      item.TaskID,
 			Enabled:     item.Enabled,
+			Tags:        item.Tags,
 			TimeData: model.TimeDatum{
 				RepeatType:      item.TimeData.RepeatType,
 				StartDate:       item.TimeData.StartDate,
@@ -65,6 +67,9 @@ func UpdateConvert(sMap map[int]model.Schedule, us []*ScheduleUpdate) (result []
 		s.TaskID = u.TaskID
 		if u.Enabled != nil {
 			s.Enabled = *u.Enabled
+		}
+		if u.Tags != nil {
+			s.Tags = *u.Tags
 		}
 		if u.TimeData != nil {
 			s.TimeData.RepeatType = u.TimeData.RepeatType

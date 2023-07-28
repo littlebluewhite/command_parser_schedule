@@ -5,6 +5,7 @@
 package model
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -15,11 +16,13 @@ type CommandTemplate struct {
 	ID          int32             `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Name        string            `gorm:"column:name;not null" json:"name"`
 	Protocol    string            `gorm:"column:protocol;not null" json:"protocol"`
+	Timeout     int32             `gorm:"column:timeout;not null" json:"timeout"`
 	Description *string           `gorm:"column:description" json:"description"`
 	Host        string            `gorm:"column:host;not null" json:"host"`
 	Port        string            `gorm:"column:port;not null" json:"port"`
 	UpdatedAt   *time.Time        `gorm:"column:updated_at" json:"updated_at"`
 	CreatedAt   *time.Time        `gorm:"column:created_at" json:"created_at"`
+	Tags        json.RawMessage   `gorm:"column:tags;default:json_array()" json:"tags"`
 	Http        *HTTPSCommand     `gorm:"foreignKey:command_template_id" json:"http"`
 	Mqtt        *MqttCommand      `gorm:"foreignKey:command_template_id" json:"mqtt"`
 	Websocket   *WebsocketCommand `gorm:"foreignKey:command_template_id" json:"websocket"`

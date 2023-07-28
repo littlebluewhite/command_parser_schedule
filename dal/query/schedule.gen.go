@@ -35,6 +35,7 @@ func newSchedule(db *gorm.DB, opts ...gen.DOOption) schedule {
 	_schedule.Enabled = field.NewBool(tableName, "enabled")
 	_schedule.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_schedule.CreatedAt = field.NewTime(tableName, "created_at")
+	_schedule.Tags = field.NewBytes(tableName, "tags")
 	_schedule.TimeData = scheduleBelongsToTimeData{
 		db: db.Session(&gorm.Session{}),
 
@@ -58,6 +59,7 @@ type schedule struct {
 	Enabled     field.Bool
 	UpdatedAt   field.Time
 	CreatedAt   field.Time
+	Tags        field.Bytes
 	TimeData    scheduleBelongsToTimeData
 
 	fieldMap map[string]field.Expr
@@ -83,6 +85,7 @@ func (s *schedule) updateTableName(table string) *schedule {
 	s.Enabled = field.NewBool(table, "enabled")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.CreatedAt = field.NewTime(table, "created_at")
+	s.Tags = field.NewBytes(table, "tags")
 
 	s.fillFieldMap()
 
@@ -105,7 +108,7 @@ func (s *schedule) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *schedule) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 10)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["name"] = s.Name
 	s.fieldMap["description"] = s.Description
@@ -114,6 +117,7 @@ func (s *schedule) fillFieldMap() {
 	s.fieldMap["enabled"] = s.Enabled
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["created_at"] = s.CreatedAt
+	s.fieldMap["tags"] = s.Tags
 
 }
 

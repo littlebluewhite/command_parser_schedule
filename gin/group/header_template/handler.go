@@ -19,7 +19,7 @@ type Handler struct {
 // @Tags        header_template
 // @Produce     json
 // @Success     200 {array} header_template.HeaderTemplate
-// @Router      /header_template/ [get]
+// @Router      /api/header_template/ [get]
 func (h *Handler) GetheaderTemplates(c *gin.Context) {
 	ht, err := h.O.List()
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *Handler) GetheaderTemplates(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     int true "header template id"
 // @Success     200 {object} header_template.HeaderTemplate
-// @Router      /header_template/{id} [get]
+// @Router      /api/header_template/{id} [get]
 func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -66,7 +66,7 @@ func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 // @Produce json
 // @Param   header_template body     []header_template.HeaderTemplateCreate true "header template body"
 // @Success 200           {array} header_template.HeaderTemplate
-// @Router  /header_template/ [post]
+// @Router  /api/header_template/ [post]
 func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 	entry := []*HeaderTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 // @Produce json
 // @Param   header_template body     []header_template.HeaderTemplateUpdate true "modify header template body"
 // @Success 200           {string} string "update successfully"
-// @Router  /header_template/ [patch]
+// @Router  /api/header_template/ [patch]
 func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
 	entry := []*HeaderTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -113,7 +113,7 @@ func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "header_template id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /header_template/ [delete]
+// @Router  /api/header_template/ [delete]
 func (h *Handler) DeleteHeaderTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

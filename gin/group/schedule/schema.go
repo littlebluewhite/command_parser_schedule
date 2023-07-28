@@ -7,15 +7,16 @@ import (
 )
 
 type Schedule struct {
-	ID          int32      `json:"id"`
-	Name        string     `json:"name"`
-	Description *string    `json:"description"`
-	TimeDataID  int32      `json:"time_data_id"`
-	TaskID      *int32     `json:"task_id"`
-	Enabled     bool       `json:"enabled"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	CreatedAt   *time.Time `json:"created_at"`
-	TimeData    TimeDatum  `json:"time_data"`
+	ID          int32           `json:"id"`
+	Name        string          `json:"name"`
+	Description *string         `json:"description"`
+	TimeDataID  int32           `json:"time_data_id"`
+	TaskID      *int32          `json:"task_id"`
+	Enabled     bool            `json:"enabled"`
+	UpdatedAt   *time.Time      `json:"updated_at"`
+	CreatedAt   *time.Time      `json:"created_at"`
+	TimeData    TimeDatum       `json:"time_data"`
+	Tags        json.RawMessage `json:"tags"`
 }
 
 type TimeDatum struct {
@@ -35,6 +36,7 @@ type ScheduleCreate struct {
 	TaskID      *int32          `json:"task_id"`
 	Enabled     bool            `json:"enabled"`
 	TimeData    TimeDatumCreate `json:"time_data" binding:"required"`
+	Tags        json.RawMessage `json:"tags"`
 }
 
 type TimeDatumCreate struct {
@@ -55,6 +57,7 @@ type ScheduleUpdate struct {
 	TaskID      *int32           `json:"task_id"`
 	Enabled     *bool            `json:"enabled"`
 	TimeData    *TimeDatumUpdate `json:"time_data"`
+	Tags        *json.RawMessage `json:"tags"`
 }
 
 type TimeDatumUpdate struct {

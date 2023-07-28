@@ -29,7 +29,8 @@ CREATE TABLE `schedule`
     `task_id`      int,
     `enabled`      boolean DEFAULT false NOT NULL,
     `updated_at`   datetime,
-    `created_at`   datetime
+    `created_at`   datetime,
+    `tags`         json    DEFAULT (JSON_ARRAY())
 );
 
 CREATE TABLE `command_template`
@@ -37,11 +38,13 @@ CREATE TABLE `command_template`
     `id`          int PRIMARY KEY AUTO_INCREMENT,
     `name`        varchar(255) UNIQUE                               NOT NULL,
     `protocol`    ENUM ('http', 'websocket', 'mqtt', 'redis_topic') NOT NULL,
+    `timeout`     int                                               NOT NULL,
     `description` varchar(255),
     `host`        varchar(255)                                      NOT NULL,
     `port`        varchar(255)                                      NOT NULL,
     `updated_at`  datetime,
-    `created_at`  datetime
+    `created_at`  datetime,
+    `tags`        json DEFAULT (JSON_ARRAY())
 );
 
 CREATE TABLE `https_command`
@@ -97,10 +100,9 @@ CREATE TABLE `redis_command`
 CREATE TABLE `monitor`
 (
     `id`                  int PRIMARY KEY AUTO_INCREMENT,
-    `column`              ENUM ('status', 'data') NOT NULL,
-    `timeout`             int                     NOT NULL,
+    `status_code`         int        NOT NULL,
     `interval`            int,
-    `command_template_id` int UNIQUE              NOT NULL
+    `command_template_id` int UNIQUE NOT NULL
 );
 
 CREATE TABLE `m_condition`
@@ -120,7 +122,8 @@ CREATE TABLE `task_template`
     `name`       varchar(255) NOT NULL,
     `variable`   json DEFAULT (JSON_OBJECT()),
     `updated_at` datetime,
-    `created_at` datetime
+    `created_at` datetime,
+    `tags`       json DEFAULT (JSON_ARRAY())
 );
 
 CREATE TABLE `task_template_stage`
@@ -137,7 +140,7 @@ CREATE TABLE `task_stage`
     `stage_number`        int                         NOT NULL,
     `mode`                ENUM ('monitor', 'execute') NOT NULL,
     `command_template_id` int,
-    `tag`                 json DEFAULT (JSON_ARRAY())
+    `tags`                json DEFAULT (JSON_ARRAY())
 );
 
 ALTER TABLE `time_template`

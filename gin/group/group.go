@@ -19,6 +19,7 @@ func Inject(ginApp initial.GinApp) {
 
 	// middleware
 	r.Use(middleware.Latency())
+	r.Group("/api")
 
 	// inject routers
 	ping.Inject(ginApp)

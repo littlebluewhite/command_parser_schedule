@@ -56,7 +56,8 @@ func (o *operate) setCacheMap(cacheMap map[int]model.TaskTemplate) {
 func (o *operate) listDB() ([]*model.TaskTemplate, error) {
 	t := query.Use(o.db).TaskTemplate
 	ctx := context.Background()
-	tt, err := t.WithContext(ctx).Preload(field.Associations).Preload(t.Stages.CommandTemplate).Find()
+	tt, err := t.WithContext(ctx).Preload(field.Associations).Preload(t.Stages.CommandTemplate).Preload(
+		t.Stages.CommandTemplate.Monitor).Preload(t.Stages.CommandTemplate.Monitor.MConditions).Find()
 	if err != nil {
 		return nil, err
 	}

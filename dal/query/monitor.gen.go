@@ -28,8 +28,7 @@ func newMonitor(db *gorm.DB, opts ...gen.DOOption) monitor {
 	tableName := _monitor.monitorDo.TableName()
 	_monitor.ALL = field.NewAsterisk(tableName)
 	_monitor.ID = field.NewInt32(tableName, "id")
-	_monitor.Column = field.NewString(tableName, "column")
-	_monitor.Timeout = field.NewInt32(tableName, "timeout")
+	_monitor.StatusCode = field.NewInt32(tableName, "status_code")
 	_monitor.Interval = field.NewInt32(tableName, "interval")
 	_monitor.CommandTemplateID = field.NewInt32(tableName, "command_template_id")
 	_monitor.MConditions = monitorHasManyMConditions{
@@ -48,8 +47,7 @@ type monitor struct {
 
 	ALL               field.Asterisk
 	ID                field.Int32
-	Column            field.String
-	Timeout           field.Int32
+	StatusCode        field.Int32
 	Interval          field.Int32
 	CommandTemplateID field.Int32
 	MConditions       monitorHasManyMConditions
@@ -70,8 +68,7 @@ func (m monitor) As(alias string) *monitor {
 func (m *monitor) updateTableName(table string) *monitor {
 	m.ALL = field.NewAsterisk(table)
 	m.ID = field.NewInt32(table, "id")
-	m.Column = field.NewString(table, "column")
-	m.Timeout = field.NewInt32(table, "timeout")
+	m.StatusCode = field.NewInt32(table, "status_code")
 	m.Interval = field.NewInt32(table, "interval")
 	m.CommandTemplateID = field.NewInt32(table, "command_template_id")
 
@@ -96,10 +93,9 @@ func (m *monitor) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *monitor) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 6)
+	m.fieldMap = make(map[string]field.Expr, 5)
 	m.fieldMap["id"] = m.ID
-	m.fieldMap["column"] = m.Column
-	m.fieldMap["timeout"] = m.Timeout
+	m.fieldMap["status_code"] = m.StatusCode
 	m.fieldMap["interval"] = m.Interval
 	m.fieldMap["command_template_id"] = m.CommandTemplateID
 

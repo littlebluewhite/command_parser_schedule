@@ -19,7 +19,7 @@ type Handler struct {
 // @Tags        task_template
 // @Produce     json
 // @Success     200 {array} task_template.TaskTemplate
-// @Router      /task_template/ [get]
+// @Router      /api/task_template/ [get]
 func (h *Handler) GetTaskTemplates(c *gin.Context) {
 	ht, err := h.O.List()
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *Handler) GetTaskTemplates(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     int true "task template id"
 // @Success     200 {object} task_template.TaskTemplate
-// @Router      /task_template/{id} [get]
+// @Router      /api/task_template/{id} [get]
 func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -66,7 +66,7 @@ func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 // @Produce json
 // @Param   task_template body     []task_template.TaskTemplateCreate true "task template body"
 // @Success 200           {array} task_template.TaskTemplate
-// @Router  /task_template/ [post]
+// @Router  /api/task_template/ [post]
 func (h *Handler) AddTaskTemplate(c *gin.Context) {
 	entry := []*TaskTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 // @Produce json
 // @Param   task_template body     []task_template.TaskTemplateUpdate true "modify task template body"
 // @Success 200           {string} string "update successfully"
-// @Router  /task_template/ [patch]
+// @Router  /api/task_template/ [patch]
 func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
 	entry := []*TaskTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -113,7 +113,7 @@ func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "task_template id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /task_template/ [delete]
+// @Router  /api/task_template/ [delete]
 func (h *Handler) DeleteTaskTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

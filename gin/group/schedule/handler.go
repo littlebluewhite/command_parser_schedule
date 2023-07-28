@@ -19,7 +19,7 @@ type Handler struct {
 // @Tags        schedule
 // @Produce     json
 // @Success     200 {array} schedule.Schedule
-// @Router      /schedule/ [get]
+// @Router      /api/schedule/ [get]
 func (h *Handler) GetSchedules(c *gin.Context) {
 	s, err := h.O.List()
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *Handler) GetSchedules(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     int true "schedule id"
 // @Success     200 {object} schedule.Schedule
-// @Router      /schedule/{id} [get]
+// @Router      /api/schedule/{id} [get]
 func (h *Handler) GetScheduleById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -66,7 +66,7 @@ func (h *Handler) GetScheduleById(c *gin.Context) {
 // @Produce json
 // @Param   schedule body     []schedule.ScheduleCreate true "schedule body"
 // @Success 200           {array} schedule.Schedule
-// @Router  /schedule/ [post]
+// @Router  /api/schedule/ [post]
 func (h *Handler) AddSchedule(c *gin.Context) {
 	entry := []*ScheduleCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) AddSchedule(c *gin.Context) {
 // @Produce json
 // @Param   schedule body     []schedule.ScheduleUpdate true "modify schedule body"
 // @Success 200           {string} string "update successfully"
-// @Router  /schedule/ [patch]
+// @Router  /api/schedule/ [patch]
 func (h *Handler) UpdateSchedule(c *gin.Context) {
 	entry := []*ScheduleUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -113,7 +113,7 @@ func (h *Handler) UpdateSchedule(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "schedule id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /schedule/ [delete]
+// @Router  /api/schedule/ [delete]
 func (h *Handler) DeleteSchedule(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

@@ -32,6 +32,7 @@ func newTaskTemplate(db *gorm.DB, opts ...gen.DOOption) taskTemplate {
 	_taskTemplate.Variable = field.NewBytes(tableName, "variable")
 	_taskTemplate.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_taskTemplate.CreatedAt = field.NewTime(tableName, "created_at")
+	_taskTemplate.Tags = field.NewBytes(tableName, "tags")
 	_taskTemplate.Stages = taskTemplateManyToManyStages{
 		db: db.Session(&gorm.Session{}),
 
@@ -108,6 +109,7 @@ type taskTemplate struct {
 	Variable  field.Bytes
 	UpdatedAt field.Time
 	CreatedAt field.Time
+	Tags      field.Bytes
 	Stages    taskTemplateManyToManyStages
 
 	fieldMap map[string]field.Expr
@@ -130,6 +132,7 @@ func (t *taskTemplate) updateTableName(table string) *taskTemplate {
 	t.Variable = field.NewBytes(table, "variable")
 	t.UpdatedAt = field.NewTime(table, "updated_at")
 	t.CreatedAt = field.NewTime(table, "created_at")
+	t.Tags = field.NewBytes(table, "tags")
 
 	t.fillFieldMap()
 
@@ -154,12 +157,13 @@ func (t *taskTemplate) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (t *taskTemplate) fillFieldMap() {
-	t.fieldMap = make(map[string]field.Expr, 6)
+	t.fieldMap = make(map[string]field.Expr, 7)
 	t.fieldMap["id"] = t.ID
 	t.fieldMap["name"] = t.Name
 	t.fieldMap["variable"] = t.Variable
 	t.fieldMap["updated_at"] = t.UpdatedAt
 	t.fieldMap["created_at"] = t.CreatedAt
+	t.fieldMap["tags"] = t.Tags
 
 }
 

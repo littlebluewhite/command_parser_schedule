@@ -9,6 +9,7 @@ type CommandTemplate struct {
 	ID          int32             `json:"id"`
 	Name        string            `json:"name"`
 	Protocol    string            `json:"protocol"`
+	Timeout     int32             `json:"timeout"`
 	Description *string           `json:"description"`
 	Host        string            `json:"host"`
 	Port        string            `json:"port"`
@@ -19,6 +20,7 @@ type CommandTemplate struct {
 	Websocket   *WebsocketCommand `json:"websocket,omitempty"`
 	Redis       *RedisCommand     `json:"redis,omitempty"`
 	Monitor     *Monitor          `json:"monitor"`
+	Tags        json.RawMessage   `json:"tags"`
 }
 
 type HTTPSCommand struct {
@@ -53,8 +55,7 @@ type RedisCommand struct {
 }
 
 type Monitor struct {
-	Column      string       `json:"column" binding:"required"`
-	Timeout     int32        `json:"timeout" binding:"required"`
+	StatusCode  int32        `json:"status_code" binding:"required"`
 	Interval    *int32       `json:"interval"`
 	MConditions []MCondition `json:"m_conditions"`
 }
@@ -70,6 +71,7 @@ type MCondition struct {
 type CommandTemplateCreate struct {
 	Name        string            `json:"name" binding:"required"`
 	Protocol    string            `json:"protocol" binding:"required"`
+	Timeout     int32             `json:"timeout" binding:"required"`
 	Description *string           `json:"description"`
 	Host        string            `json:"host" binding:"required"`
 	Port        string            `json:"port" binding:"required"`
@@ -78,4 +80,5 @@ type CommandTemplateCreate struct {
 	Websocket   *WebsocketCommand `json:"websocket"`
 	Redis       *RedisCommand     `json:"redis"`
 	Monitor     *Monitor          `json:"monitor"`
+	Tags        json.RawMessage   `json:"tags"`
 }

@@ -17,7 +17,7 @@ type TaskStage struct {
 	StageNumber       int32            `gorm:"column:stage_number;not null" json:"stage_number"`
 	Mode              string           `gorm:"column:mode;not null" json:"mode"`
 	CommandTemplateID *int32           `gorm:"column:command_template_id" json:"command_template_id"`
-	Tag               json.RawMessage  `gorm:"column:tag;default:json_array()" json:"tag"`
+	Tags              json.RawMessage  `gorm:"column:tags;default:json_array()" json:"tags"`
 	CommandTemplate   *CommandTemplate `gorm:"foreignKey:command_template_id" json:"command_template"`
 }
 

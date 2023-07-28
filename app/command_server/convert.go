@@ -7,6 +7,7 @@ func model2template(mc model.CommandTemplate) template {
 		ID:          mc.ID,
 		Name:        mc.Name,
 		Protocol:    mc.Protocol,
+		Timeout:     mc.Timeout,
 		Description: mc.Description,
 		Host:        mc.Host,
 		Port:        mc.Port,
@@ -60,7 +61,6 @@ func model2template(mc model.CommandTemplate) template {
 		}
 		t.Monitor = &monitor{
 			Column:      mc.Monitor.Column,
-			Timeout:     mc.Monitor.Timeout,
 			Interval:    mc.Monitor.Interval,
 			MConditions: mResult,
 		}

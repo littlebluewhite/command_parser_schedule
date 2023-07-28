@@ -30,11 +30,13 @@ func newCommandTemplate(db *gorm.DB, opts ...gen.DOOption) commandTemplate {
 	_commandTemplate.ID = field.NewInt32(tableName, "id")
 	_commandTemplate.Name = field.NewString(tableName, "name")
 	_commandTemplate.Protocol = field.NewString(tableName, "protocol")
+	_commandTemplate.Timeout = field.NewInt32(tableName, "timeout")
 	_commandTemplate.Description = field.NewString(tableName, "description")
 	_commandTemplate.Host = field.NewString(tableName, "host")
 	_commandTemplate.Port = field.NewString(tableName, "port")
 	_commandTemplate.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_commandTemplate.CreatedAt = field.NewTime(tableName, "created_at")
+	_commandTemplate.Tags = field.NewBytes(tableName, "tags")
 	_commandTemplate.Http = commandTemplateHasOneHttp{
 		db: db.Session(&gorm.Session{}),
 
@@ -82,11 +84,13 @@ type commandTemplate struct {
 	ID          field.Int32
 	Name        field.String
 	Protocol    field.String
+	Timeout     field.Int32
 	Description field.String
 	Host        field.String
 	Port        field.String
 	UpdatedAt   field.Time
 	CreatedAt   field.Time
+	Tags        field.Bytes
 	Http        commandTemplateHasOneHttp
 
 	Mqtt commandTemplateHasOneMqtt
@@ -115,11 +119,13 @@ func (c *commandTemplate) updateTableName(table string) *commandTemplate {
 	c.ID = field.NewInt32(table, "id")
 	c.Name = field.NewString(table, "name")
 	c.Protocol = field.NewString(table, "protocol")
+	c.Timeout = field.NewInt32(table, "timeout")
 	c.Description = field.NewString(table, "description")
 	c.Host = field.NewString(table, "host")
 	c.Port = field.NewString(table, "port")
 	c.UpdatedAt = field.NewTime(table, "updated_at")
 	c.CreatedAt = field.NewTime(table, "created_at")
+	c.Tags = field.NewBytes(table, "tags")
 
 	c.fillFieldMap()
 
@@ -144,15 +150,17 @@ func (c *commandTemplate) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (c *commandTemplate) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 13)
+	c.fieldMap = make(map[string]field.Expr, 15)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["name"] = c.Name
 	c.fieldMap["protocol"] = c.Protocol
+	c.fieldMap["timeout"] = c.Timeout
 	c.fieldMap["description"] = c.Description
 	c.fieldMap["host"] = c.Host
 	c.fieldMap["port"] = c.Port
 	c.fieldMap["updated_at"] = c.UpdatedAt
 	c.fieldMap["created_at"] = c.CreatedAt
+	c.fieldMap["tags"] = c.Tags
 
 }
 

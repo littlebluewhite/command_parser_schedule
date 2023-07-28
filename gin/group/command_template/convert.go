@@ -11,11 +11,13 @@ func Format(ct []model.CommandTemplate) []CommandTemplate {
 			ID:          item.ID,
 			Name:        item.Name,
 			Protocol:    item.Protocol,
+			Timeout:     item.Timeout,
 			Description: item.Description,
 			Host:        item.Host,
 			Port:        item.Port,
 			UpdatedAt:   item.UpdatedAt,
 			CreatedAt:   item.CreatedAt,
+			Tags:        item.Tags,
 		}
 		if item.Http != nil {
 			i.Http = &HTTPSCommand{
@@ -65,8 +67,7 @@ func Format(ct []model.CommandTemplate) []CommandTemplate {
 				mResult = append(mResult, i)
 			}
 			i.Monitor = &Monitor{
-				Column:      item.Monitor.Column,
-				Timeout:     item.Monitor.Timeout,
+				StatusCode:  item.Monitor.StatusCode,
 				Interval:    item.Monitor.Interval,
 				MConditions: mResult,
 			}
@@ -93,9 +94,11 @@ func CreateConvert(c []*CommandTemplateCreate) []*model.CommandTemplate {
 		i := model.CommandTemplate{
 			Name:        item.Name,
 			Protocol:    item.Protocol,
+			Timeout:     item.Timeout,
 			Description: item.Description,
 			Host:        item.Host,
 			Port:        item.Port,
+			Tags:        item.Tags,
 		}
 		if item.Http != nil {
 			i.Http = &model.HTTPSCommand{
@@ -134,8 +137,7 @@ func CreateConvert(c []*CommandTemplateCreate) []*model.CommandTemplate {
 		}
 		if item.Monitor != nil {
 			i.Monitor = &model.Monitor{
-				Column:      item.Monitor.Column,
-				Timeout:     item.Monitor.Timeout,
+				StatusCode:  item.Monitor.StatusCode,
 				Interval:    item.Monitor.Interval,
 				MConditions: mResult,
 			}

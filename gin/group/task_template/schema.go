@@ -13,6 +13,7 @@ type TaskTemplate struct {
 	UpdatedAt *time.Time      `json:"updated_at"`
 	CreatedAt *time.Time      `json:"created_at"`
 	Stages    []*TaskStage    `json:"stages"`
+	Tags      json.RawMessage `json:"tags"`
 }
 
 type TaskStage struct {
@@ -21,7 +22,7 @@ type TaskStage struct {
 	StageNumber       int32                             `json:"stage_number"`
 	Mode              string                            `json:"mode"`
 	CommandTemplateID *int32                            `json:"command_template_id,omitempty"`
-	Tag               json.RawMessage                   `json:"tag"`
+	Tags              json.RawMessage                   `json:"tags"`
 	CommandTemplate   *command_template.CommandTemplate `json:"command_template,omitempty"`
 }
 
@@ -29,6 +30,7 @@ type TaskTemplateCreate struct {
 	Name     string             `json:"name" binding:"required"`
 	Variable json.RawMessage    `json:"variable"`
 	Stages   []*TaskStageCreate `json:"stages"`
+	Tags     json.RawMessage    `json:"tags"`
 }
 
 type TaskStageCreate struct {
@@ -36,7 +38,7 @@ type TaskStageCreate struct {
 	StageNumber       int32           `json:"stage_number" binding:"required"`
 	Mode              string          `json:"mode" binding:"required"`
 	CommandTemplateID *int32          `json:"command_template_id"`
-	Tag               json.RawMessage `json:"tag"`
+	Tags              json.RawMessage `json:"tags"`
 }
 
 type TaskTemplateUpdate struct {
@@ -44,6 +46,7 @@ type TaskTemplateUpdate struct {
 	Name     *string            `json:"name"`
 	Variable *json.RawMessage   `json:"variable"`
 	Stages   []*TaskStageUpdate `json:"stages"`
+	Tags     *json.RawMessage   `json:"tags"`
 }
 
 type TaskStageUpdate struct {
@@ -52,5 +55,5 @@ type TaskStageUpdate struct {
 	StageNumber       int32           `json:"stage_number" binding:"required"`
 	Mode              string          `json:"mode" binding:"required"`
 	CommandTemplateID *int32          `json:"command_template_id"`
-	Tag               json.RawMessage `json:"tag"`
+	Tags              json.RawMessage `json:"tags"`
 }

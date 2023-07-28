@@ -18,6 +18,7 @@ type TaskTemplate struct {
 	Variable  json.RawMessage `gorm:"column:variable;default:json_object()" json:"variable"`
 	UpdatedAt *time.Time      `gorm:"column:updated_at" json:"updated_at"`
 	CreatedAt *time.Time      `gorm:"column:created_at" json:"created_at"`
+	Tags      json.RawMessage `gorm:"column:tags;default:json_array()" json:"tags"`
 	Stages    []TaskStage     `gorm:"many2many:task_template_stage" json:"stages"`
 }
 

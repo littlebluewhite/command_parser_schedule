@@ -4,11 +4,32 @@
     "stages": [
       {
         "mode": "monitor",
-        "name": "test",
+        "name": "test1",
         "stage_number": 1,
-        "command_template_id": 1
+        "command_template_id": 5
+      },
+      {
+        "mode": "execute",
+        "name": "test2",
+        "stage_number": 1,
+        "command_template_id": 6
+      },
+      {
+        "mode": "execute",
+        "name": "test3",
+        "stage_number": 1,
+        "command_template_id": 7
+      },
+      {
+        "mode": "execute",
+        "name": "test4",
+        "stage_number": 2,
+        "command_template_id": 8
       }
     ],
-    "variable": null
+    "variable": {
+      "name": "aaaa",
+      "tem": 37
+    }
   }
 ]
