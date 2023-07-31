@@ -61,11 +61,11 @@ type Monitor struct {
 }
 
 type MCondition struct {
-	Order         *int32  `json:"order"`
-	CalculateType *string `json:"calculate_type"`
+	Order         int32   `json:"order"`
+	CalculateType string  `json:"calculate_type"`
 	PreLogicType  *string `json:"pre_logic_type"`
-	Value         *string `json:"value"`
-	SearchRule    *string `json:"search_rule"`
+	Value         string  `json:"value"`
+	SearchRule    string  `json:"search_rule"`
 }
 
 type CommandTemplateCreate struct {

@@ -98,13 +98,36 @@ func (c *commandServer) doHttp(ctx context.Context, com command) (result doResul
 }
 
 func monitorData(result doResult, m monitor) doResult {
-	if result.statusCode != int(m.StatusCode){
+	if result.statusCode != int(m.StatusCode) {
 		result.message = "status code error"
 		return result
 	}
-	s := strings.Split(, ".")
+	for _, condition := range m.MConditions {
+		v := stringAnalyze(result.respData, condition.SearchRule)
+	}
 }
 
-func stringAnalyze(data []byte, c string) string {
+func stringAnalyze(data []byte, rule string) (result analyzeResult) {
+	r := strings.Split(rule, ".")
+	// "root.person.[all]array.name
+	var f any
+	e := json.Unmarshal(data, &f)
+	if e != nil {
+		return
+	}
+	for _, word := range r[1:] {
+		if strings.Index(word, "array") == -1 {
+			m, ok := f.(map[string]interface{})
+			if !ok {
+				return
+			}
+			f, ok = m[word]
+			if !ok {
+				return
+			}
+		} else {
 
+		}
+	}
+	return
 }

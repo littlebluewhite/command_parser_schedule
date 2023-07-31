@@ -138,11 +138,11 @@ type monitor struct {
 }
 
 type mCondition struct {
-	Order         *int32  `json:"order"`
-	CalculateType *string `json:"calculate_type"`
+	Order         int32   `json:"order"`
+	CalculateType string  `json:"calculate_type"`
 	PreLogicType  *string `json:"pre_logic_type"`
-	Value         *string `json:"value"`
-	SearchRule    *string `json:"search_rule"`
+	Value         string  `json:"value"`
+	SearchRule    string  `json:"search_rule"`
 	MonitorID     *int32  `json:"monitor_id"`
 }
 
@@ -164,4 +164,10 @@ type doResult struct {
 	respData   []byte
 	status     Status
 	message    string
+}
+
+type analyzeResult struct {
+	getSuccess   bool
+	stringResult *string
+	arrayResult  []string
 }

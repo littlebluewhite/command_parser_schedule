@@ -108,11 +108,11 @@ CREATE TABLE `monitor`
 CREATE TABLE `m_condition`
 (
     `id`             int PRIMARY KEY AUTO_INCREMENT,
-    `order`          int,
-    `calculate_type` ENUM ('=', '!=', '<', '>', '<=', '>=', 'include', 'exclude'),
+    `order`          int NOT NULL,
+    `calculate_type` ENUM ('=', '!=', '<', '>', '<=', '>=', 'include', 'exclude') NOT NULL,
     `pre_logic_type` ENUM ('and', 'or'),
-    `value`          varchar(255),
-    `search_rule`    varchar(255) COMMENT 'ex: person.item.[]array.name',
+    `value`          varchar(255) NOT NULL,
+    `search_rule`    varchar(255) COMMENT 'ex: person.item.[]array.name' NOT NULL,
     `monitor_id`     int
 );
 
