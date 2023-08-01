@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -110,24 +111,48 @@ func monitorData(result doResult, m monitor) doResult {
 func stringAnalyze(data []byte, rule string) (result analyzeResult) {
 	r := strings.Split(rule, ".")
 	// "root.person.[all]array.name
-	var f any
-	e := json.Unmarshal(data, &f)
+	var f []any
+	var flagArray bool
+	var d any
+	e := json.Unmarshal(data, &d)
 	if e != nil {
 		return
 	}
+	f = append(f, d)
 	for _, word := range r[1:] {
+		var newFind []any
+		var handleFunc func(word string, find []any) []any
 		if strings.Index(word, "array") == -1 {
-			m, ok := f.(map[string]interface{})
-			if !ok {
-				return
-			}
-			f, ok = m[word]
-			if !ok {
-				return
-			}
+			handleFunc = handleKey
 		} else {
+			handleFunc = handleArray
+			re, _ := regexp.Compile(`\[([0-9]*)]`)
+			indexes := re.FindStringSubmatchIndex(word)
+			index := word[indexes[2]:indexes[3]]
+			if index == "" {
+			} else {
 
+			}
 		}
 	}
 	return
+}
+
+func handleArray(word string, find []any) (result []any) {
+
+}
+
+func handleKey(word string, find []any) (result []any) {
+	for _, item := range find {
+		m, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		item, ok = m[word]
+		if !ok {
+			continue
+		}
+		result = append(result, item)
+		return
+	}
 }
