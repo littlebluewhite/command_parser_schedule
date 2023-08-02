@@ -60,7 +60,7 @@ func model2template(mc model.CommandTemplate) template {
 			mResult = append(mResult, i)
 		}
 		t.Monitor = &monitor{
-			Column:      mc.Monitor.Column,
+			StatusCode:  mc.Monitor.StatusCode,
 			Interval:    mc.Monitor.Interval,
 			MConditions: mResult,
 		}

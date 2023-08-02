@@ -131,7 +131,6 @@ type redisCommand struct {
 
 type monitor struct {
 	StatusCode        int32        `json:"status_code"`
-	Timeout           int32        `json:"timeout"`
 	Interval          *int32       `json:"interval"`
 	CommandTemplateID int32        `json:"command_template_id"`
 	MConditions       []mCondition `json:"m_conditions"`
@@ -167,7 +166,18 @@ type doResult struct {
 }
 
 type analyzeResult struct {
-	getSuccess   bool
-	stringResult *string
-	arrayResult  []string
+	getSuccess  bool
+	valueResult any
+	arrayResult []any
 }
+
+type assertResult struct {
+	order         int32
+	assertSuccess bool
+	preLogicType  *string
+}
+
+var (
+	valueCalculate = []string{"=", "<", "<=", ">", ">=", "!="}
+	sliceCalculate = []string{"include", "exclude"}
+)
