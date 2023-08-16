@@ -1,6 +1,6 @@
 package util
 
-func Contains[T string | int](container []T, include []T) bool {
+func Contains[T string | int | bool](container []T, include []T) bool {
 	includeMap := make(map[T]struct{})
 	for _, a := range include {
 		includeMap[a] = struct{}{}

@@ -19,17 +19,6 @@ func (p Protocol) String() string {
 	return [...]string{"http", "websocket", "mqtt", "redis_topic"}[p]
 }
 
-type Column int
-
-const (
-	status Column = iota
-	data
-)
-
-func (c Column) String() string {
-	return [...]string{"status", "data"}[c]
-}
-
 type CalculateType int
 
 const (
@@ -61,15 +50,18 @@ func (s Status) String() string {
 }
 
 type command struct {
-	CommandId   string          `json:"command_id"`
-	From        time.Time       `json:"from"`
-	To          *time.Time      `json:"to"`
-	TriggerFrom []string        `json:"trigger_from"`
-	StatusCode  int             `json:"status_code"`
-	RespData    json.RawMessage `json:"resp_data"`
-	Status      Status          `json:"status"`
-	TemplateID  int             `json:"template_id"`
-	Template    template        `json:"template"`
+	CommandId      string          `json:"command_id"`
+	From           time.Time       `json:"from"`
+	To             *time.Time      `json:"to"`
+	TriggerFrom    []string        `json:"trigger_from"`
+	TriggerAccount string          `json:"trigger_account"`
+	StatusCode     int             `json:"status_code"`
+	RespData       json.RawMessage `json:"resp_data"`
+	Status         Status          `json:"status"`
+	Message        string          `json:"message"`
+	TemplateID     int             `json:"template_id"`
+	Template       template        `json:"template"`
+	CancelFunc     func()
 }
 
 type PreLogicType int
@@ -131,7 +123,7 @@ type redisCommand struct {
 
 type monitor struct {
 	StatusCode        int32        `json:"status_code"`
-	Interval          *int32       `json:"interval"`
+	Interval          int32        `json:"interval"`
 	CommandTemplateID int32        `json:"command_template_id"`
 	MConditions       []mCondition `json:"m_conditions"`
 }

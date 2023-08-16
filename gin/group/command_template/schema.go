@@ -56,7 +56,7 @@ type RedisCommand struct {
 
 type Monitor struct {
 	StatusCode  int32        `json:"status_code" binding:"required"`
-	Interval    *int32       `json:"interval"`
+	Interval    int32        `json:"interval" binding:"required"`
 	MConditions []MCondition `json:"m_conditions"`
 }
 

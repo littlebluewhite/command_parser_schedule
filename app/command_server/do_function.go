@@ -5,19 +5,27 @@ import (
 	"command_parser_schedule/util"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (c *commandServer) requestProtocol(ctx context.Context, com command) (result doResult) {
 	for {
 		select {
 		case <-ctx.Done():
-			result.status = Failure
-			result.message = "command not match monitor timeout"
+			if errors.Is(ctx.Err(), context.Canceled) {
+				result.status = Cancel
+				result.message = "command has been canceled"
+			} else if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+				result.status = Failure
+				result.message = "command not match monitor timeout"
+			}
 			return
 		default:
 			switch com.Template.Protocol {
@@ -32,7 +40,11 @@ func (c *commandServer) requestProtocol(ctx context.Context, com command) (resul
 				result.status = Success
 				return
 			} else {
-				monitorData(result, *com.Template.Monitor)
+				result = monitorData(result, *com.Template.Monitor)
+				if result.status == Success {
+					return
+				}
+				time.Sleep(time.Duration(com.Template.Monitor.Interval) * time.Second)
 			}
 		}
 	}
@@ -109,7 +121,15 @@ func monitorData(result doResult, m monitor) doResult {
 	for _, condition := range m.MConditions {
 		ar := stringAnalyze(result.respData, condition.SearchRule)
 		assert := assertValue(ar, condition)
+		asserts = append(asserts, assert)
 	}
+	logicResult := assertLogic(asserts)
+	if logicResult {
+		result.status = Success
+	} else {
+		result.message = "monitor condition is not suitable now"
+	}
+	return result
 }
 
 func stringAnalyze(data []byte, rule string) (result analyzeResult) {
@@ -243,22 +263,60 @@ func assertNumber(v float64, cv, c string) (r bool) {
 }
 
 func assertArray(result []any, cv, calculateType string) (r bool) {
-	for _, v := range result {
-		switch v.(type) {
+	switch calculateType {
+	case "include":
+		r = handleInclude(result, cv)
+	case "exclude":
+		r = handleExclude(result, cv)
+	}
+	return
+}
+
+func handleInclude(data []any, cv string) (r bool) {
+	for _, item := range data {
+		switch item.(type) {
 		case string:
-			r = assertArraySingleString(v.(string), cv, calculateType)
+			if item.(string) == cv {
+				r = true
+				return
+			}
 		case float64:
-			r = assertArraySingleFloat64(v.(float64), cv, calculateType)
+			cNum, err := strconv.ParseFloat(cv, 64)
+			if err != nil {
+				continue
+			}
+			if item.(float64) == cNum {
+				r = true
+				return
+			}
+		default:
+			continue
 		}
 	}
+	return
 }
 
-func assertArraySingleString(v string, cv, calculateType string) (r bool) {
-
-}
-
-func assertArraySingleFloat64(v float64, cv, c string) (r bool) {
-
+func handleExclude(data []any, cv string) (r bool) {
+	for _, item := range data {
+		switch item.(type) {
+		case string:
+			if item.(string) == cv {
+				return
+			}
+		case float64:
+			cNum, err := strconv.ParseFloat(cv, 64)
+			if err != nil {
+				continue
+			}
+			if item.(float64) == cNum {
+				return
+			}
+		default:
+			continue
+		}
+	}
+	r = true
+	return
 }
 
 func handleArray(word string, find []any) (result []any, flag bool) {
@@ -317,5 +375,29 @@ func handleKey(word string, find []any) (result []any, flag bool) {
 		}
 		result = append(result, item)
 	}
+	return
+}
+
+func assertLogic(asserts []assertResult) (result bool) {
+	sort.Slice(asserts, func(i, j int) bool {
+		return asserts[i].order < asserts[j].order
+	})
+	orSlice := make([]bool, 0, len(asserts))
+	pre := false
+	for i, assert := range asserts {
+		if assert.preLogicType == nil && i == 0 {
+			pre = assert.assertSuccess
+			continue
+		}
+		switch *assert.preLogicType {
+		case "and":
+			pre = pre && assert.assertSuccess
+		case "or":
+			orSlice = append(orSlice, pre)
+			pre = assert.assertSuccess
+		}
+	}
+	orSlice = append(orSlice, pre)
+	result = util.Contains[bool]([]bool{true}, orSlice)
 	return
 }

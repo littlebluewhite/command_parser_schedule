@@ -101,18 +101,18 @@ CREATE TABLE `monitor`
 (
     `id`                  int PRIMARY KEY AUTO_INCREMENT,
     `status_code`         int        NOT NULL,
-    `interval`            int,
+    `interval`            int        NOT NULL,
     `command_template_id` int UNIQUE NOT NULL
 );
 
 CREATE TABLE `m_condition`
 (
     `id`             int PRIMARY KEY AUTO_INCREMENT,
-    `order`          int NOT NULL,
+    `order`          int                                                          NOT NULL,
     `calculate_type` ENUM ('=', '!=', '<', '>', '<=', '>=', 'include', 'exclude') NOT NULL,
     `pre_logic_type` ENUM ('and', 'or'),
-    `value`          varchar(255) NOT NULL,
-    `search_rule`    varchar(255) COMMENT 'ex: person.item.[]array.name' NOT NULL,
+    `value`          varchar(255)                                                 NOT NULL,
+    `search_rule`    varchar(255) COMMENT 'ex: person.item.[]array.name'          NOT NULL,
     `monitor_id`     int
 );
 
