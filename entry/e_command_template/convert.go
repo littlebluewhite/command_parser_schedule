@@ -1,4 +1,4 @@
-package command_template
+package e_command_template
 
 import (
 	"command_parser_schedule/dal/model"

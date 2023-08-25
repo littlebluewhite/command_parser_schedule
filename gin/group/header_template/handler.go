@@ -1,6 +1,7 @@
 package header_template
 
 import (
+	"command_parser_schedule/entry/e_header_template"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -68,7 +69,7 @@ func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 // @Success 200           {array} header_template.HeaderTemplate
 // @Router  /api/header_template/ [post]
 func (h *Handler) AddHeaderTemplate(c *gin.Context) {
-	entry := []*HeaderTemplateCreate{nil}
+	entry := []*e_header_template.HeaderTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddHeaderTemplate: ", err)
@@ -92,7 +93,7 @@ func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 // @Success 200           {string} string "update successfully"
 // @Router  /api/header_template/ [patch]
 func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
-	entry := []*HeaderTemplateUpdate{nil}
+	entry := []*e_header_template.HeaderTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateHeaderTemplate: ", err)

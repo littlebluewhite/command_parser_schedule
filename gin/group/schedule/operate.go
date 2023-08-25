@@ -5,6 +5,7 @@ import (
 	"command_parser_schedule/app/time_server"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
+	"command_parser_schedule/entry/e_schedule"
 	"command_parser_schedule/util"
 	"context"
 	"errors"
@@ -17,8 +18,8 @@ import (
 type Operate interface {
 	List() ([]model.Schedule, error)
 	Find(ids []int32) ([]model.Schedule, error)
-	Create([]*ScheduleCreate) ([]model.Schedule, error)
-	Update([]*ScheduleUpdate) error
+	Create([]*e_schedule.ScheduleCreate) ([]model.Schedule, error)
+	Update([]*e_schedule.ScheduleUpdate) error
 	Delete([]int32) error
 	ReloadCache() error
 }
@@ -128,11 +129,11 @@ func (o *operate) Find(ids []int32) ([]model.Schedule, error) {
 	return o.findCache(ids)
 }
 
-func (o *operate) Create(c []*ScheduleCreate) ([]model.Schedule, error) {
+func (o *operate) Create(c []*e_schedule.ScheduleCreate) ([]model.Schedule, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
 	cacheMap := o.getCacheMap()
-	Schedules := CreateConvert(c)
+	Schedules := e_schedule.CreateConvert(c)
 	result := make([]model.Schedule, 0, len(Schedules))
 	err := q.Transaction(func(tx *query.Query) error {
 		if err := tx.Schedule.WithContext(ctx).CreateInBatches(Schedules, 100); err != nil {
@@ -152,9 +153,9 @@ func (o *operate) Create(c []*ScheduleCreate) ([]model.Schedule, error) {
 	return result, nil
 }
 
-func (o *operate) Update(u []*ScheduleUpdate) error {
+func (o *operate) Update(u []*e_schedule.ScheduleUpdate) error {
 	cacheMap := o.getCacheMap()
-	s := UpdateConvert(cacheMap, u)
+	s := e_schedule.UpdateConvert(cacheMap, u)
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {

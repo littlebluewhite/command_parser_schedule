@@ -4,6 +4,7 @@ import (
 	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
+	"command_parser_schedule/entry/e_command_template"
 	"context"
 	"errors"
 	"fmt"
@@ -15,7 +16,7 @@ import (
 type Operate interface {
 	List() ([]model.CommandTemplate, error)
 	Find(ids []int32) ([]model.CommandTemplate, error)
-	Create([]*CommandTemplateCreate) ([]model.CommandTemplate, error)
+	Create([]*e_command_template.CommandTemplateCreate) ([]model.CommandTemplate, error)
 	Delete([]int32) error
 	ReloadCache() error
 }
@@ -121,11 +122,11 @@ func (o *operate) Find(ids []int32) ([]model.CommandTemplate, error) {
 	return o.findCache(ids)
 }
 
-func (o *operate) Create(c []*CommandTemplateCreate) ([]model.CommandTemplate, error) {
+func (o *operate) Create(c []*e_command_template.CommandTemplateCreate) ([]model.CommandTemplate, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
 	cacheMap := o.getCacheMap()
-	commandTemplates := CreateConvert(c)
+	commandTemplates := e_command_template.CreateConvert(c)
 	result := make([]model.CommandTemplate, 0, len(commandTemplates))
 	err := q.Transaction(func(tx *query.Query) error {
 		if err := tx.CommandTemplate.WithContext(ctx).CreateInBatches(commandTemplates, 100); err != nil {

@@ -1,4 +1,4 @@
-package schedule
+package e_schedule
 
 import (
 	"encoding/json"

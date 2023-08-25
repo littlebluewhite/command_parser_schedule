@@ -1,4 +1,4 @@
-package command_template
+package e_command_template
 
 import (
 	"encoding/json"

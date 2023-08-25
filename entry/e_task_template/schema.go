@@ -1,7 +1,7 @@
-package task_template
+package e_task_template
 
 import (
-	"command_parser_schedule/gin/group/command_template"
+	"command_parser_schedule/entry/e_command_template"
 	"encoding/json"
 	"time"
 )
@@ -12,18 +12,18 @@ type TaskTemplate struct {
 	Variable  json.RawMessage `json:"variable"`
 	UpdatedAt *time.Time      `json:"updated_at"`
 	CreatedAt *time.Time      `json:"created_at"`
-	Stages    []*TaskStage    `json:"stages"`
+	Stages    []TaskStage     `json:"stages"`
 	Tags      json.RawMessage `json:"tags"`
 }
 
 type TaskStage struct {
-	ID                int32                             `json:"id"`
-	Name              string                            `json:"name"`
-	StageNumber       int32                             `json:"stage_number"`
-	Mode              string                            `json:"mode"`
-	CommandTemplateID *int32                            `json:"command_template_id,omitempty"`
-	Tags              json.RawMessage                   `json:"tags"`
-	CommandTemplate   *command_template.CommandTemplate `json:"command_template,omitempty"`
+	ID                int32                               `json:"id"`
+	Name              string                              `json:"name"`
+	StageNumber       int32                               `json:"stage_number"`
+	Mode              string                              `json:"mode"`
+	CommandTemplateID *int32                              `json:"command_template_id,omitempty"`
+	Tags              json.RawMessage                     `json:"tags"`
+	CommandTemplate   *e_command_template.CommandTemplate `json:"command_template,omitempty"`
 }
 
 type TaskTemplateCreate struct {

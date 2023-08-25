@@ -1,6 +1,7 @@
 package schedule
 
 import (
+	"command_parser_schedule/entry/e_schedule"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func (h *Handler) GetSchedules(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetheaderTemplates: success")
-	c.JSON(200, Format(s))
+	c.JSON(200, e_schedule.Format(s))
 	return
 }
 
@@ -55,7 +56,7 @@ func (h *Handler) GetScheduleById(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetScheduleById: success")
-	c.JSON(200, Format(s)[0])
+	c.JSON(200, e_schedule.Format(s)[0])
 	return
 }
 
@@ -68,7 +69,7 @@ func (h *Handler) GetScheduleById(c *gin.Context) {
 // @Success 200           {array} schedule.Schedule
 // @Router  /api/schedule/ [post]
 func (h *Handler) AddSchedule(c *gin.Context) {
-	entry := []*ScheduleCreate{nil}
+	entry := []*e_schedule.ScheduleCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddSchedule: ", err)
@@ -80,7 +81,7 @@ func (h *Handler) AddSchedule(c *gin.Context) {
 		h.L.Error().Println("AddSchedule: ", err)
 		return
 	}
-	c.JSON(200, Format(s))
+	c.JSON(200, e_schedule.Format(s))
 }
 
 // UpdateSchedule swagger
@@ -92,7 +93,7 @@ func (h *Handler) AddSchedule(c *gin.Context) {
 // @Success 200           {string} string "update successfully"
 // @Router  /api/schedule/ [patch]
 func (h *Handler) UpdateSchedule(c *gin.Context) {
-	entry := []*ScheduleUpdate{nil}
+	entry := []*e_schedule.ScheduleUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateSchedule: ", err)

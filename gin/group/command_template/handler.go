@@ -1,6 +1,7 @@
 package command_template
 
 import (
+	"command_parser_schedule/entry/e_command_template"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,7 @@ type Handler struct {
 // @Router      /api/command_template/ [get]
 func (h *Handler) GetCommandTemplates(c *gin.Context) {
 	ct, err := h.O.List()
-	result := Format(ct)
+	result := e_command_template.Format(ct)
 	if err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("GetCommandTemplates: ", err)
@@ -56,7 +57,7 @@ func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetCommandTemplateById: success")
-	c.JSON(200, Format(ht)[0])
+	c.JSON(200, e_command_template.Format(ht)[0])
 	return
 }
 
@@ -69,7 +70,7 @@ func (h *Handler) GetCommandTemplateById(c *gin.Context) {
 // @Success 200           {array} command_template.CommandTemplate
 // @Router  /api/command_template/ [post]
 func (h *Handler) AddCommandTemplate(c *gin.Context) {
-	entry := []*CommandTemplateCreate{nil}
+	entry := []*e_command_template.CommandTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddCommandTemplate: ", err)
@@ -81,7 +82,7 @@ func (h *Handler) AddCommandTemplate(c *gin.Context) {
 		h.L.Error().Println("AddCommandTemplate: ", err)
 		return
 	}
-	c.JSON(200, Format(result))
+	c.JSON(200, e_command_template.Format(result))
 }
 
 // DeleteCommandTemplate swagger

@@ -2,10 +2,13 @@ package command_server
 
 import (
 	"bytes"
+	"command_parser_schedule/entry/e_command"
+	"command_parser_schedule/entry/e_command_template"
 	"command_parser_schedule/util"
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
@@ -15,16 +18,16 @@ import (
 	"time"
 )
 
-func (c *commandServer) requestProtocol(ctx context.Context, com command) (result doResult) {
+func (c *commandServer) requestProtocol(ctx context.Context, com e_command.Command) (result doResult) {
 	for {
 		select {
 		case <-ctx.Done():
 			if errors.Is(ctx.Err(), context.Canceled) {
-				result.status = Cancel
-				result.message = "command has been canceled"
+				result.status = e_command.Cancel
+				result.message = "Command has been canceled"
 			} else if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-				result.status = Failure
-				result.message = "command not match monitor timeout"
+				result.status = e_command.Failure
+				result.message = "Command not match monitor timeout"
 			}
 			return
 		default:
@@ -37,11 +40,11 @@ func (c *commandServer) requestProtocol(ctx context.Context, com command) (resul
 			default:
 			}
 			if com.Template.Monitor == nil {
-				result.status = Success
+				result.status = e_command.Success
 				return
 			} else {
 				result = monitorData(result, *com.Template.Monitor)
-				if result.status == Success {
+				if result.status == e_command.Success {
 					return
 				}
 				time.Sleep(time.Duration(com.Template.Monitor.Interval) * time.Second)
@@ -50,7 +53,7 @@ func (c *commandServer) requestProtocol(ctx context.Context, com command) (resul
 	}
 }
 
-func (c *commandServer) doHttp(ctx context.Context, com command) (result doResult) {
+func (c *commandServer) doHttp(ctx context.Context, com e_command.Command) (result doResult) {
 	// TODO: add variable function
 	var body io.Reader
 	h := com.Template.Http
@@ -72,13 +75,13 @@ func (c *commandServer) doHttp(ctx context.Context, com command) (result doResul
 	header := make([]httpHeader, 0, 20)
 	req, e := http.NewRequestWithContext(ctx, h.Method, h.URL, body)
 	if e != nil {
-		result.status = Failure
+		result.status = e_command.Failure
 		result.message = "http request timeout"
 		return
 	}
 	if h.Header != nil {
 		if e := json.Unmarshal(h.Header, &header); e != nil {
-			c.l.Error().Printf("id: %d header unmarshal failed", com.CommandId)
+			c.l.Error().Printf("id: %s header unmarshal failed", com.CommandId)
 		}
 	}
 	for _, item := range header {
@@ -91,14 +94,14 @@ func (c *commandServer) doHttp(ctx context.Context, com command) (result doResul
 	var resp *http.Response
 	if resp1, e := client.Do(req); e != nil {
 		result.respData = []byte{}
-		c.l.Error().Printf("id: %d request failed", com.CommandId)
+		c.l.Error().Printf("id: %s request failed", com.CommandId)
 	} else {
 		resp = resp1
 	}
 	result.statusCode = resp.StatusCode
 	if respBody1, e := io.ReadAll(resp.Body); e != nil {
 		result.respData = []byte{}
-		c.l.Error().Printf("id: %d request body failed", com.CommandId)
+		c.l.Error().Printf("id: %s request body failed", com.CommandId)
 		return
 	} else {
 		result.respData = respBody1
@@ -108,11 +111,11 @@ func (c *commandServer) doHttp(ctx context.Context, com command) (result doResul
 			c.l.Error().Println("Response body closed failed")
 		}
 	}()
-	c.l.Info().Printf("id: %d request status: %v\nrequest result: %s, co\n", com.CommandId)
+	c.l.Info().Printf("id: %s request status: %v\nrequest result: %s\n", com.CommandId, result.status, result.respData)
 	return
 }
 
-func monitorData(result doResult, m monitor) doResult {
+func monitorData(result doResult, m e_command_template.Monitor) doResult {
 	if result.statusCode != int(m.StatusCode) {
 		result.message = "status code error"
 		return result
@@ -125,7 +128,7 @@ func monitorData(result doResult, m monitor) doResult {
 	}
 	logicResult := assertLogic(asserts)
 	if logicResult {
-		result.status = Success
+		result.status = e_command.Success
 	} else {
 		result.message = "monitor condition is not suitable now"
 	}
@@ -150,20 +153,26 @@ func stringAnalyze(data []byte, rule string) (result analyzeResult) {
 		} else {
 			handleFunc = handleArray
 		}
-		f, arrayFlag = handleFunc(word, f)
+		var flag bool
+		f, flag = handleFunc(word, f)
+		if flag {
+			arrayFlag = true
+		}
+	}
+	if len(f) > 0 {
+		result.getSuccess = true
+	} else {
+		return
 	}
 	if arrayFlag {
 		result.arrayResult = f
 	} else {
 		result.valueResult = f[0]
 	}
-	if len(f) > 0 {
-		result.getSuccess = true
-	}
 	return
 }
 
-func assertValue(ar analyzeResult, condition mCondition) (a assertResult) {
+func assertValue(ar analyzeResult, condition e_command_template.MCondition) (a assertResult) {
 	a.order = condition.Order
 	a.preLogicType = condition.PreLogicType
 	if ar.getSuccess == false {
@@ -181,8 +190,12 @@ func assertSingle(result any, cv, c string) (r bool) {
 	switch result.(type) {
 	case string:
 		r = assertString(result.(string), cv, c)
+	case int:
+		r = assertInt(result.(int), cv, c)
 	case float64:
-		r = assertNumber(result.(float64), cv, c)
+		r = assertFloat(result.(float64), cv, c)
+	default:
+		fmt.Printf("%T, %v", result, result)
 	}
 	return
 }
@@ -202,33 +215,24 @@ func assertString(v string, cv, c string) (r bool) {
 		if err != nil {
 			return
 		}
-		cNum, err := strconv.ParseFloat(cv, 64)
+		_, err = strconv.ParseFloat(cv, 64)
 		if err != nil {
 			return
 		}
-		switch c {
-		case "<":
-			if vNum < cNum {
-				r = true
-			}
-		case "<=":
-			if vNum <= cNum {
-				r = true
-			}
-		case ">":
-			if vNum > cNum {
-				r = true
-			}
-		case ">=":
-			if vNum >= cNum {
-				r = true
-			}
-		}
+		return assertFloat(vNum, cv, c)
 	}
 	return
 }
 
-func assertNumber(v float64, cv, c string) (r bool) {
+func assertInt(v int, cv, c string) (r bool) {
+	_, err := strconv.ParseFloat(cv, 64)
+	if err != nil {
+		return
+	}
+	return assertFloat(float64(v), cv, c)
+}
+
+func assertFloat(v float64, cv, c string) (r bool) {
 	cNum, err := strconv.ParseFloat(cv, 64)
 	if err != nil {
 		return
@@ -289,7 +293,17 @@ func handleInclude(data []any, cv string) (r bool) {
 				r = true
 				return
 			}
+		case int:
+			cNum, err := strconv.ParseInt(cv, 10, 64)
+			if err != nil {
+				continue
+			}
+			if item.(int) == int(cNum) {
+				r = true
+				return
+			}
 		default:
+			fmt.Printf("%T, %v", item, item)
 			continue
 		}
 	}
@@ -309,6 +323,14 @@ func handleExclude(data []any, cv string) (r bool) {
 				continue
 			}
 			if item.(float64) == cNum {
+				return
+			}
+		case int:
+			cNum, err := strconv.ParseInt(cv, 10, 64)
+			if err != nil {
+				continue
+			}
+			if item.(int) == int(cNum) {
 				return
 			}
 		default:

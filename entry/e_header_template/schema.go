@@ -1,8 +1,6 @@
-package header_template
+package e_header_template
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 type HeaderTemplate struct {
 	ID   int32           `json:"id"`

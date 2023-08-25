@@ -1,6 +1,7 @@
 package task_template
 
 import (
+	"command_parser_schedule/entry/e_task_template"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func (h *Handler) GetTaskTemplates(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetTaskTemplates: success")
-	c.JSON(200, Format(ht))
+	c.JSON(200, e_task_template.Format(ht))
 	return
 }
 
@@ -55,7 +56,7 @@ func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetTaskTemplateById: success")
-	c.JSON(200, Format(ht)[0])
+	c.JSON(200, e_task_template.Format(ht)[0])
 	return
 }
 
@@ -68,7 +69,7 @@ func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 // @Success 200           {array} task_template.TaskTemplate
 // @Router  /api/task_template/ [post]
 func (h *Handler) AddTaskTemplate(c *gin.Context) {
-	entry := []*TaskTemplateCreate{nil}
+	entry := []*e_task_template.TaskTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddTaskTemplate: ", err)
@@ -80,7 +81,7 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 		h.L.Error().Println("AddTaskTemplate: ", err)
 		return
 	}
-	c.JSON(200, Format(tt))
+	c.JSON(200, e_task_template.Format(tt))
 }
 
 // UpdateTaskTemplate swagger
@@ -92,7 +93,7 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 // @Success 200           {string} string "update successfully"
 // @Router  /api/task_template/ [patch]
 func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
-	entry := []*TaskTemplateUpdate{nil}
+	entry := []*e_task_template.TaskTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateTaskTemplate: ", err)

@@ -1,8 +1,8 @@
-package task_template
+package e_task_template
 
 import (
 	"command_parser_schedule/dal/model"
-	"command_parser_schedule/gin/group/command_template"
+	"command_parser_schedule/entry/e_command_template"
 	"fmt"
 	"math"
 )
@@ -11,11 +11,11 @@ func Format(ct []model.TaskTemplate) []TaskTemplate {
 	result := make([]TaskTemplate, 0, len(ct))
 	for _, item := range ct {
 		fmt.Printf("%+v\n", item)
-		sResult := make([]*TaskStage, 0, len(item.Stages))
+		sResult := make([]TaskStage, 0, len(item.Stages))
 		for _, s := range item.Stages {
-			var cTemplate *command_template.CommandTemplate
+			var cTemplate *e_command_template.CommandTemplate
 			if s.CommandTemplate != nil {
-				cTemplate = &command_template.Format([]model.CommandTemplate{*s.CommandTemplate})[0]
+				cTemplate = &e_command_template.Format([]model.CommandTemplate{*s.CommandTemplate})[0]
 			} else {
 				cTemplate = nil
 			}
@@ -28,7 +28,7 @@ func Format(ct []model.TaskTemplate) []TaskTemplate {
 				Tags:              s.Tags,
 				CommandTemplate:   cTemplate,
 			}
-			sResult = append(sResult, &i)
+			sResult = append(sResult, i)
 		}
 		i := TaskTemplate{
 			ID:        item.ID,

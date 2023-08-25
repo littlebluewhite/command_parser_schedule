@@ -1,4 +1,4 @@
-package schedule
+package e_schedule
 
 import (
 	"command_parser_schedule/dal/model"

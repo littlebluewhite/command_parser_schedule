@@ -8,7 +8,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/influxdata/influxdb-client-go/v2 v2.12.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/redis/go-redis/v9 v9.0.5
+	github.com/redis/go-redis/v9 v9.1.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/files v1.0.1
@@ -16,8 +16,8 @@ require (
 	github.com/swaggo/swag v1.16.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gen v0.3.23
-	gorm.io/gorm v1.25.3
-	gorm.io/plugin/dbresolver v1.4.4
+	gorm.io/gorm v1.25.4
+	gorm.io/plugin/dbresolver v1.4.7
 )
 
 require (

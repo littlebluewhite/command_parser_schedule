@@ -1,6 +1,7 @@
 package time_template
 
 import (
+	"command_parser_schedule/entry/e_time_template"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func (h *Handler) GetTimeTemplates(c *gin.Context) {
 		return
 	}
 	h.L.Info().Println("GetTimeTemplates: success")
-	c.JSON(200, Format(tt))
+	c.JSON(200, e_time_template.Format(tt))
 	return
 }
 
@@ -54,7 +55,7 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 		h.L.Error().Println("GetTimeTemplateById: ", err)
 		return
 	}
-	result := Format(tt)
+	result := e_time_template.Format(tt)
 	h.L.Info().Println("GetTimeTemplateById: success")
 	c.JSON(200, result[0])
 	return
@@ -69,7 +70,7 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 // @Success 200           {array} time_template.TimeTemplate
 // @Router  /time_template/ [post]
 func (h *Handler) AddTimeTemplate(c *gin.Context) {
-	entry := []*TimeTemplateCreate{nil}
+	entry := []*e_time_template.TimeTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("AddTimeTemplate: ", err)
@@ -81,7 +82,7 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 		h.L.Error().Println("AddTimeTemplate: ", err)
 		return
 	}
-	c.JSON(200, Format(tt))
+	c.JSON(200, e_time_template.Format(tt))
 }
 
 // UpdateTimeTemplate swagger
@@ -93,7 +94,7 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 // @Success 200           {string} string "update successfully"
 // @Router  /time_template/ [patch]
 func (h *Handler) UpdateTimeTemplate(c *gin.Context) {
-	entry := []*TimeTemplateUpdate{nil}
+	entry := []*e_time_template.TimeTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
 		util.Err(c, err, 0)
 		h.L.Error().Println("UpdateTimeTemplate: ", err)

@@ -1,4 +1,4 @@
-package header_template
+package e_header_template
 
 import "command_parser_schedule/dal/model"
 

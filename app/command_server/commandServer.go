@@ -3,6 +3,8 @@ package command_server
 import (
 	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
+	"command_parser_schedule/entry/e_command"
+	"command_parser_schedule/entry/e_command_template"
 	"command_parser_schedule/util/logFile"
 	"context"
 	"encoding/json"
@@ -14,29 +16,28 @@ import (
 )
 
 type CommandServer interface {
+	Start(removeTime time.Duration)
 }
 
 type commandServer struct {
 	dbs dbs.Dbs
 	l   logFile.LogFile
-	c   map[string]command
+	c   map[string]e_command.Command
 	chs chs
 }
 
 func NewCommandServer(dbs dbs.Dbs) CommandServer {
 	l := logFile.NewLogFile("app", "command_server")
-	c := make(map[string]command)
-	r := make(chan command)
-	send := make(chan command)
+	c := make(map[string]e_command.Command)
+	rec := make(chan e_command.Command)
 	mu := new(sync.RWMutex)
 	return &commandServer{
 		dbs: dbs,
 		l:   l,
 		c:   c,
 		chs: chs{
-			rec:  r,
-			send: send,
-			mu:   mu,
+			rec: rec,
+			mu:  mu,
 		},
 	}
 }
@@ -45,14 +46,17 @@ func (c *commandServer) Start(removeTime time.Duration) {
 	wg := &sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	wg.Add(3)
 	go func(wg *sync.WaitGroup) {
-		wg.Add(1)
 		c.receive(ctx)
 		wg.Done()
 	}(wg)
 	go func(wg *sync.WaitGroup) {
-		wg.Add(1)
 		c.removeFinishedCommand(ctx, removeTime)
+		wg.Done()
+	}(wg)
+	go func(wg *sync.WaitGroup) {
+		c.rdbSub(ctx)
 		wg.Done()
 	}(wg)
 	wg.Wait()
@@ -71,12 +75,33 @@ Loop1:
 	}
 }
 
-func (c *commandServer) doCommand(com command) {
+func (c *commandServer) rdbSub(ctx context.Context) {
+	pubsub := c.dbs.GetRdb().Subscribe(ctx, "sendCommand")
+	for {
+		msg, err := pubsub.ReceiveMessage(ctx)
+		if err != nil {
+			panic(err)
+		}
+		b := []byte(msg.Payload)
+		var s SendCommand
+		err = json.Unmarshal(b, &s)
+		if err != nil {
+			continue
+		}
+		ep := executeParams{s.TemplateId, s.TriggerFrom, s.TriggerAccount, s.Token}
+		_, err = c.Execute(ep)
+		if err != nil {
+			c.l.Error().Println("Error executing Command")
+		}
+	}
+}
+
+func (c *commandServer) doCommand(com e_command.Command) {
 	ctx, cancel := context.WithTimeout(context.Background(),
-		time.Duration(com.Template.Timeout)*time.Second)
+		time.Duration(com.Template.Timeout)*time.Millisecond)
 	defer cancel()
 	c.chs.mu.Lock()
-	com.Status = Process
+	com.Status = e_command.Process
 	com.CancelFunc = cancel
 	c.c[com.CommandId] = com
 	c.chs.mu.Unlock()
@@ -90,31 +115,44 @@ func (c *commandServer) doCommand(com command) {
 	c.chs.mu.Lock()
 	c.c[com.CommandId] = com
 	c.chs.mu.Unlock()
+	// write to history in influxdb
 	c.writeToHistory(com)
+	// send to redis channel
+	cr := commandRec{CommandId: com.CommandId, Status: com.Status.String(), Message: com.Message}
+	if e := c.rdbPub(ctx, cr); e != nil {
+		panic(e)
+	}
 }
 
-func (c *commandServer) Execute(templateId int, triggerFrom []string, triggerAccount string) (commandId string, err error) {
+func (c *commandServer) Execute(ep executeParams) (commandId string, err error) {
+	ctx := context.Background()
 	cache := c.dbs.GetCache()
 	var cacheMap map[int]model.CommandTemplate
 	if x, found := cache.Get("commandTemplates"); found {
 		cacheMap = x.(map[int]model.CommandTemplate)
 	}
-	ct, ok := cacheMap[templateId]
+	ct, ok := cacheMap[ep.templateId]
 	if !ok {
-		err = errors.New("can not find command template")
+		err = errors.New("can not find Command template")
+		cr := commandRec{Token: ep.token, Message: "can not find Command template"}
+		_ = c.rdbPub(ctx, cr)
 		return
 	}
 	from := time.Now()
-	commandId = fmt.Sprintf("%v_%v_%v_%v", templateId, ct.Name, ct.Protocol, from.UnixMicro())
-	com := command{
+	commandId = fmt.Sprintf("%v_%v_%v_%v", ep.templateId, ct.Name, ct.Protocol, from.UnixMicro())
+	com := e_command.Command{
 		CommandId:      commandId,
+		Token:          ep.token,
 		From:           from,
-		TriggerFrom:    triggerFrom,
-		TriggerAccount: triggerAccount,
-		TemplateID:     templateId,
-		Template:       model2template(ct),
+		TriggerFrom:    ep.triggerFrom,
+		TriggerAccount: ep.triggerAccount,
+		TemplateID:     ep.templateId,
+		Template:       e_command_template.Format([]model.CommandTemplate{ct})[0],
 	}
 	c.chs.rec <- com
+	// publish to redis
+	cr := commandRec{Token: ep.token, CommandId: commandId}
+	_ = c.rdbPub(ctx, cr)
 	return
 }
 
@@ -123,9 +161,9 @@ func (c *commandServer) CancelCommand(commandId string) error {
 	com, ok := c.c[commandId]
 	c.chs.mu.RUnlock()
 	if !ok {
-		return errors.New("can not find command")
+		return errors.New("can not find Command")
 	}
-	if com.Status != Process {
+	if com.Status != e_command.Process {
 		return fmt.Errorf("command id %v finished. Can not cancel", commandId)
 	} else {
 		com.CancelFunc()
@@ -133,7 +171,7 @@ func (c *commandServer) CancelCommand(commandId string) error {
 	return nil
 }
 
-func (c *commandServer) ShowCommandList() (cs []command) {
+func (c *commandServer) ShowCommandList() (cs []e_command.Command) {
 	c.chs.mu.RLock()
 	defer c.chs.mu.RUnlock()
 	for _, item := range c.c {
@@ -152,7 +190,7 @@ Loop1:
 			c.chs.mu.Lock()
 			now := time.Now()
 			for cId, item := range c.c {
-				if item.Status != Process && item.To.Add(s).After(now) {
+				if item.Status != e_command.Process && item.To.Add(s).After(now) {
 					delete(c.c, cId)
 				}
 			}
@@ -161,7 +199,7 @@ Loop1:
 	}
 }
 
-func (c *commandServer) writeToHistory(com command) {
+func (c *commandServer) writeToHistory(com e_command.Command) {
 	ctx := context.Background()
 	p := influxdb2.NewPoint("command_history",
 		map[string]string{"command_id": com.CommandId, "status": com.Status.String()},
@@ -173,7 +211,7 @@ func (c *commandServer) writeToHistory(com command) {
 	}
 }
 
-func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (hc []command) {
+func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (hc []e_command.Command) {
 	ctx := context.Background()
 	stopValue := ""
 	if stop != "" {
@@ -193,7 +231,7 @@ func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (
 	result, err := c.dbs.GetIdb().Querier().Query(ctx, stmt)
 	if err == nil {
 		for result.Next() {
-			var com command
+			var com e_command.Command
 			v := result.Record().Value()
 			if e := json.Unmarshal([]byte(v.(string)), &com); e != nil {
 				panic(e)
@@ -202,6 +240,16 @@ func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (
 		}
 	} else {
 		panic(err)
+	}
+	return
+}
+
+func (c *commandServer) rdbPub(ctx context.Context, cr commandRec) (e error) {
+	crb, _ := json.Marshal(cr)
+	e = c.dbs.GetRdb().Publish(ctx, "commandRec", crb).Err()
+	if e != nil {
+		c.l.Error().Println("redis publish error")
+		return
 	}
 	return
 }

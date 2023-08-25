@@ -1,8 +1,6 @@
-package time_template
+package e_time_template
 
-import (
-	"command_parser_schedule/dal/model"
-)
+import "command_parser_schedule/dal/model"
 
 func Format(tt []model.TimeTemplate) []TimeTemplate {
 	result := make([]TimeTemplate, 0, len(tt))

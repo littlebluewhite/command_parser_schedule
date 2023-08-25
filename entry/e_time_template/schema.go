@@ -1,10 +1,12 @@
-package time_template
+package e_time_template
 
 import (
 	"encoding/json"
 	"gorm.io/datatypes"
 	"time"
 )
+
+type TimeTemplates []TimeTemplate
 
 type TimeTemplate struct {
 	ID        int32      `json:"id"`

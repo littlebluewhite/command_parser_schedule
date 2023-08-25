@@ -4,6 +4,7 @@ import (
 	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
+	"command_parser_schedule/entry/e_task_template"
 	"command_parser_schedule/util"
 	"context"
 	"errors"
@@ -16,8 +17,8 @@ import (
 type Operate interface {
 	List() ([]model.TaskTemplate, error)
 	Find(ids []int32) ([]model.TaskTemplate, error)
-	Create([]*TaskTemplateCreate) ([]model.TaskTemplate, error)
-	Update([]*TaskTemplateUpdate) error
+	Create([]*e_task_template.TaskTemplateCreate) ([]model.TaskTemplate, error)
+	Update([]*e_task_template.TaskTemplateUpdate) error
 	Delete([]int32) error
 	ReloadCache() error
 }
@@ -125,11 +126,11 @@ func (o *operate) Find(ids []int32) ([]model.TaskTemplate, error) {
 	return o.findCache(ids)
 }
 
-func (o *operate) Create(c []*TaskTemplateCreate) ([]model.TaskTemplate, error) {
+func (o *operate) Create(c []*e_task_template.TaskTemplateCreate) ([]model.TaskTemplate, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
 	cacheMap := o.getCacheMap()
-	taskTemplates := CreateConvert(c)
+	taskTemplates := e_task_template.CreateConvert(c)
 	result := make([]model.TaskTemplate, 0, len(taskTemplates))
 	err := q.Transaction(func(tx *query.Query) error {
 		if err := tx.TaskTemplate.WithContext(ctx).CreateInBatches(taskTemplates, 100); err != nil {
@@ -148,9 +149,9 @@ func (o *operate) Create(c []*TaskTemplateCreate) ([]model.TaskTemplate, error) 
 	return result, nil
 }
 
-func (o *operate) Update(u []*TaskTemplateUpdate) error {
+func (o *operate) Update(u []*e_task_template.TaskTemplateUpdate) error {
 	cacheMap := o.getCacheMap()
-	tt := UpdateConvert(cacheMap, u)
+	tt := e_task_template.UpdateConvert(cacheMap, u)
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {
