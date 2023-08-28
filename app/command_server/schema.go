@@ -67,10 +67,3 @@ type SendCommand struct {
 	TriggerAccount string   `json:"trigger_account"`
 	Token          string   `json:"token"`
 }
-
-type commandRec struct {
-	Token     string `json:"token"`
-	CommandId string `json:"command_id"`
-	Status    string `json:"status"`
-	Message   string `json:"message"`
-}

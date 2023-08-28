@@ -57,3 +57,14 @@ type TaskStageUpdate struct {
 	CommandTemplateID *int32          `json:"command_template_id"`
 	Tags              json.RawMessage `json:"tags"`
 }
+
+type Mode int
+
+const (
+	monitor Mode = iota
+	execute
+)
+
+func (m Mode) String() string {
+	return [...]string{"monitor", "execute"}[m]
+}

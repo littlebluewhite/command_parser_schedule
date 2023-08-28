@@ -9,14 +9,15 @@ import (
 type Status int
 
 const (
-	Process Status = iota
+	Prepared Status = iota
+	Process
 	Success
 	Failure
 	Cancel
 )
 
 func (s Status) String() string {
-	return [...]string{"Process", "Success", "Failure", "Cancel"}[s]
+	return [...]string{"Prepared", "Process", "Success", "Failure", "Cancel"}[s]
 }
 
 type Command struct {

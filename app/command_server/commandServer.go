@@ -96,7 +96,7 @@ func (c *commandServer) rdbSub(ctx context.Context) {
 	}
 }
 
-func (c *commandServer) doCommand(com e_command.Command) {
+func (c *commandServer) doCommand(com e_command.Command) e_command.Command {
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Duration(com.Template.Timeout)*time.Millisecond)
 	defer cancel()
@@ -118,10 +118,14 @@ func (c *commandServer) doCommand(com e_command.Command) {
 	// write to history in influxdb
 	c.writeToHistory(com)
 	// send to redis channel
-	cr := commandRec{CommandId: com.CommandId, Status: com.Status.String(), Message: com.Message}
-	if e := c.rdbPub(ctx, cr); e != nil {
+	if e := c.rdbPub(ctx, com); e != nil {
 		panic(e)
 	}
+	return com
+}
+
+func (c *commandServer) execute(ep executeParams) (err error) {
+	return
 }
 
 func (c *commandServer) Execute(ep executeParams) (commandId string, err error) {
@@ -134,8 +138,8 @@ func (c *commandServer) Execute(ep executeParams) (commandId string, err error) 
 	ct, ok := cacheMap[ep.templateId]
 	if !ok {
 		err = errors.New("can not find Command template")
-		cr := commandRec{Token: ep.token, Message: "can not find Command template"}
-		_ = c.rdbPub(ctx, cr)
+		com := e_command.Command{Token: ep.token, Message: "can not find Command template", Status: e_command.Failure}
+		_ = c.rdbPub(ctx, com)
 		return
 	}
 	from := time.Now()
@@ -151,8 +155,7 @@ func (c *commandServer) Execute(ep executeParams) (commandId string, err error) 
 	}
 	c.chs.rec <- com
 	// publish to redis
-	cr := commandRec{Token: ep.token, CommandId: commandId}
-	_ = c.rdbPub(ctx, cr)
+	_ = c.rdbPub(ctx, com)
 	return
 }
 
@@ -244,9 +247,9 @@ func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (
 	return
 }
 
-func (c *commandServer) rdbPub(ctx context.Context, cr commandRec) (e error) {
-	crb, _ := json.Marshal(cr)
-	e = c.dbs.GetRdb().Publish(ctx, "commandRec", crb).Err()
+func (c *commandServer) rdbPub(ctx context.Context, com e_command.Command) (e error) {
+	cb, _ := json.Marshal(com)
+	e = c.dbs.GetRdb().Publish(ctx, "CommandRec", cb).Err()
 	if e != nil {
 		c.l.Error().Println("redis publish error")
 		return

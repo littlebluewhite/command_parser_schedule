@@ -11,36 +11,43 @@ func (t *taskServer) doTask(task e_task.Task) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	stages := task.Template.Stages
-	sns, stageMap := getStages(stages)
-	for _, sn := range sns {
-		s := stageMap[sn]
-		doStages(s)
+	gsr := getStages(stages)
+	for _, sn := range gsr.sns {
+		s := gsr.stageMap[sn]
+		t.doStages(s)
 	}
 }
 
 // getStages return stage number array without duplicates and return the map (stage number as key stages as value)
-func getStages(stages []e_task_template.TaskStage) (sns []int32, stageMap map[int32][]e_task_template.TaskStage) {
+func getStages(stages []e_task_template.TaskStage) (gsr getStagesResult) {
 	snSet := make(map[int32]struct{})
-	stageMap = make(map[int32][]e_task_template.TaskStage)
+	gsr.stageMap = make(map[int32]stageMapValue)
 	for i := 0; i < len(stages); i++ {
 		sn := stages[i].StageNumber
-		var ts []e_task_template.TaskStage
 		if _, ok := snSet[sn]; !ok {
-			sns = append(sns, sn)
+			gsr.sns = append(gsr.sns, sn)
 			snSet[sn] = struct{}{}
-			ts = []e_task_template.TaskStage{stages[i]}
-		} else {
-			ts = stageMap[sn]
-			ts = append(ts, stages[i])
 		}
-		stageMap[sn] = ts
+		monitor := gsr.stageMap[sn].monitor
+		execute := gsr.stageMap[sn].execute
+		switch stages[i].Mode {
+		case e_task_template.Mode(0).String():
+			monitor = append(monitor, stages[i])
+		case e_task_template.Mode(1).String():
+			execute = append(execute, stages[i])
+		default:
+		}
+		gsr.stageMap[sn] = stageMapValue{monitor: monitor, execute: execute}
 	}
-	sort.Slice(sns, func(i, j int) bool {
-		return sns[i] < sns[j]
+	sort.Slice(gsr.sns, func(i, j int) bool {
+		return gsr.sns[i] < gsr.sns[j]
 	})
 	return
 }
 
-func doStages(s []e_task_template.TaskStage) {
+func (t *taskServer) doStages(sv stageMapValue) {
+	for _, stage := range sv.monitor {
+		t.cs.DoCommand(*stage.CommandTemplate)
 
+	}
 }
