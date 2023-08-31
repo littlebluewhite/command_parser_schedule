@@ -4,6 +4,7 @@ import (
 	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
 	"command_parser_schedule/dal/query"
+	"command_parser_schedule/entry/e_header_template"
 	"command_parser_schedule/util"
 	"context"
 	"errors"
@@ -16,8 +17,8 @@ import (
 type Operate interface {
 	List() ([]model.HeaderTemplate, error)
 	Find(ids []int32) ([]model.HeaderTemplate, error)
-	Create([]*HeaderTemplateCreate) ([]model.HeaderTemplate, error)
-	Update([]*HeaderTemplateUpdate) error
+	Create([]*e_header_template.HeaderTemplateCreate) ([]model.HeaderTemplate, error)
+	Update([]*e_header_template.HeaderTemplateUpdate) error
 	Delete([]int32) error
 	ReloadCache() error
 }
@@ -124,11 +125,11 @@ func (o *operate) findCache(ids []int32) ([]model.HeaderTemplate, error) {
 	return tt, nil
 }
 
-func (o *operate) Create(c []*HeaderTemplateCreate) ([]model.HeaderTemplate, error) {
+func (o *operate) Create(c []*e_header_template.HeaderTemplateCreate) ([]model.HeaderTemplate, error) {
 	q := query.Use(o.db)
 	ctx := context.Background()
 	cacheMap := o.getCacheMap()
-	headerTemplates := CreateConvert(c)
+	headerTemplates := e_header_template.CreateConvert(c)
 	result := make([]model.HeaderTemplate, 0, len(headerTemplates))
 	err := q.Transaction(func(tx *query.Query) error {
 		if err := tx.HeaderTemplate.WithContext(ctx).CreateInBatches(headerTemplates, 100); err != nil {
@@ -147,9 +148,9 @@ func (o *operate) Create(c []*HeaderTemplateCreate) ([]model.HeaderTemplate, err
 	return result, nil
 }
 
-func (o *operate) Update(u []*HeaderTemplateUpdate) error {
+func (o *operate) Update(u []*e_header_template.HeaderTemplateUpdate) error {
 	cacheMap := o.getCacheMap()
-	ht := UpdateConvert(cacheMap, u)
+	ht := e_header_template.UpdateConvert(cacheMap, u)
 	q := query.Use(o.db)
 	ctx := context.Background()
 	err := q.Transaction(func(tx *query.Query) error {

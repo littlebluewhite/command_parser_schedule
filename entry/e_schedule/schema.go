@@ -1,7 +1,7 @@
 package e_schedule
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"gorm.io/datatypes"
 	"time"
 )

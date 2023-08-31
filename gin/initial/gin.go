@@ -24,6 +24,9 @@ type ginApp struct {
 
 func NewGinApp(log logFile.LogFile, dbs dbs.Dbs, ts time_server.TimeServer) GinApp {
 	r := initRouter(log)
+	// middleware
+	r.Use(middleware.Latency())
+
 	return &ginApp{
 		Router: r,
 		Dbs:    dbs,
@@ -40,8 +43,8 @@ func initRouter(log logFile.LogFile) *gin.Engine {
 	r := gin.Default()
 
 	// cors middleware
+	//r.Use(cors.Default())
 	r.Use(middleware.CORSMiddleware())
-	gin.SetMode(gin.ReleaseMode)
 	return r
 }
 func (g *ginApp) GetRouter() *gin.Engine {

@@ -88,6 +88,10 @@ func (r redisCommand) TableName() string { return r.redisCommandDo.TableName() }
 
 func (r redisCommand) Alias() string { return r.redisCommandDo.Alias() }
 
+func (r redisCommand) Columns(cols ...field.Expr) gen.Columns {
+	return r.redisCommandDo.Columns(cols...)
+}
+
 func (r *redisCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := r.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -162,10 +166,6 @@ func (r redisCommandDo) Select(conds ...field.Expr) *redisCommandDo {
 
 func (r redisCommandDo) Where(conds ...gen.Condition) *redisCommandDo {
 	return r.withDO(r.DO.Where(conds...))
-}
-
-func (r redisCommandDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *redisCommandDo {
-	return r.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (r redisCommandDo) Order(conds ...field.Expr) *redisCommandDo {

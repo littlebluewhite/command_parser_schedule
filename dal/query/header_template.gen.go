@@ -76,6 +76,10 @@ func (h headerTemplate) TableName() string { return h.headerTemplateDo.TableName
 
 func (h headerTemplate) Alias() string { return h.headerTemplateDo.Alias() }
 
+func (h headerTemplate) Columns(cols ...field.Expr) gen.Columns {
+	return h.headerTemplateDo.Columns(cols...)
+}
+
 func (h *headerTemplate) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := h.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -146,10 +150,6 @@ func (h headerTemplateDo) Select(conds ...field.Expr) *headerTemplateDo {
 
 func (h headerTemplateDo) Where(conds ...gen.Condition) *headerTemplateDo {
 	return h.withDO(h.DO.Where(conds...))
-}
-
-func (h headerTemplateDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *headerTemplateDo {
-	return h.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (h headerTemplateDo) Order(conds ...field.Expr) *headerTemplateDo {

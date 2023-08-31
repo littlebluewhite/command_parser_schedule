@@ -7,7 +7,7 @@ import (
 	"sort"
 )
 
-func (t *taskServer) doTask(task e_task.Task) {
+func (t *TaskServer) doTask(task e_task.Task) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	stages := task.Template.Stages
@@ -45,7 +45,7 @@ func getStages(stages []e_task_template.TaskStage) (gsr getStagesResult) {
 	return
 }
 
-func (t *taskServer) doStages(sv stageMapValue) {
+func (t *TaskServer) doStages(sv stageMapValue) {
 	for _, stage := range sv.monitor {
 		t.cs.DoCommand(*stage.CommandTemplate)
 

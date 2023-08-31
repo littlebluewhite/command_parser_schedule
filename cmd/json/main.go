@@ -1,62 +1,48 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
+	"time"
 )
 
 func main() {
-	data, _ := json.Marshal([]map[string]interface {
-	}{{
-		"a": []any{1, "5"},
-		"b": "B",
-		"c": 1,
-		"d": "2",
-	}, {
-		"e": 2,
-	},
-	})
-	fmt.Printf("%T, %+v\n", data, data)
-	var data2 []map[string]interface{}
-	e := json.Unmarshal(data, &data2)
+	t := Command{}
+	tb, e := json.Marshal(t)
 	if e != nil {
 		fmt.Println(e)
-		return
 	}
-	fmt.Printf("%T, %+v\n", data2, data2)
-	for _, item := range data2 {
-		for _, v := range item {
-			switch v.(type) {
-			case float64:
-				fmt.Printf("float64: %v\n", v)
-			case string:
-				fmt.Printf("string: %s\n", v)
-			default:
-				fmt.Printf("%T, %v\n", v, v)
-			}
-		}
-	}
+	fmt.Println(string(tb))
+}
 
-	for _, v := range data2[0]["a"].([]any) {
-		switch v.(type) {
-		case float64:
-			fmt.Printf("float64: %v\n", v)
-		case string:
-			fmt.Printf("string: %s\n", v)
-		default:
-			fmt.Printf("%T, %v\n", v, v)
-		}
-	}
+type Status int
 
-	data3, _ := json.Marshal(1)
-	var data4 any
-	json.Unmarshal(data3, &data4)
-	switch data4.(type) {
-	case float64:
-		fmt.Printf("float64: %v\n", data4)
-	case string:
-		fmt.Printf("string: %s\n", data4)
-	default:
-		fmt.Printf("%T, %v\n", data4, data4)
-	}
+const (
+	Prepared Status = iota
+	Process
+	Success
+	Failure
+	Cancel
+)
+
+func (s Status) String() string {
+	return [...]string{"Prepared", "Process", "Success", "Failure", "Cancel"}[s]
+}
+
+func (s Status) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.String())
+}
+
+type Command struct {
+	CommandId      string          `json:"command_id"`
+	Token          string          `json:"token"`
+	From           time.Time       `json:"from"`
+	To             *time.Time      `json:"to"`
+	TriggerFrom    []string        `json:"trigger_from"`
+	TriggerAccount string          `json:"trigger_account"`
+	StatusCode     int             `json:"status_code"`
+	RespData       json.RawMessage `json:"resp_data"`
+	Status         Status          `json:"status"`
+	Message        string          `json:"message"`
+	TemplateID     int             `json:"template_id"`
 }

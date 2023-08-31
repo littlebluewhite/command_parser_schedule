@@ -85,6 +85,8 @@ func (m mqttCommand) TableName() string { return m.mqttCommandDo.TableName() }
 
 func (m mqttCommand) Alias() string { return m.mqttCommandDo.Alias() }
 
+func (m mqttCommand) Columns(cols ...field.Expr) gen.Columns { return m.mqttCommandDo.Columns(cols...) }
+
 func (m *mqttCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -158,10 +160,6 @@ func (m mqttCommandDo) Select(conds ...field.Expr) *mqttCommandDo {
 
 func (m mqttCommandDo) Where(conds ...gen.Condition) *mqttCommandDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m mqttCommandDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *mqttCommandDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m mqttCommandDo) Order(conds ...field.Expr) *mqttCommandDo {

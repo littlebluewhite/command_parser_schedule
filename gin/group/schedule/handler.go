@@ -19,8 +19,8 @@ type Handler struct {
 // @Description Get all schedules
 // @Tags        schedule
 // @Produce     json
-// @Success     200 {array} schedule.Schedule
-// @Router      /api/schedule/ [get]
+// @Success     200 {array} e_schedule.Schedule
+// @Router      /schedule/ [get]
 func (h *Handler) GetSchedules(c *gin.Context) {
 	s, err := h.O.List()
 	if err != nil {
@@ -39,8 +39,8 @@ func (h *Handler) GetSchedules(c *gin.Context) {
 // @Tags        schedule
 // @Produce     json
 // @Param       id  path     int true "schedule id"
-// @Success     200 {object} schedule.Schedule
-// @Router      /api/schedule/{id} [get]
+// @Success     200 {object} e_schedule.Schedule
+// @Router      /schedule/{id} [get]
 func (h *Handler) GetScheduleById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -65,9 +65,9 @@ func (h *Handler) GetScheduleById(c *gin.Context) {
 // @Tags    schedule
 // @Accept  json
 // @Produce json
-// @Param   schedule body     []schedule.ScheduleCreate true "schedule body"
-// @Success 200           {array} schedule.Schedule
-// @Router  /api/schedule/ [post]
+// @Param   schedule body     []e_schedule.ScheduleCreate true "schedule body"
+// @Success 200           {array} e_schedule.Schedule
+// @Router  /schedule/ [post]
 func (h *Handler) AddSchedule(c *gin.Context) {
 	entry := []*e_schedule.ScheduleCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -89,9 +89,9 @@ func (h *Handler) AddSchedule(c *gin.Context) {
 // @Tags    schedule
 // @Accept  json
 // @Produce json
-// @Param   schedule body     []schedule.ScheduleUpdate true "modify schedule body"
+// @Param   schedule body     []e_schedule.ScheduleUpdate true "modify schedule body"
 // @Success 200           {string} string "update successfully"
-// @Router  /api/schedule/ [patch]
+// @Router  /schedule/ [patch]
 func (h *Handler) UpdateSchedule(c *gin.Context) {
 	entry := []*e_schedule.ScheduleUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -114,7 +114,7 @@ func (h *Handler) UpdateSchedule(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "schedule id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /api/schedule/ [delete]
+// @Router  /schedule/ [delete]
 func (h *Handler) DeleteSchedule(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

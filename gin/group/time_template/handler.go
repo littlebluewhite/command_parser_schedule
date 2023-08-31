@@ -19,8 +19,8 @@ type Handler struct {
 // @Description Get all time templates
 // @Tags        time_template
 // @Produce     json
-// @Success     200 {array} time_template.TimeTemplate
-// @Router      /time_template/ [get]
+// @Success     200 {array} e_time_template.TimeTemplate
+// @Router     /time_template/ [get]
 func (h *Handler) GetTimeTemplates(c *gin.Context) {
 	tt, err := h.O.List()
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *Handler) GetTimeTemplates(c *gin.Context) {
 // @Tags        time_template
 // @Produce     json
 // @Param       id  path     int true "time template id"
-// @Success     200 {object} time_template.TimeTemplate
+// @Success     200 {object} e_time_template.TimeTemplate
 // @Router      /time_template/{id} [get]
 func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 	id := c.Param("id")
@@ -66,8 +66,8 @@ func (h *Handler) GetTimeTemplateById(c *gin.Context) {
 // @Tags    time_template
 // @Accept  json
 // @Produce json
-// @Param   time_template body     []time_template.TimeTemplateCreate true "time template body"
-// @Success 200           {array} time_template.TimeTemplate
+// @Param   time_template body     []e_time_template.TimeTemplateCreate true "time template body"
+// @Success 200           {array} e_time_template.TimeTemplate
 // @Router  /time_template/ [post]
 func (h *Handler) AddTimeTemplate(c *gin.Context) {
 	entry := []*e_time_template.TimeTemplateCreate{nil}
@@ -90,7 +90,7 @@ func (h *Handler) AddTimeTemplate(c *gin.Context) {
 // @Tags    time_template
 // @Accept  json
 // @Produce json
-// @Param   time_template body     []time_template.TimeTemplateUpdate true "modify time template body"
+// @Param   time_template body     []e_time_template.TimeTemplateUpdate true "modify time template body"
 // @Success 200           {string} string "update successfully"
 // @Router  /time_template/ [patch]
 func (h *Handler) UpdateTimeTemplate(c *gin.Context) {

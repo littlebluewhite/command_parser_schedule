@@ -5,7 +5,7 @@ import (
 	"command_parser_schedule/gin/initial"
 	"command_parser_schedule/util"
 	"command_parser_schedule/util/logFile"
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

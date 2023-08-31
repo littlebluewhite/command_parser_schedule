@@ -94,6 +94,10 @@ func (h hTTPSCommand) TableName() string { return h.hTTPSCommandDo.TableName() }
 
 func (h hTTPSCommand) Alias() string { return h.hTTPSCommandDo.Alias() }
 
+func (h hTTPSCommand) Columns(cols ...field.Expr) gen.Columns {
+	return h.hTTPSCommandDo.Columns(cols...)
+}
+
 func (h *hTTPSCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := h.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -170,10 +174,6 @@ func (h hTTPSCommandDo) Select(conds ...field.Expr) *hTTPSCommandDo {
 
 func (h hTTPSCommandDo) Where(conds ...gen.Condition) *hTTPSCommandDo {
 	return h.withDO(h.DO.Where(conds...))
-}
-
-func (h hTTPSCommandDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *hTTPSCommandDo {
-	return h.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (h hTTPSCommandDo) Order(conds ...field.Expr) *hTTPSCommandDo {

@@ -19,8 +19,8 @@ type Handler struct {
 // @Description Get all header templates
 // @Tags        header_template
 // @Produce     json
-// @Success     200 {array} header_template.HeaderTemplate
-// @Router      /api/header_template/ [get]
+// @Success     200 {array} e_header_template.HeaderTemplate
+// @Router      /header_template/ [get]
 func (h *Handler) GetheaderTemplates(c *gin.Context) {
 	ht, err := h.O.List()
 	if err != nil {
@@ -39,8 +39,8 @@ func (h *Handler) GetheaderTemplates(c *gin.Context) {
 // @Tags        header_template
 // @Produce     json
 // @Param       id  path     int true "header template id"
-// @Success     200 {object} header_template.HeaderTemplate
-// @Router      /api/header_template/{id} [get]
+// @Success     200 {object} e_header_template.HeaderTemplate
+// @Router      /header_template/{id} [get]
 func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -65,9 +65,9 @@ func (h *Handler) GetHeaderTemplateById(c *gin.Context) {
 // @Tags    header_template
 // @Accept  json
 // @Produce json
-// @Param   header_template body     []header_template.HeaderTemplateCreate true "header template body"
-// @Success 200           {array} header_template.HeaderTemplate
-// @Router  /api/header_template/ [post]
+// @Param   header_template body     []e_header_template.HeaderTemplateCreate true "header template body"
+// @Success 200           {array} e_header_template.HeaderTemplate
+// @Router  /header_template/ [post]
 func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 	entry := []*e_header_template.HeaderTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -89,9 +89,9 @@ func (h *Handler) AddHeaderTemplate(c *gin.Context) {
 // @Tags    header_template
 // @Accept  json
 // @Produce json
-// @Param   header_template body     []header_template.HeaderTemplateUpdate true "modify header template body"
+// @Param   header_template body     []e_header_template.HeaderTemplateUpdate true "modify header template body"
 // @Success 200           {string} string "update successfully"
-// @Router  /api/header_template/ [patch]
+// @Router  /header_template/ [patch]
 func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
 	entry := []*e_header_template.HeaderTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -114,7 +114,7 @@ func (h *Handler) UpdateHeaderTemplate(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "header_template id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /api/header_template/ [delete]
+// @Router  /header_template/ [delete]
 func (h *Handler) DeleteHeaderTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

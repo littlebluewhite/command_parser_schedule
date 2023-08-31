@@ -1,6 +1,6 @@
 package e_header_template
 
-import "encoding/json"
+import "github.com/goccy/go-json"
 
 type HeaderTemplate struct {
 	ID   int32           `json:"id"`

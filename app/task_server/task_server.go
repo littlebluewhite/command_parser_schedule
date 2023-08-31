@@ -4,34 +4,37 @@ import (
 	"command_parser_schedule/app/command_server"
 	"command_parser_schedule/app/dbs"
 	"command_parser_schedule/dal/model"
+	"command_parser_schedule/entry/e_command"
 	"command_parser_schedule/entry/e_task"
 	"command_parser_schedule/util/logFile"
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/goccy/go-json"
 	"sync"
 	"time"
 )
 
-type TaskServer interface {
+type CommandServer interface {
+	Start(removeTime time.Duration)
+	Execute(templateId int, triggerFrom []string,
+		triggerAccount string, token string) (com e_command.Command, err error)
 }
 
-type taskServer struct {
+type TaskServer struct {
 	dbs dbs.Dbs
 	l   logFile.LogFile
 	t   map[string]e_task.Task
-	cs  command_server.CommandServer
+	cs  CommandServer
 	chs chs
 }
 
-func NewTaskServer(dbs dbs.Dbs) TaskServer {
+func NewTaskServer(dbs dbs.Dbs) *TaskServer {
 	l := logFile.NewLogFile("app", "task_server")
 	t := make(map[string]e_task.Task)
 	rec := make(chan e_task.Task)
 	mu := new(sync.RWMutex)
 	cs := command_server.NewCommandServer(dbs)
-	return &taskServer{
+	return &TaskServer{
 		dbs: dbs,
 		l:   l,
 		t:   t,
@@ -43,25 +46,23 @@ func NewTaskServer(dbs dbs.Dbs) TaskServer {
 	}
 }
 
-func (t *taskServer) Start(removeTime time.Duration) {
+func (t *TaskServer) Start(removeTime time.Duration) {
 	t.cs.Start(removeTime)
 }
 
-func (t *taskServer) receive(ctx context.Context) {
-Loop1:
-	for {
-		select {
-		case <-ctx.Done():
-			break Loop1
-		default:
-			task := <-t.chs.rec
-			go t.doTask(task)
-		}
+func (t *TaskServer) Execute(ep executeParams) (taskId string, err error) {
+	ctx := context.Background()
+	task, err := t.generateTask(ep)
+	// publish to redis
+	_ = t.rdbPub(ctx, task)
+	if err != nil {
+		t.l.Error().Println(err)
+		return
 	}
+	return
 }
 
-func (t *taskServer) Execute(ep executeParams) (taskId string, err error) {
-	ctx := context.Background()
+func (t *TaskServer) generateTask(ep executeParams) (task e_task.Task, err error) {
 	cache := t.dbs.GetCache()
 	var cacheMap map[int]model.TaskTemplate
 	if x, found := cache.Get("taskTemplates"); found {
@@ -69,11 +70,14 @@ func (t *taskServer) Execute(ep executeParams) (taskId string, err error) {
 	}
 	tt, ok := cacheMap[ep.templateId]
 	if !ok {
-		err = errors.New("can not find task template")
+		err = cannotFindTemplate
+		task = e_task.Task{Token: ep.token, Message: "can not find task template",
+			Status: e_task.Status{TStatus: e_task.Failure}}
+		return
 	}
 	from := time.Now()
-	taskId = fmt.Sprintf("%v_%v_%v", ep.templateId, tt.Name, from.UnixMicro())
-	task := e_task.Task{
+	taskId := fmt.Sprintf("%v_%v_%v", ep.templateId, tt.Name, from.UnixMicro())
+	task = e_task.Task{
 		TaskId:         taskId,
 		Token:          ep.token,
 		From:           from,
@@ -81,15 +85,11 @@ func (t *taskServer) Execute(ep executeParams) (taskId string, err error) {
 		TriggerAccount: ep.triggerAccount,
 		TemplateID:     ep.templateId,
 	}
-	t.chs.rec <- task
-	// publish to redis
-	tr := taskRec{Token: ep.token, TaskId: taskId}
-	_ = t.rdbPub(ctx, tr)
 	return
 }
 
-func (t *taskServer) rdbPub(ctx context.Context, tr taskRec) (e error) {
-	trb, _ := json.Marshal(tr)
+func (t *TaskServer) rdbPub(ctx context.Context, task e_task.Task) (e error) {
+	trb, _ := json.Marshal(e_task.ToPub(task))
 	e = t.dbs.GetRdb().Publish(ctx, "taskRec", trb).Err()
 	if e != nil {
 		t.l.Error().Println("redis publish error")

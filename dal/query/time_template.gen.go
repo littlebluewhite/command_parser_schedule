@@ -88,6 +88,10 @@ func (t timeTemplate) TableName() string { return t.timeTemplateDo.TableName() }
 
 func (t timeTemplate) Alias() string { return t.timeTemplateDo.Alias() }
 
+func (t timeTemplate) Columns(cols ...field.Expr) gen.Columns {
+	return t.timeTemplateDo.Columns(cols...)
+}
+
 func (t *timeTemplate) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -232,10 +236,6 @@ func (t timeTemplateDo) Select(conds ...field.Expr) *timeTemplateDo {
 
 func (t timeTemplateDo) Where(conds ...gen.Condition) *timeTemplateDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t timeTemplateDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *timeTemplateDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t timeTemplateDo) Order(conds ...field.Expr) *timeTemplateDo {

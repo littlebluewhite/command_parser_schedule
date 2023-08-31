@@ -98,6 +98,8 @@ func (s schedule) TableName() string { return s.scheduleDo.TableName() }
 
 func (s schedule) Alias() string { return s.scheduleDo.Alias() }
 
+func (s schedule) Columns(cols ...field.Expr) gen.Columns { return s.scheduleDo.Columns(cols...) }
+
 func (s *schedule) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -246,10 +248,6 @@ func (s scheduleDo) Select(conds ...field.Expr) *scheduleDo {
 
 func (s scheduleDo) Where(conds ...gen.Condition) *scheduleDo {
 	return s.withDO(s.DO.Where(conds...))
-}
-
-func (s scheduleDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *scheduleDo {
-	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (s scheduleDo) Order(conds ...field.Expr) *scheduleDo {

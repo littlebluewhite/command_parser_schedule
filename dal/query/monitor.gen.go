@@ -83,6 +83,8 @@ func (m monitor) TableName() string { return m.monitorDo.TableName() }
 
 func (m monitor) Alias() string { return m.monitorDo.Alias() }
 
+func (m monitor) Columns(cols ...field.Expr) gen.Columns { return m.monitorDo.Columns(cols...) }
+
 func (m *monitor) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -226,10 +228,6 @@ func (m monitorDo) Select(conds ...field.Expr) *monitorDo {
 
 func (m monitorDo) Where(conds ...gen.Condition) *monitorDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m monitorDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *monitorDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m monitorDo) Order(conds ...field.Expr) *monitorDo {

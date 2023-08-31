@@ -1,7 +1,7 @@
 package e_command_template
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"time"
 )
 

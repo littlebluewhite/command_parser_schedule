@@ -1,7 +1,7 @@
 package e_time_template
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"gorm.io/datatypes"
 	"time"
 )

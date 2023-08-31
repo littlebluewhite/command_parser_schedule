@@ -6,7 +6,7 @@ import (
 )
 
 type Routes struct {
-	R *gin.Engine
+	R gin.IRouter
 	O Operate
 	L logFile.LogFile
 }

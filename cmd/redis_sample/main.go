@@ -3,8 +3,8 @@ package main
 import (
 	"command_parser_schedule/app/dbs/rdb"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -8,7 +8,6 @@ import (
 	"command_parser_schedule/gin/group/task_template"
 	"command_parser_schedule/gin/group/time_template"
 	"command_parser_schedule/gin/initial"
-	"command_parser_schedule/gin/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -16,10 +15,6 @@ import (
 func Inject(ginApp initial.GinApp) {
 	//get router from ginApp
 	r := ginApp.GetRouter()
-
-	// middleware
-	r.Use(middleware.Latency())
-	r.Group("/api")
 
 	// inject routers
 	ping.Inject(ginApp)

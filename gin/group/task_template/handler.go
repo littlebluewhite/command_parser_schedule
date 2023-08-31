@@ -19,8 +19,8 @@ type Handler struct {
 // @Description Get all task templates
 // @Tags        task_template
 // @Produce     json
-// @Success     200 {array} task_template.TaskTemplate
-// @Router      /api/task_template/ [get]
+// @Success     200 {array} e_task_template.TaskTemplate
+// @Router      /task_template/ [get]
 func (h *Handler) GetTaskTemplates(c *gin.Context) {
 	ht, err := h.O.List()
 	if err != nil {
@@ -39,8 +39,8 @@ func (h *Handler) GetTaskTemplates(c *gin.Context) {
 // @Tags        task_template
 // @Produce     json
 // @Param       id  path     int true "task template id"
-// @Success     200 {object} task_template.TaskTemplate
-// @Router      /api/task_template/{id} [get]
+// @Success     200 {object} e_task_template.TaskTemplate
+// @Router      /task_template/{id} [get]
 func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 	id := c.Param("id")
 	IdInt, err := strconv.ParseInt(id, 10, 0)
@@ -65,9 +65,9 @@ func (h *Handler) GetTaskTemplateById(c *gin.Context) {
 // @Tags    task_template
 // @Accept  json
 // @Produce json
-// @Param   task_template body     []task_template.TaskTemplateCreate true "task template body"
-// @Success 200           {array} task_template.TaskTemplate
-// @Router  /api/task_template/ [post]
+// @Param   task_template body     []e_task_template.TaskTemplateCreate true "task template body"
+// @Success 200           {array} e_task_template.TaskTemplate
+// @Router  /task_template/ [post]
 func (h *Handler) AddTaskTemplate(c *gin.Context) {
 	entry := []*e_task_template.TaskTemplateCreate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -89,9 +89,9 @@ func (h *Handler) AddTaskTemplate(c *gin.Context) {
 // @Tags    task_template
 // @Accept  json
 // @Produce json
-// @Param   task_template body     []task_template.TaskTemplateUpdate true "modify task template body"
+// @Param   task_template body     []e_task_template.TaskTemplateUpdate true "modify task template body"
 // @Success 200           {string} string "update successfully"
-// @Router  /api/task_template/ [patch]
+// @Router  /task_template/ [patch]
 func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
 	entry := []*e_task_template.TaskTemplateUpdate{nil}
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {
@@ -114,7 +114,7 @@ func (h *Handler) UpdateTaskTemplate(c *gin.Context) {
 // @Produce json
 // @Param ids body []int true "task_template id"
 // @Success 200 {string} string "delete successfully"
-// @Router  /api/task_template/ [delete]
+// @Router  /task_template/ [delete]
 func (h *Handler) DeleteTaskTemplate(c *gin.Context) {
 	entry := make([]int32, 0, 10)
 	if err := c.ShouldBindBodyWith(&entry, binding.JSON); err != nil {

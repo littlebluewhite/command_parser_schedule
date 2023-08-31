@@ -41,7 +41,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/command_template.CommandTemplate"
+                                "$ref": "#/definitions/e_command_template.CommandTemplate"
                             }
                         }
                     }
@@ -67,7 +67,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/command_template.CommandTemplateCreate"
+                                "$ref": "#/definitions/e_command_template.CommandTemplateCreate"
                             }
                         }
                     }
@@ -78,7 +78,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/command_template.CommandTemplate"
+                                "$ref": "#/definitions/e_command_template.CommandTemplate"
                             }
                         }
                     }
@@ -139,7 +139,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/command_template.CommandTemplate"
+                            "$ref": "#/definitions/e_command_template.CommandTemplate"
                         }
                     }
                 }
@@ -161,7 +161,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/header_template.HeaderTemplate"
+                                "$ref": "#/definitions/e_header_template.HeaderTemplate"
                             }
                         }
                     }
@@ -187,7 +187,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/header_template.HeaderTemplateCreate"
+                                "$ref": "#/definitions/e_header_template.HeaderTemplateCreate"
                             }
                         }
                     }
@@ -198,7 +198,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/header_template.HeaderTemplate"
+                                "$ref": "#/definitions/e_header_template.HeaderTemplate"
                             }
                         }
                     }
@@ -255,7 +255,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/header_template.HeaderTemplateUpdate"
+                                "$ref": "#/definitions/e_header_template.HeaderTemplateUpdate"
                             }
                         }
                     }
@@ -293,7 +293,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/header_template.HeaderTemplate"
+                            "$ref": "#/definitions/e_header_template.HeaderTemplate"
                         }
                     }
                 }
@@ -358,7 +358,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schedule.Schedule"
+                                "$ref": "#/definitions/e_schedule.Schedule"
                             }
                         }
                     }
@@ -384,7 +384,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schedule.ScheduleCreate"
+                                "$ref": "#/definitions/e_schedule.ScheduleCreate"
                             }
                         }
                     }
@@ -395,7 +395,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schedule.Schedule"
+                                "$ref": "#/definitions/e_schedule.Schedule"
                             }
                         }
                     }
@@ -452,7 +452,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schedule.ScheduleUpdate"
+                                "$ref": "#/definitions/e_schedule.ScheduleUpdate"
                             }
                         }
                     }
@@ -490,7 +490,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schedule.Schedule"
+                            "$ref": "#/definitions/e_schedule.Schedule"
                         }
                     }
                 }
@@ -512,7 +512,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/task_template.TaskTemplate"
+                                "$ref": "#/definitions/e_task_template.TaskTemplate"
                             }
                         }
                     }
@@ -538,7 +538,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/task_template.TaskTemplateCreate"
+                                "$ref": "#/definitions/e_task_template.TaskTemplateCreate"
                             }
                         }
                     }
@@ -549,7 +549,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/task_template.TaskTemplate"
+                                "$ref": "#/definitions/e_task_template.TaskTemplate"
                             }
                         }
                     }
@@ -606,7 +606,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/task_template.TaskTemplateUpdate"
+                                "$ref": "#/definitions/e_task_template.TaskTemplateUpdate"
                             }
                         }
                     }
@@ -644,7 +644,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/task_template.TaskTemplate"
+                            "$ref": "#/definitions/e_task_template.TaskTemplate"
                         }
                     }
                 }
@@ -666,7 +666,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/time_template.TimeTemplate"
+                                "$ref": "#/definitions/e_time_template.TimeTemplate"
                             }
                         }
                     }
@@ -692,7 +692,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/time_template.TimeTemplateCreate"
+                                "$ref": "#/definitions/e_time_template.TimeTemplateCreate"
                             }
                         }
                     }
@@ -703,7 +703,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/time_template.TimeTemplate"
+                                "$ref": "#/definitions/e_time_template.TimeTemplate"
                             }
                         }
                     }
@@ -760,7 +760,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/time_template.TimeTemplateUpdate"
+                                "$ref": "#/definitions/e_time_template.TimeTemplateUpdate"
                             }
                         }
                     }
@@ -798,7 +798,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/time_template.TimeTemplate"
+                            "$ref": "#/definitions/e_time_template.TimeTemplate"
                         }
                     }
                 }
@@ -806,7 +806,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "command_template.CommandTemplate": {
+        "e_command_template.CommandTemplate": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -819,16 +819,16 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "http": {
-                    "$ref": "#/definitions/command_template.HTTPSCommand"
+                    "$ref": "#/definitions/e_command_template.HTTPSCommand"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "monitor": {
-                    "$ref": "#/definitions/command_template.Monitor"
+                    "$ref": "#/definitions/e_command_template.Monitor"
                 },
                 "mqtt": {
-                    "$ref": "#/definitions/command_template.MqttCommand"
+                    "$ref": "#/definitions/e_command_template.MqttCommand"
                 },
                 "name": {
                     "type": "string"
@@ -840,23 +840,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "redis": {
-                    "$ref": "#/definitions/command_template.RedisCommand"
+                    "$ref": "#/definitions/e_command_template.RedisCommand"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "timeout": {
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
                 },
                 "websocket": {
-                    "$ref": "#/definitions/command_template.WebsocketCommand"
+                    "$ref": "#/definitions/e_command_template.WebsocketCommand"
                 }
             }
         },
-        "command_template.CommandTemplateCreate": {
+        "e_command_template.CommandTemplateCreate": {
             "type": "object",
             "required": [
                 "host",
                 "name",
                 "port",
-                "protocol"
+                "protocol",
+                "timeout"
             ],
             "properties": {
                 "description": {
@@ -866,13 +876,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "http": {
-                    "$ref": "#/definitions/command_template.HTTPSCommand"
+                    "$ref": "#/definitions/e_command_template.HTTPSCommand"
                 },
                 "monitor": {
-                    "$ref": "#/definitions/command_template.Monitor"
+                    "$ref": "#/definitions/e_command_template.Monitor"
                 },
                 "mqtt": {
-                    "$ref": "#/definitions/command_template.MqttCommand"
+                    "$ref": "#/definitions/e_command_template.MqttCommand"
                 },
                 "name": {
                     "type": "string"
@@ -884,14 +894,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "redis": {
-                    "$ref": "#/definitions/command_template.RedisCommand"
+                    "$ref": "#/definitions/e_command_template.RedisCommand"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "timeout": {
+                    "type": "integer"
                 },
                 "websocket": {
-                    "$ref": "#/definitions/command_template.WebsocketCommand"
+                    "$ref": "#/definitions/e_command_template.WebsocketCommand"
                 }
             }
         },
-        "command_template.HTTPSCommand": {
+        "e_command_template.HTTPSCommand": {
             "type": "object",
             "properties": {
                 "authorization_type": {
@@ -926,7 +945,7 @@ const docTemplate = `{
                 }
             }
         },
-        "command_template.MCondition": {
+        "e_command_template.MCondition": {
             "type": "object",
             "properties": {
                 "calculate_type": {
@@ -946,31 +965,28 @@ const docTemplate = `{
                 }
             }
         },
-        "command_template.Monitor": {
+        "e_command_template.Monitor": {
             "type": "object",
             "required": [
-                "column",
-                "timeout"
+                "interval",
+                "status_code"
             ],
             "properties": {
-                "column": {
-                    "type": "string"
-                },
                 "interval": {
                     "type": "integer"
                 },
                 "m_conditions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/command_template.MCondition"
+                        "$ref": "#/definitions/e_command_template.MCondition"
                     }
                 },
-                "timeout": {
+                "status_code": {
                     "type": "integer"
                 }
             }
         },
-        "command_template.MqttCommand": {
+        "e_command_template.MqttCommand": {
             "type": "object",
             "required": [
                 "topic",
@@ -997,7 +1013,7 @@ const docTemplate = `{
                 }
             }
         },
-        "command_template.RedisCommand": {
+        "e_command_template.RedisCommand": {
             "type": "object",
             "required": [
                 "type"
@@ -1023,7 +1039,7 @@ const docTemplate = `{
                 }
             }
         },
-        "command_template.WebsocketCommand": {
+        "e_command_template.WebsocketCommand": {
             "type": "object",
             "required": [
                 "url"
@@ -1043,7 +1059,7 @@ const docTemplate = `{
                 }
             }
         },
-        "header_template.HeaderTemplate": {
+        "e_header_template.HeaderTemplate": {
             "type": "object",
             "properties": {
                 "data": {
@@ -1060,7 +1076,7 @@ const docTemplate = `{
                 }
             }
         },
-        "header_template.HeaderTemplateCreate": {
+        "e_header_template.HeaderTemplateCreate": {
             "type": "object",
             "required": [
                 "data",
@@ -1078,7 +1094,7 @@ const docTemplate = `{
                 }
             }
         },
-        "header_template.HeaderTemplateUpdate": {
+        "e_header_template.HeaderTemplateUpdate": {
             "type": "object",
             "required": [
                 "id"
@@ -1098,29 +1114,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ping.SwaggerListPing": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 20
-                },
-                "name": {
-                    "type": "string",
-                    "example": "wilson"
-                }
-            }
-        },
-        "ping.SwaggerPing": {
-            "type": "object",
-            "properties": {
-                "example": {
-                    "type": "string",
-                    "example": "asdfasdf"
-                }
-            }
-        },
-        "schedule.Schedule": {
+        "e_schedule.Schedule": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1138,11 +1132,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "task_id": {
                     "type": "integer"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/schedule.TimeDatum"
+                    "$ref": "#/definitions/e_schedule.TimeDatum"
                 },
                 "time_data_id": {
                     "type": "integer"
@@ -1152,7 +1152,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schedule.ScheduleCreate": {
+        "e_schedule.ScheduleCreate": {
             "type": "object",
             "required": [
                 "name",
@@ -1168,15 +1168,21 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "task_id": {
                     "type": "integer"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/schedule.TimeDatumCreate"
+                    "$ref": "#/definitions/e_schedule.TimeDatumCreate"
                 }
             }
         },
-        "schedule.ScheduleUpdate": {
+        "e_schedule.ScheduleUpdate": {
             "type": "object",
             "required": [
                 "id"
@@ -1194,15 +1200,21 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "task_id": {
                     "type": "integer"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/schedule.TimeDatumUpdate"
+                    "$ref": "#/definitions/e_schedule.TimeDatumUpdate"
                 }
             }
         },
-        "schedule.TimeDatum": {
+        "e_schedule.TimeDatum": {
             "type": "object",
             "properties": {
                 "condition_type": {
@@ -1234,7 +1246,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schedule.TimeDatumCreate": {
+        "e_schedule.TimeDatumCreate": {
             "type": "object",
             "required": [
                 "end_time",
@@ -1271,7 +1283,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schedule.TimeDatumUpdate": {
+        "e_schedule.TimeDatumUpdate": {
             "type": "object",
             "required": [
                 "end_time",
@@ -1310,11 +1322,11 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskStage": {
+        "e_task_template.TaskStage": {
             "type": "object",
             "properties": {
                 "command_template": {
-                    "$ref": "#/definitions/command_template.CommandTemplate"
+                    "$ref": "#/definitions/e_command_template.CommandTemplate"
                 },
                 "command_template_id": {
                     "type": "integer"
@@ -1331,7 +1343,7 @@ const docTemplate = `{
                 "stage_number": {
                     "type": "integer"
                 },
-                "tag": {
+                "tags": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1339,7 +1351,7 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskStageCreate": {
+        "e_task_template.TaskStageCreate": {
             "type": "object",
             "required": [
                 "mode",
@@ -1359,7 +1371,7 @@ const docTemplate = `{
                 "stage_number": {
                     "type": "integer"
                 },
-                "tag": {
+                "tags": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1367,7 +1379,7 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskStageUpdate": {
+        "e_task_template.TaskStageUpdate": {
             "type": "object",
             "required": [
                 "mode",
@@ -1390,7 +1402,7 @@ const docTemplate = `{
                 "stage_number": {
                     "type": "integer"
                 },
-                "tag": {
+                "tags": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1398,7 +1410,7 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskTemplate": {
+        "e_task_template.TaskTemplate": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1413,7 +1425,13 @@ const docTemplate = `{
                 "stages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/task_template.TaskStage"
+                        "$ref": "#/definitions/e_task_template.TaskStage"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
                     }
                 },
                 "updated_at": {
@@ -1427,7 +1445,7 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskTemplateCreate": {
+        "e_task_template.TaskTemplateCreate": {
             "type": "object",
             "required": [
                 "name"
@@ -1439,7 +1457,13 @@ const docTemplate = `{
                 "stages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/task_template.TaskStageCreate"
+                        "$ref": "#/definitions/e_task_template.TaskStageCreate"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
                     }
                 },
                 "variable": {
@@ -1450,7 +1474,7 @@ const docTemplate = `{
                 }
             }
         },
-        "task_template.TaskTemplateUpdate": {
+        "e_task_template.TaskTemplateUpdate": {
             "type": "object",
             "required": [
                 "id"
@@ -1465,7 +1489,13 @@ const docTemplate = `{
                 "stages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/task_template.TaskStageUpdate"
+                        "$ref": "#/definitions/e_task_template.TaskStageUpdate"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
                     }
                 },
                 "variable": {
@@ -1476,7 +1506,7 @@ const docTemplate = `{
                 }
             }
         },
-        "time_template.TimeDatum": {
+        "e_time_template.TimeDatum": {
             "type": "object",
             "properties": {
                 "condition_type": {
@@ -1508,7 +1538,7 @@ const docTemplate = `{
                 }
             }
         },
-        "time_template.TimeDatumCreate": {
+        "e_time_template.TimeDatumCreate": {
             "type": "object",
             "required": [
                 "end_time",
@@ -1546,7 +1576,7 @@ const docTemplate = `{
                 }
             }
         },
-        "time_template.TimeDatumUpdate": {
+        "e_time_template.TimeDatumUpdate": {
             "type": "object",
             "required": [
                 "end_time",
@@ -1585,7 +1615,7 @@ const docTemplate = `{
                 }
             }
         },
-        "time_template.TimeTemplate": {
+        "e_time_template.TimeTemplate": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1598,14 +1628,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/time_template.TimeDatum"
+                    "$ref": "#/definitions/e_time_template.TimeDatum"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "time_template.TimeTemplateCreate": {
+        "e_time_template.TimeTemplateCreate": {
             "type": "object",
             "required": [
                 "name",
@@ -1616,11 +1646,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/time_template.TimeDatumCreate"
+                    "$ref": "#/definitions/e_time_template.TimeDatumCreate"
                 }
             }
         },
-        "time_template.TimeTemplateUpdate": {
+        "e_time_template.TimeTemplateUpdate": {
             "type": "object",
             "required": [
                 "id"
@@ -1633,7 +1663,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "time_data": {
-                    "$ref": "#/definitions/time_template.TimeDatumUpdate"
+                    "$ref": "#/definitions/e_time_template.TimeDatumUpdate"
+                }
+            }
+        },
+        "ping.SwaggerListPing": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "name": {
+                    "type": "string",
+                    "example": "wilson"
+                }
+            }
+        },
+        "ping.SwaggerPing": {
+            "type": "object",
+            "properties": {
+                "example": {
+                    "type": "string",
+                    "example": "asdfasdf"
                 }
             }
         }

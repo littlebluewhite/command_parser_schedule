@@ -2,7 +2,7 @@ package e_task_template
 
 import (
 	"command_parser_schedule/entry/e_command_template"
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package util
 
 import (
 	"command_parser_schedule/dal/model"
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"

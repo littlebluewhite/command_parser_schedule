@@ -1,5 +1,5 @@
 definitions:
-  command_template.CommandTemplate:
+  e_command_template.CommandTemplate:
     properties:
       created_at:
         type: string
@@ -8,13 +8,13 @@ definitions:
       host:
         type: string
       http:
-        $ref: '#/definitions/command_template.HTTPSCommand'
+        $ref: '#/definitions/e_command_template.HTTPSCommand'
       id:
         type: integer
       monitor:
-        $ref: '#/definitions/command_template.Monitor'
+        $ref: '#/definitions/e_command_template.Monitor'
       mqtt:
-        $ref: '#/definitions/command_template.MqttCommand'
+        $ref: '#/definitions/e_command_template.MqttCommand'
       name:
         type: string
       port:
@@ -22,24 +22,30 @@ definitions:
       protocol:
         type: string
       redis:
-        $ref: '#/definitions/command_template.RedisCommand'
+        $ref: '#/definitions/e_command_template.RedisCommand'
+      tags:
+        items:
+          type: integer
+        type: array
+      timeout:
+        type: integer
       updated_at:
         type: string
       websocket:
-        $ref: '#/definitions/command_template.WebsocketCommand'
+        $ref: '#/definitions/e_command_template.WebsocketCommand'
     type: object
-  command_template.CommandTemplateCreate:
+  e_command_template.CommandTemplateCreate:
     properties:
       description:
         type: string
       host:
         type: string
       http:
-        $ref: '#/definitions/command_template.HTTPSCommand'
+        $ref: '#/definitions/e_command_template.HTTPSCommand'
       monitor:
-        $ref: '#/definitions/command_template.Monitor'
+        $ref: '#/definitions/e_command_template.Monitor'
       mqtt:
-        $ref: '#/definitions/command_template.MqttCommand'
+        $ref: '#/definitions/e_command_template.MqttCommand'
       name:
         type: string
       port:
@@ -47,16 +53,23 @@ definitions:
       protocol:
         type: string
       redis:
-        $ref: '#/definitions/command_template.RedisCommand'
+        $ref: '#/definitions/e_command_template.RedisCommand'
+      tags:
+        items:
+          type: integer
+        type: array
+      timeout:
+        type: integer
       websocket:
-        $ref: '#/definitions/command_template.WebsocketCommand'
+        $ref: '#/definitions/e_command_template.WebsocketCommand'
     required:
     - host
     - name
     - port
     - protocol
+    - timeout
     type: object
-  command_template.HTTPSCommand:
+  e_command_template.HTTPSCommand:
     properties:
       authorization_type:
         type: string
@@ -79,7 +92,7 @@ definitions:
       url:
         type: string
     type: object
-  command_template.MCondition:
+  e_command_template.MCondition:
     properties:
       calculate_type:
         type: string
@@ -92,23 +105,21 @@ definitions:
       value:
         type: string
     type: object
-  command_template.Monitor:
+  e_command_template.Monitor:
     properties:
-      column:
-        type: string
       interval:
         type: integer
       m_conditions:
         items:
-          $ref: '#/definitions/command_template.MCondition'
+          $ref: '#/definitions/e_command_template.MCondition'
         type: array
-      timeout:
+      status_code:
         type: integer
     required:
-    - column
-    - timeout
+    - interval
+    - status_code
     type: object
-  command_template.MqttCommand:
+  e_command_template.MqttCommand:
     properties:
       header:
         items:
@@ -126,7 +137,7 @@ definitions:
     - topic
     - type
     type: object
-  command_template.RedisCommand:
+  e_command_template.RedisCommand:
     properties:
       db:
         type: integer
@@ -143,7 +154,7 @@ definitions:
     required:
     - type
     type: object
-  command_template.WebsocketCommand:
+  e_command_template.WebsocketCommand:
     properties:
       header:
         items:
@@ -156,7 +167,7 @@ definitions:
     required:
     - url
     type: object
-  header_template.HeaderTemplate:
+  e_header_template.HeaderTemplate:
     properties:
       data:
         items:
@@ -167,7 +178,7 @@ definitions:
       name:
         type: string
     type: object
-  header_template.HeaderTemplateCreate:
+  e_header_template.HeaderTemplateCreate:
     properties:
       data:
         items:
@@ -179,7 +190,7 @@ definitions:
     - data
     - name
     type: object
-  header_template.HeaderTemplateUpdate:
+  e_header_template.HeaderTemplateUpdate:
     properties:
       data:
         items:
@@ -189,6 +200,375 @@ definitions:
         type: integer
       name:
         type: string
+    required:
+    - id
+    type: object
+  e_schedule.Schedule:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      tags:
+        items:
+          type: integer
+        type: array
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/e_schedule.TimeDatum'
+      time_data_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  e_schedule.ScheduleCreate:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      name:
+        type: string
+      tags:
+        items:
+          type: integer
+        type: array
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/e_schedule.TimeDatumCreate'
+    required:
+    - name
+    - time_data
+    type: object
+  e_schedule.ScheduleUpdate:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      tags:
+        items:
+          type: integer
+        type: array
+      task_id:
+        type: integer
+      time_data:
+        $ref: '#/definitions/e_schedule.TimeDatumUpdate'
+    required:
+    - id
+    type: object
+  e_schedule.TimeDatum:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    type: object
+  e_schedule.TimeDatumCreate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - start_date
+    - start_time
+    type: object
+  e_schedule.TimeDatumUpdate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - repeat_type
+    - start_date
+    - start_time
+    - t_condition
+    type: object
+  e_task_template.TaskStage:
+    properties:
+      command_template:
+        $ref: '#/definitions/e_command_template.CommandTemplate'
+      command_template_id:
+        type: integer
+      id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tags:
+        items:
+          type: integer
+        type: array
+    type: object
+  e_task_template.TaskStageCreate:
+    properties:
+      command_template_id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tags:
+        items:
+          type: integer
+        type: array
+    required:
+    - mode
+    - name
+    - stage_number
+    type: object
+  e_task_template.TaskStageUpdate:
+    properties:
+      command_template_id:
+        type: integer
+      id:
+        type: integer
+      mode:
+        type: string
+      name:
+        type: string
+      stage_number:
+        type: integer
+      tags:
+        items:
+          type: integer
+        type: array
+    required:
+    - mode
+    - name
+    - stage_number
+    type: object
+  e_task_template.TaskTemplate:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/e_task_template.TaskStage'
+        type: array
+      tags:
+        items:
+          type: integer
+        type: array
+      updated_at:
+        type: string
+      variable:
+        items:
+          type: integer
+        type: array
+    type: object
+  e_task_template.TaskTemplateCreate:
+    properties:
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/e_task_template.TaskStageCreate'
+        type: array
+      tags:
+        items:
+          type: integer
+        type: array
+      variable:
+        items:
+          type: integer
+        type: array
+    required:
+    - name
+    type: object
+  e_task_template.TaskTemplateUpdate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/e_task_template.TaskStageUpdate'
+        type: array
+      tags:
+        items:
+          type: integer
+        type: array
+      variable:
+        items:
+          type: integer
+        type: array
+    required:
+    - id
+    type: object
+  e_time_template.TimeDatum:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    type: object
+  e_time_template.TimeDatumCreate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - start_date
+    - start_time
+    - t_condition
+    type: object
+  e_time_template.TimeDatumUpdate:
+    properties:
+      condition_type:
+        type: string
+      end_date:
+        type: string
+      end_time:
+        type: string
+      interval_seconds:
+        type: integer
+      repeat_type:
+        type: string
+      start_date:
+        type: string
+      start_time:
+        type: string
+      t_condition:
+        items:
+          type: integer
+        type: array
+    required:
+    - end_time
+    - repeat_type
+    - start_date
+    - start_time
+    - t_condition
+    type: object
+  e_time_template.TimeTemplate:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/e_time_template.TimeDatum'
+      updated_at:
+        type: string
+    type: object
+  e_time_template.TimeTemplateCreate:
+    properties:
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/e_time_template.TimeDatumCreate'
+    required:
+    - name
+    - time_data
+    type: object
+  e_time_template.TimeTemplateUpdate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      time_data:
+        $ref: '#/definitions/e_time_template.TimeDatumUpdate'
     required:
     - id
     type: object
@@ -206,351 +586,6 @@ definitions:
       example:
         example: asdfasdf
         type: string
-    type: object
-  schedule.Schedule:
-    properties:
-      created_at:
-        type: string
-      description:
-        type: string
-      enabled:
-        type: boolean
-      id:
-        type: integer
-      name:
-        type: string
-      task_id:
-        type: integer
-      time_data:
-        $ref: '#/definitions/schedule.TimeDatum'
-      time_data_id:
-        type: integer
-      updated_at:
-        type: string
-    type: object
-  schedule.ScheduleCreate:
-    properties:
-      description:
-        type: string
-      enabled:
-        type: boolean
-      name:
-        type: string
-      task_id:
-        type: integer
-      time_data:
-        $ref: '#/definitions/schedule.TimeDatumCreate'
-    required:
-    - name
-    - time_data
-    type: object
-  schedule.ScheduleUpdate:
-    properties:
-      description:
-        type: string
-      enabled:
-        type: boolean
-      id:
-        type: integer
-      name:
-        type: string
-      task_id:
-        type: integer
-      time_data:
-        $ref: '#/definitions/schedule.TimeDatumUpdate'
-    required:
-    - id
-    type: object
-  schedule.TimeDatum:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    type: object
-  schedule.TimeDatumCreate:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    required:
-    - end_time
-    - start_date
-    - start_time
-    type: object
-  schedule.TimeDatumUpdate:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    required:
-    - end_time
-    - repeat_type
-    - start_date
-    - start_time
-    - t_condition
-    type: object
-  task_template.TaskStage:
-    properties:
-      command_template:
-        $ref: '#/definitions/command_template.CommandTemplate'
-      command_template_id:
-        type: integer
-      id:
-        type: integer
-      mode:
-        type: string
-      name:
-        type: string
-      stage_number:
-        type: integer
-      tag:
-        items:
-          type: integer
-        type: array
-    type: object
-  task_template.TaskStageCreate:
-    properties:
-      command_template_id:
-        type: integer
-      mode:
-        type: string
-      name:
-        type: string
-      stage_number:
-        type: integer
-      tag:
-        items:
-          type: integer
-        type: array
-    required:
-    - mode
-    - name
-    - stage_number
-    type: object
-  task_template.TaskStageUpdate:
-    properties:
-      command_template_id:
-        type: integer
-      id:
-        type: integer
-      mode:
-        type: string
-      name:
-        type: string
-      stage_number:
-        type: integer
-      tag:
-        items:
-          type: integer
-        type: array
-    required:
-    - mode
-    - name
-    - stage_number
-    type: object
-  task_template.TaskTemplate:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      stages:
-        items:
-          $ref: '#/definitions/task_template.TaskStage'
-        type: array
-      updated_at:
-        type: string
-      variable:
-        items:
-          type: integer
-        type: array
-    type: object
-  task_template.TaskTemplateCreate:
-    properties:
-      name:
-        type: string
-      stages:
-        items:
-          $ref: '#/definitions/task_template.TaskStageCreate'
-        type: array
-      variable:
-        items:
-          type: integer
-        type: array
-    required:
-    - name
-    type: object
-  task_template.TaskTemplateUpdate:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      stages:
-        items:
-          $ref: '#/definitions/task_template.TaskStageUpdate'
-        type: array
-      variable:
-        items:
-          type: integer
-        type: array
-    required:
-    - id
-    type: object
-  time_template.TimeDatum:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    type: object
-  time_template.TimeDatumCreate:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    required:
-    - end_time
-    - start_date
-    - start_time
-    - t_condition
-    type: object
-  time_template.TimeDatumUpdate:
-    properties:
-      condition_type:
-        type: string
-      end_date:
-        type: string
-      end_time:
-        type: string
-      interval_seconds:
-        type: integer
-      repeat_type:
-        type: string
-      start_date:
-        type: string
-      start_time:
-        type: string
-      t_condition:
-        items:
-          type: integer
-        type: array
-    required:
-    - end_time
-    - repeat_type
-    - start_date
-    - start_time
-    - t_condition
-    type: object
-  time_template.TimeTemplate:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      time_data:
-        $ref: '#/definitions/time_template.TimeDatum'
-      updated_at:
-        type: string
-    type: object
-  time_template.TimeTemplateCreate:
-    properties:
-      name:
-        type: string
-      time_data:
-        $ref: '#/definitions/time_template.TimeDatumCreate'
-    required:
-    - name
-    - time_data
-    type: object
-  time_template.TimeTemplateUpdate:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      time_data:
-        $ref: '#/definitions/time_template.TimeDatumUpdate'
-    required:
-    - id
     type: object
 host: 127.0.0.1:5487
 info:
@@ -596,7 +631,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/command_template.CommandTemplate'
+              $ref: '#/definitions/e_command_template.CommandTemplate'
             type: array
       summary: Show all command templates
       tags:
@@ -611,7 +646,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/command_template.CommandTemplateCreate'
+            $ref: '#/definitions/e_command_template.CommandTemplateCreate'
           type: array
       produces:
       - application/json
@@ -620,7 +655,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/command_template.CommandTemplate'
+              $ref: '#/definitions/e_command_template.CommandTemplate'
             type: array
       summary: Create command templates
       tags:
@@ -640,7 +675,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/command_template.CommandTemplate'
+            $ref: '#/definitions/e_command_template.CommandTemplate'
       summary: Show command templates
       tags:
       - command_template
@@ -674,7 +709,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/header_template.HeaderTemplate'
+              $ref: '#/definitions/e_header_template.HeaderTemplate'
             type: array
       summary: Show all header templates
       tags:
@@ -689,7 +724,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/header_template.HeaderTemplateUpdate'
+            $ref: '#/definitions/e_header_template.HeaderTemplateUpdate'
           type: array
       produces:
       - application/json
@@ -711,7 +746,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/header_template.HeaderTemplateCreate'
+            $ref: '#/definitions/e_header_template.HeaderTemplateCreate'
           type: array
       produces:
       - application/json
@@ -720,7 +755,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/header_template.HeaderTemplate'
+              $ref: '#/definitions/e_header_template.HeaderTemplate'
             type: array
       summary: Create header templates
       tags:
@@ -740,7 +775,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/header_template.HeaderTemplate'
+            $ref: '#/definitions/e_header_template.HeaderTemplate'
       summary: Show header templates
       tags:
       - header_template
@@ -802,7 +837,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/schedule.Schedule'
+              $ref: '#/definitions/e_schedule.Schedule'
             type: array
       summary: Show all schedules
       tags:
@@ -817,7 +852,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/schedule.ScheduleUpdate'
+            $ref: '#/definitions/e_schedule.ScheduleUpdate'
           type: array
       produces:
       - application/json
@@ -839,7 +874,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/schedule.ScheduleCreate'
+            $ref: '#/definitions/e_schedule.ScheduleCreate'
           type: array
       produces:
       - application/json
@@ -848,7 +883,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/schedule.Schedule'
+              $ref: '#/definitions/e_schedule.Schedule'
             type: array
       summary: Create schedules
       tags:
@@ -868,7 +903,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schedule.Schedule'
+            $ref: '#/definitions/e_schedule.Schedule'
       summary: Show schedules
       tags:
       - schedule
@@ -902,7 +937,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/task_template.TaskTemplate'
+              $ref: '#/definitions/e_task_template.TaskTemplate'
             type: array
       summary: Show all task templates
       tags:
@@ -917,7 +952,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/task_template.TaskTemplateUpdate'
+            $ref: '#/definitions/e_task_template.TaskTemplateUpdate'
           type: array
       produces:
       - application/json
@@ -939,7 +974,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/task_template.TaskTemplateCreate'
+            $ref: '#/definitions/e_task_template.TaskTemplateCreate'
           type: array
       produces:
       - application/json
@@ -948,7 +983,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/task_template.TaskTemplate'
+              $ref: '#/definitions/e_task_template.TaskTemplate'
             type: array
       summary: Create task templates
       tags:
@@ -968,7 +1003,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/task_template.TaskTemplate'
+            $ref: '#/definitions/e_task_template.TaskTemplate'
       summary: Show task templates
       tags:
       - task_template
@@ -1002,7 +1037,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/time_template.TimeTemplate'
+              $ref: '#/definitions/e_time_template.TimeTemplate'
             type: array
       summary: Show all time templates
       tags:
@@ -1017,7 +1052,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/time_template.TimeTemplateUpdate'
+            $ref: '#/definitions/e_time_template.TimeTemplateUpdate'
           type: array
       produces:
       - application/json
@@ -1039,7 +1074,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/time_template.TimeTemplateCreate'
+            $ref: '#/definitions/e_time_template.TimeTemplateCreate'
           type: array
       produces:
       - application/json
@@ -1048,7 +1083,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/time_template.TimeTemplate'
+              $ref: '#/definitions/e_time_template.TimeTemplate'
             type: array
       summary: Create time templates
       tags:
@@ -1068,7 +1103,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/time_template.TimeTemplate'
+            $ref: '#/definitions/e_time_template.TimeTemplate'
       summary: Show time templates
       tags:
       - time_template

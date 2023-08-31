@@ -1,7 +1,7 @@
 package time_server
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"time"
 )
 

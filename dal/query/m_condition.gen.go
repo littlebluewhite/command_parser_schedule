@@ -88,6 +88,8 @@ func (m mCondition) TableName() string { return m.mConditionDo.TableName() }
 
 func (m mCondition) Alias() string { return m.mConditionDo.Alias() }
 
+func (m mCondition) Columns(cols ...field.Expr) gen.Columns { return m.mConditionDo.Columns(cols...) }
+
 func (m *mCondition) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -162,10 +164,6 @@ func (m mConditionDo) Select(conds ...field.Expr) *mConditionDo {
 
 func (m mConditionDo) Where(conds ...gen.Condition) *mConditionDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m mConditionDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *mConditionDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m mConditionDo) Order(conds ...field.Expr) *mConditionDo {

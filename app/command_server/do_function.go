@@ -6,9 +6,9 @@ import (
 	"command_parser_schedule/entry/e_command_template"
 	"command_parser_schedule/util"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/goccy/go-json"
 	"io"
 	"net/http"
 	"regexp"
@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func (c *commandServer) requestProtocol(ctx context.Context, com e_command.Command) (result doResult) {
+func (c *CommandServer) requestProtocol(ctx context.Context, com e_command.Command) (result doResult) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -53,7 +53,7 @@ func (c *commandServer) requestProtocol(ctx context.Context, com e_command.Comma
 	}
 }
 
-func (c *commandServer) doHttp(ctx context.Context, com e_command.Command) (result doResult) {
+func (c *CommandServer) doHttp(ctx context.Context, com e_command.Command) (result doResult) {
 	// TODO: add variable function
 	var body io.Reader
 	h := com.Template.Http

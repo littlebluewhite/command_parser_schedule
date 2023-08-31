@@ -7,31 +7,27 @@ import (
 	"command_parser_schedule/entry/e_command_template"
 	"command_parser_schedule/util/logFile"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/goccy/go-json"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"sync"
 	"time"
 )
 
-type CommandServer interface {
-	Start(removeTime time.Duration)
-}
-
-type commandServer struct {
+type CommandServer struct {
 	dbs dbs.Dbs
 	l   logFile.LogFile
 	c   map[string]e_command.Command
 	chs chs
 }
 
-func NewCommandServer(dbs dbs.Dbs) CommandServer {
+func NewCommandServer(dbs dbs.Dbs) *CommandServer {
 	l := logFile.NewLogFile("app", "command_server")
 	c := make(map[string]e_command.Command)
 	rec := make(chan e_command.Command)
 	mu := new(sync.RWMutex)
-	return &commandServer{
+	return &CommandServer{
 		dbs: dbs,
 		l:   l,
 		c:   c,
@@ -42,15 +38,11 @@ func NewCommandServer(dbs dbs.Dbs) CommandServer {
 	}
 }
 
-func (c *commandServer) Start(removeTime time.Duration) {
+func (c *CommandServer) Start(removeTime time.Duration) {
 	wg := &sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	wg.Add(3)
-	go func(wg *sync.WaitGroup) {
-		c.receive(ctx)
-		wg.Done()
-	}(wg)
+	wg.Add(2)
 	go func(wg *sync.WaitGroup) {
 		c.removeFinishedCommand(ctx, removeTime)
 		wg.Done()
@@ -62,20 +54,7 @@ func (c *commandServer) Start(removeTime time.Duration) {
 	wg.Wait()
 }
 
-func (c *commandServer) receive(ctx context.Context) {
-Loop1:
-	for {
-		select {
-		case <-ctx.Done():
-			break Loop1
-		default:
-			com := <-c.chs.rec
-			go c.doCommand(com)
-		}
-	}
-}
-
-func (c *commandServer) rdbSub(ctx context.Context) {
+func (c *CommandServer) rdbSub(ctx context.Context) {
 	pubsub := c.dbs.GetRdb().Subscribe(ctx, "sendCommand")
 	for {
 		msg, err := pubsub.ReceiveMessage(ctx)
@@ -89,14 +68,14 @@ func (c *commandServer) rdbSub(ctx context.Context) {
 			continue
 		}
 		ep := executeParams{s.TemplateId, s.TriggerFrom, s.TriggerAccount, s.Token}
-		_, err = c.Execute(ep)
+		_, err = c.execute(ep)
 		if err != nil {
 			c.l.Error().Println("Error executing Command")
 		}
 	}
 }
 
-func (c *commandServer) doCommand(com e_command.Command) e_command.Command {
+func (c *CommandServer) doCommand(com e_command.Command) e_command.Command {
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Duration(com.Template.Timeout)*time.Millisecond)
 	defer cancel()
@@ -124,12 +103,47 @@ func (c *commandServer) doCommand(com e_command.Command) e_command.Command {
 	return com
 }
 
-func (c *commandServer) execute(ep executeParams) (err error) {
+func (c *CommandServer) execute(ep executeParams) (commandId string, err error) {
+	ctx := context.Background()
+	com, err := c.generateCommand(ep)
+	// publish to redis
+	_ = c.rdbPub(ctx, com)
+	if err != nil {
+		c.l.Error().Println(err)
+		return
+	}
+	go func() {
+		c.doCommand(com)
+	}()
+	commandId = com.CommandId
 	return
 }
 
-func (c *commandServer) Execute(ep executeParams) (commandId string, err error) {
+func (c *CommandServer) Execute(templateId int, triggerFrom []string,
+	triggerAccount string, token string) (com e_command.Command, err error) {
 	ctx := context.Background()
+	ep := executeParams{
+		templateId:     templateId,
+		triggerFrom:    triggerFrom,
+		triggerAccount: triggerAccount,
+		token:          token,
+	}
+	com, err = c.generateCommand(ep)
+	// publish to redis
+	_ = c.rdbPub(ctx, com)
+	if err != nil {
+		c.l.Error().Println(err)
+		return
+	}
+	ch := make(chan e_command.Command)
+	go func() {
+		ch <- c.doCommand(com)
+	}()
+	com = <-ch
+	return
+}
+
+func (c *CommandServer) generateCommand(ep executeParams) (com e_command.Command, err error) {
 	cache := c.dbs.GetCache()
 	var cacheMap map[int]model.CommandTemplate
 	if x, found := cache.Get("commandTemplates"); found {
@@ -137,14 +151,13 @@ func (c *commandServer) Execute(ep executeParams) (commandId string, err error) 
 	}
 	ct, ok := cacheMap[ep.templateId]
 	if !ok {
-		err = errors.New("can not find Command template")
-		com := e_command.Command{Token: ep.token, Message: "can not find Command template", Status: e_command.Failure}
-		_ = c.rdbPub(ctx, com)
+		err = cannotFindTemplate
+		com = e_command.Command{Token: ep.token, Message: "can not find Command template", Status: e_command.Failure}
 		return
 	}
 	from := time.Now()
-	commandId = fmt.Sprintf("%v_%v_%v_%v", ep.templateId, ct.Name, ct.Protocol, from.UnixMicro())
-	com := e_command.Command{
+	commandId := fmt.Sprintf("%v_%v_%v_%v", ep.templateId, ct.Name, ct.Protocol, from.UnixMicro())
+	com = e_command.Command{
 		CommandId:      commandId,
 		Token:          ep.token,
 		From:           from,
@@ -153,13 +166,10 @@ func (c *commandServer) Execute(ep executeParams) (commandId string, err error) 
 		TemplateID:     ep.templateId,
 		Template:       e_command_template.Format([]model.CommandTemplate{ct})[0],
 	}
-	c.chs.rec <- com
-	// publish to redis
-	_ = c.rdbPub(ctx, com)
 	return
 }
 
-func (c *commandServer) CancelCommand(commandId string) error {
+func (c *CommandServer) CancelCommand(commandId string) error {
 	c.chs.mu.RLock()
 	com, ok := c.c[commandId]
 	c.chs.mu.RUnlock()
@@ -174,7 +184,7 @@ func (c *commandServer) CancelCommand(commandId string) error {
 	return nil
 }
 
-func (c *commandServer) ShowCommandList() (cs []e_command.Command) {
+func (c *CommandServer) ShowCommandList() (cs []e_command.Command) {
 	c.chs.mu.RLock()
 	defer c.chs.mu.RUnlock()
 	for _, item := range c.c {
@@ -183,7 +193,7 @@ func (c *commandServer) ShowCommandList() (cs []e_command.Command) {
 	return
 }
 
-func (c *commandServer) removeFinishedCommand(ctx context.Context, s time.Duration) {
+func (c *CommandServer) removeFinishedCommand(ctx context.Context, s time.Duration) {
 Loop1:
 	for {
 		select {
@@ -202,7 +212,7 @@ Loop1:
 	}
 }
 
-func (c *commandServer) writeToHistory(com e_command.Command) {
+func (c *CommandServer) writeToHistory(com e_command.Command) {
 	ctx := context.Background()
 	p := influxdb2.NewPoint("command_history",
 		map[string]string{"command_id": com.CommandId, "status": com.Status.String()},
@@ -214,7 +224,7 @@ func (c *commandServer) writeToHistory(com e_command.Command) {
 	}
 }
 
-func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (hc []e_command.Command) {
+func (c *CommandServer) ReadFromHistory(commandId, start, stop, status string) (hc []e_command.Command) {
 	ctx := context.Background()
 	stopValue := ""
 	if stop != "" {
@@ -247,8 +257,8 @@ func (c *commandServer) ReadFromHistory(commandId, start, stop, status string) (
 	return
 }
 
-func (c *commandServer) rdbPub(ctx context.Context, com e_command.Command) (e error) {
-	cb, _ := json.Marshal(com)
+func (c *CommandServer) rdbPub(ctx context.Context, com e_command.Command) (e error) {
+	cb, _ := json.Marshal(e_command.ToPub(com))
 	e = c.dbs.GetRdb().Publish(ctx, "CommandRec", cb).Err()
 	if e != nil {
 		c.l.Error().Println("redis publish error")

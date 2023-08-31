@@ -147,6 +147,10 @@ func (t taskTemplate) TableName() string { return t.taskTemplateDo.TableName() }
 
 func (t taskTemplate) Alias() string { return t.taskTemplateDo.Alias() }
 
+func (t taskTemplate) Columns(cols ...field.Expr) gen.Columns {
+	return t.taskTemplateDo.Columns(cols...)
+}
+
 func (t *taskTemplate) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -314,10 +318,6 @@ func (t taskTemplateDo) Select(conds ...field.Expr) *taskTemplateDo {
 
 func (t taskTemplateDo) Where(conds ...gen.Condition) *taskTemplateDo {
 	return t.withDO(t.DO.Where(conds...))
-}
-
-func (t taskTemplateDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *taskTemplateDo {
-	return t.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (t taskTemplateDo) Order(conds ...field.Expr) *taskTemplateDo {

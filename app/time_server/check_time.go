@@ -2,7 +2,7 @@ package time_server
 
 import (
 	"command_parser_schedule/util"
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"gorm.io/datatypes"
 	"time"
 )

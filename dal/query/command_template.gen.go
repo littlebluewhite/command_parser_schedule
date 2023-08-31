@@ -140,6 +140,10 @@ func (c commandTemplate) TableName() string { return c.commandTemplateDo.TableNa
 
 func (c commandTemplate) Alias() string { return c.commandTemplateDo.Alias() }
 
+func (c commandTemplate) Columns(cols ...field.Expr) gen.Columns {
+	return c.commandTemplateDo.Columns(cols...)
+}
+
 func (c *commandTemplate) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := c.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -577,10 +581,6 @@ func (c commandTemplateDo) Select(conds ...field.Expr) *commandTemplateDo {
 
 func (c commandTemplateDo) Where(conds ...gen.Condition) *commandTemplateDo {
 	return c.withDO(c.DO.Where(conds...))
-}
-
-func (c commandTemplateDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *commandTemplateDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (c commandTemplateDo) Order(conds ...field.Expr) *commandTemplateDo {

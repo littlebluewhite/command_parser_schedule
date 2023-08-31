@@ -4,8 +4,8 @@ import (
 	"command_parser_schedule/app/dbs/influxdb"
 	"command_parser_schedule/dal/model"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"time"
 )

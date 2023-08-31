@@ -82,6 +82,10 @@ func (w websocketCommand) TableName() string { return w.websocketCommandDo.Table
 
 func (w websocketCommand) Alias() string { return w.websocketCommandDo.Alias() }
 
+func (w websocketCommand) Columns(cols ...field.Expr) gen.Columns {
+	return w.websocketCommandDo.Columns(cols...)
+}
+
 func (w *websocketCommand) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := w.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -154,10 +158,6 @@ func (w websocketCommandDo) Select(conds ...field.Expr) *websocketCommandDo {
 
 func (w websocketCommandDo) Where(conds ...gen.Condition) *websocketCommandDo {
 	return w.withDO(w.DO.Where(conds...))
-}
-
-func (w websocketCommandDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *websocketCommandDo {
-	return w.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (w websocketCommandDo) Order(conds ...field.Expr) *websocketCommandDo {

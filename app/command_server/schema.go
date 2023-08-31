@@ -2,6 +2,7 @@ package command_server
 
 import (
 	"command_parser_schedule/entry/e_command"
+	"errors"
 	"sync"
 )
 
@@ -67,3 +68,5 @@ type SendCommand struct {
 	TriggerAccount string   `json:"trigger_account"`
 	Token          string   `json:"token"`
 }
+
+var cannotFindTemplate = errors.New("can not find Command template")
